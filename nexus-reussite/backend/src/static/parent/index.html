@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Réussite - Dashboard Parent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-button.active { 
+            background-color: #3b82f6; 
+            color: white; 
+            border-bottom-color: #3b82f6;
+        }
+        .card-hover {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="bg-blue-600 text-white rounded-lg p-2 mr-3">
+                        <span class="font-bold text-lg">N</span>
+                    </div>
+                    <h1 class="text-xl font-semibold text-gray-900">Nexus Réussite</h1>
+                    <span class="ml-2 text-sm text-gray-500">Dashboard Parent</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm flex items-center space-x-1">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                    </button>
+                    <button class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center space-x-1">
+                        <i data-lucide="bot" class="w-4 h-4"></i>
+                    </button>
+                    <button class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm flex items-center space-x-1">
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                    </button>
+                    <button class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm flex items-center space-x-1">
+                        <i data-lucide="message-circle" class="w-4 h-4"></i>
+                    </button>
+                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                        <span class="text-sm font-medium">P</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-8">
+                <button onclick="showTab('dashboard')" class="tab-button active py-4 px-1 border-b-2 border-blue-500 font-medium text-sm text-blue-600 flex items-center space-x-2">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                    <span>Tableau de Bord</span>
+                </button>
+                <button onclick="showTab('profile')" class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 flex items-center space-x-2">
+                    <i data-lucide="user" class="w-4 h-4"></i>
+                    <span>Profil Élève</span>
+                </button>
+                <button onclick="showTab('reports')" class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 flex items-center space-x-2">
+                    <i data-lucide="file-text" class="w-4 h-4"></i>
+                    <span>Rapports</span>
+                </button>
+                <button onclick="showTab('communication')" class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 flex items-center space-x-2">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                    <span>Communication</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Tableau de Bord -->
+        <div id="dashboard" class="tab-content active">
+            <!-- Student Header -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-8 card-hover">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                            SB
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Sarah Benali</h2>
+                            <p class="text-gray-600">Terminale S - École Internationale de Tunis</p>
+                            <span class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium mt-2">
+                                Excellence Individuelle
+                            </span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm text-gray-500">Prochaine séance</p>
+                        <p class="text-lg font-semibold text-gray-900">Mathématiques - 23 juillet 2025 à 14:00</p>
+                        <p class="text-sm text-gray-600">Avec M. Dubois</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metrics Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <span class="text-2xl">📈</span>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-500">Progression Globale</p>
+                            <p class="text-2xl font-bold text-gray-900">87%</p>
+                            <p class="text-sm text-green-600">+12% ce mois</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <span class="text-2xl">🎯</span>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-500">Séances ce mois</p>
+                            <p class="text-2xl font-bold text-gray-900">12</p>
+                            <p class="text-sm text-blue-600">8 individuelles, 4 groupe</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                            <span class="text-2xl">🎯</span>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-500">Objectifs Atteints</p>
+                            <p class="text-2xl font-bold text-gray-900">8/10</p>
+                            <p class="text-sm text-orange-600">Excellent rythme</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <span class="text-2xl">🤖</span>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-500">Confiance ARIA</p>
+                            <p class="text-2xl font-bold text-gray-900">94%</p>
+                            <p class="text-sm text-purple-600">Prédiction réussite</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Progress Chart -->
+                <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Évolution des Notes par Matière</h3>
+                    <canvas id="progressChart" width="400" height="200"></canvas>
+                </div>
+
+                <!-- Learning Profile -->
+                <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Profil d'Apprentissage ARIA</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-medium text-gray-700">Visuel</span>
+                                <span class="text-sm font-bold text-blue-600">85%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-medium text-gray-700">Auditif</span>
+                                <span class="text-sm font-bold text-green-600">60%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-600 h-2 rounded-full" style="width: 60%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-medium text-gray-700">Kinesthésique</span>
+                                <span class="text-sm font-bold text-orange-600">45%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-orange-600 h-2 rounded-full" style="width: 45%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-medium text-gray-700">Lecture/Écriture</span>
+                                <span class="text-sm font-bold text-red-600">75%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-red-600 h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                        <h4 class="text-sm font-semibold text-blue-900 mb-2">Recommandations ARIA :</h4>
+                        <ul class="text-sm text-blue-800 space-y-1">
+                            <li>• Utiliser des diagrammes pour les concepts complexes</li>
+                            <li>• Privilégier les couleurs pour organiser l'information</li>
+                            <li>• Créer des cartes mentales pour les révisions</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Notifications -->
+            <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Notifications Récentes</h3>
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                            <span class="text-green-600 text-sm">✓</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">Objectif atteint en Mathématiques</p>
+                            <p class="text-sm text-gray-600">Sarah a maîtrisé les fonctions exponentielles</p>
+                            <p class="text-xs text-gray-500 mt-1">22 juil. 2025, 10:30</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                            <span class="text-blue-600 text-sm">💬</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">Message de M. Dubois</p>
+                            <p class="text-sm text-gray-600">Nouveau plan de révision disponible</p>
+                            <p class="text-xs text-gray-500 mt-1">21 juil. 2025, 15:45</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profil Élève -->
+        <div id="profile" class="tab-content">
+            <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                <h3 class="text-xl font-semibold text-gray-900 mb-6">Profil Détaillé de l'Élève</h3>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-lg font-medium text-gray-900 mb-4">Style d'Apprentissage Dominant</h4>
+                        <div class="space-y-4">
+                            <div class="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                                <h5 class="font-medium text-blue-900">Visuel (85%)</h5>
+                                <p class="text-sm text-blue-800 mt-1">Sarah apprend mieux avec des supports visuels, diagrammes et schémas colorés.</p>
+                            </div>
+                            <div class="p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
+                                <h5 class="font-medium text-red-900">Lecture/Écriture (75%)</h5>
+                                <p class="text-sm text-red-800 mt-1">Excellente capacité à assimiler l'information par la lecture et l'écriture.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-lg font-medium text-gray-900 mb-4">Recommandations Personnalisées</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                                    <span class="text-green-600 text-xs">✓</span>
+                                </div>
+                                <p class="text-sm text-gray-700">Utiliser des mind maps pour organiser les concepts</p>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                                    <span class="text-green-600 text-xs">✓</span>
+                                </div>
+                                <p class="text-sm text-gray-700">Privilégier les exercices avec supports graphiques</p>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                                    <span class="text-green-600 text-xs">✓</span>
+                                </div>
+                                <p class="text-sm text-gray-700">Encourager la prise de notes structurées</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8">
+                    <h4 class="text-lg font-medium text-gray-900 mb-4">Progression par Matière</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <h5 class="font-medium text-gray-900">Mathématiques</h5>
+                            <p class="text-2xl font-bold text-blue-600 mt-2">17.5/20</p>
+                            <p class="text-sm text-green-600">↗ +2.5 points</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <h5 class="font-medium text-gray-900">Physique</h5>
+                            <p class="text-2xl font-bold text-green-600 mt-2">16/20</p>
+                            <p class="text-sm text-green-600">↗ +1 point</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <h5 class="font-medium text-gray-900">Français</h5>
+                            <p class="text-2xl font-bold text-orange-600 mt-2">15/20</p>
+                            <p class="text-sm text-orange-600">→ Stable</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rapports -->
+        <div id="reports" class="tab-content">
+            <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                <h3 class="text-xl font-semibold text-gray-900 mb-6">Rapports Hebdomadaires</h3>
+                
+                <div class="space-y-6">
+                    <div class="border-l-4 border-blue-500 pl-4">
+                        <h4 class="font-medium text-gray-900">Semaine du 15-21 juillet 2025</h4>
+                        <div class="mt-3 space-y-3">
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <h5 class="font-medium text-gray-800">Mathématiques (4h)</h5>
+                                <p class="text-sm text-gray-600 mt-1">Notions abordées : Fonctions exponentielles, dérivées</p>
+                                <p class="text-sm text-gray-600">Progression : Excellente maîtrise des concepts</p>
+                                <p class="text-sm text-blue-600 font-medium">Commentaire M. Dubois : "Sarah montre une progression remarquable"</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <h5 class="font-medium text-gray-800">Physique (2h)</h5>
+                                <p class="text-sm text-gray-600 mt-1">Notions abordées : Mécanique, forces</p>
+                                <p class="text-sm text-gray-600">Progression : Bonne compréhension</p>
+                                <p class="text-sm text-green-600 font-medium">Commentaire Mme Martin : "Très bonne participation"</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                            <h5 class="font-medium text-blue-900">Analyse ARIA</h5>
+                            <p class="text-sm text-blue-800 mt-1">Recommandation : Continuer avec les supports visuels en mathématiques. Augmenter les exercices pratiques en physique.</p>
+                        </div>
+                        <div class="mt-4 p-3 bg-green-50 rounded-lg">
+                            <h5 class="font-medium text-green-900">Objectifs semaine prochaine</h5>
+                            <ul class="text-sm text-green-800 mt-1 space-y-1">
+                                <li>• Maîtriser les logarithmes en mathématiques</li>
+                                <li>• Approfondir les lois de Newton en physique</li>
+                                <li>• Préparer le contrôle de français</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Communication -->
+        <div id="communication" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Messages avec les Professeurs</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-blue-500 pl-4 py-2">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-medium text-gray-900">M. Dubois - Mathématiques</h4>
+                                <span class="text-xs text-gray-500">Hier 16:30</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-1">Sarah a excellé lors du dernier cours. Je recommande de continuer avec les exercices d'approfondissement.</p>
+                            <button class="text-blue-600 text-sm mt-2 hover:underline">Répondre</button>
+                        </div>
+                        
+                        <div class="border-l-4 border-green-500 pl-4 py-2">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-medium text-gray-900">Mme Martin - Physique</h4>
+                                <span class="text-xs text-gray-500">20 juil. 14:15</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-1">Prochaine séance : nous aborderons la thermodynamique. Merci de réviser les bases.</p>
+                            <button class="text-green-600 text-sm mt-2 hover:underline">Répondre</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Planification & Contacts</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-blue-50 rounded-lg">
+                            <h4 class="font-medium text-blue-900">Prochains Rendez-vous</h4>
+                            <div class="mt-2 space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-blue-800">Mathématiques</span>
+                                    <span class="text-sm font-medium text-blue-900">23 juil. 14:00</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-blue-800">Physique</span>
+                                    <span class="text-sm font-medium text-blue-900">25 juil. 16:00</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <button class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                                Planifier un rendez-vous
+                            </button>
+                            <button class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
+                                Contacter un professeur
+                            </button>
+                            <button class="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors">
+                                Support technique
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Tab switching functionality
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+                button.classList.add('text-gray-500', 'border-transparent');
+                button.classList.remove('text-blue-600', 'border-blue-500');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            event.target.classList.remove('text-gray-500', 'border-transparent');
+            event.target.classList.add('text-blue-600', 'border-blue-500');
+        }
+
+        // Initialize chart when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Sept', 'Oct', 'Nov', 'Déc', 'Jan'],
+                    datasets: [{
+                        label: 'Mathématiques',
+                        data: [12, 15, 16, 17, 17.5],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Physique',
+                        data: [14, 14.5, 15, 15.5, 16],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Français',
+                        data: [16, 15.5, 15, 15, 15],
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 10,
+                            max: 20
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,123 @@
+{
+  "bricks": [
+    {
+      "id": "449d84b5-547d-428c-9d49-ca6073bb4237",
+      "content": "# Définition de la fonction exponentielle\n\nLa fonction exponentielle, notée exp ou e^x, est définie sur ℝ par :\n\n**exp(x) = e^x** où e ≈ 2,718...\n\n## Propriétés fondamentales :\n- exp(0) = 1\n- exp(1) = e\n- exp est strictement croissante sur ℝ\n- exp(x) > 0 pour tout x ∈ ℝ",
+      "type": "definition",
+      "title": "Définition de la fonction exponentielle",
+      "subject": "mathematiques",
+      "chapter": "Fonctions exponentielles",
+      "difficulty": 2,
+      "target_profiles": [
+        "average",
+        "excellence"
+      ],
+      "learning_steps": [
+        "discovery"
+      ],
+      "tags": [
+        "exponentielle",
+        "définition",
+        "propriétés"
+      ],
+      "prerequisites": [],
+      "duration_minutes": 10,
+      "created_at": "2025-07-23T06:21:11.790458",
+      "updated_at": "2025-07-23T06:21:11.790464",
+      "author_id": "coach_dubois",
+      "author_name": "M. Dubois",
+      "usage_count": 0,
+      "average_rating": 0.0
+    },
+    {
+      "id": "bb0a6f51-16e1-40e0-979e-3e05da860195",
+      "content": "# Propriété fondamentale de l'exponentielle\n\nPour tous réels a et b :\n**exp(a + b) = exp(a) × exp(b)**\n\n## Conséquences :\n- exp(a - b) = exp(a) / exp(b)\n- exp(na) = [exp(a)]^n pour n ∈ ℤ\n- exp(-x) = 1/exp(x)\n\nCette propriété fait de l'exponentielle un **morphisme** de (ℝ,+) vers (ℝ*₊,×).",
+      "type": "theoreme",
+      "title": "Propriété fondamentale de l'exponentielle",
+      "subject": "mathematiques",
+      "chapter": "Fonctions exponentielles",
+      "difficulty": 3,
+      "target_profiles": [
+        "average",
+        "excellence"
+      ],
+      "learning_steps": [
+        "training"
+      ],
+      "tags": [
+        "exponentielle",
+        "propriété",
+        "morphisme"
+      ],
+      "prerequisites": [],
+      "duration_minutes": 15,
+      "created_at": "2025-07-23T06:21:11.790478",
+      "updated_at": "2025-07-23T06:21:11.790478",
+      "author_id": "coach_dubois",
+      "author_name": "M. Dubois",
+      "usage_count": 0,
+      "average_rating": 0.0
+    },
+    {
+      "id": "e9e538ec-0f3b-4c79-aa25-1426eae6a152",
+      "content": "# Définition d'un graphe en informatique\n\nUn **graphe** G = (V, E) est une structure de données composée de :\n- **V** : un ensemble de sommets (vertices/nodes)\n- **E** : un ensemble d'arêtes (edges) reliant les sommets\n\n## Types de graphes :\n- **Graphe orienté** : les arêtes ont une direction\n- **Graphe non orienté** : les arêtes sont bidirectionnelles\n- **Graphe pondéré** : chaque arête a un poids/coût\n\n## Représentations :\n- Matrice d'adjacence\n- Liste d'adjacence\n- Liste d'arêtes",
+      "type": "definition",
+      "title": "Définition d'un graphe",
+      "subject": "nsi",
+      "chapter": "Graphes",
+      "difficulty": 2,
+      "target_profiles": [
+        "average",
+        "excellence"
+      ],
+      "learning_steps": [
+        "discovery"
+      ],
+      "tags": [
+        "graphe",
+        "structure",
+        "données"
+      ],
+      "prerequisites": [],
+      "duration_minutes": 12,
+      "created_at": "2025-07-23T06:21:11.790485",
+      "updated_at": "2025-07-23T06:21:11.790486",
+      "author_id": "coach_martin",
+      "author_name": "Mme Martin",
+      "usage_count": 0,
+      "average_rating": 0.0
+    },
+    {
+      "id": "f427262f-3d41-49e4-b78d-0e6ad11bde03",
+      "content": "# Exercice : Parcours en largeur (BFS)\n\nSoit le graphe suivant représenté par sa liste d'adjacence :\n```\nA: [B, C]\nB: [A, D, E]\nC: [A, F]\nD: [B]\nE: [B, F]\nF: [C, E]\n```\n\n**Questions :**\n1. Effectuez un parcours en largeur à partir du sommet A\n2. Donnez l'ordre de visite des sommets\n3. Construisez l'arbre de parcours\n4. Quelle est la complexité temporelle de cet algorithme ?\n\n**Aide :** Utilisez une file (queue) pour implémenter le BFS.",
+      "type": "exercice",
+      "title": "Exercice BFS sur graphe",
+      "subject": "nsi",
+      "chapter": "Graphes",
+      "difficulty": 4,
+      "target_profiles": [
+        "excellence"
+      ],
+      "learning_steps": [
+        "training",
+        "deepening"
+      ],
+      "tags": [
+        "BFS",
+        "parcours",
+        "algorithme"
+      ],
+      "prerequisites": [
+        "definition_graphe"
+      ],
+      "duration_minutes": 25,
+      "created_at": "2025-07-23T06:21:11.790493",
+      "updated_at": "2025-07-23T06:21:11.790493",
+      "author_id": "coach_martin",
+      "author_name": "Mme Martin",
+      "usage_count": 0,
+      "average_rating": 0.0
+    }
+  ],
+  "last_updated": "2025-07-23T06:21:11.790522"
+}
