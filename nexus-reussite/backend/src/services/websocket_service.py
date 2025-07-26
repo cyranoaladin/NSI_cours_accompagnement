@@ -6,21 +6,24 @@ Gère les connexions WebSocket et la diffusion de notifications
 import asyncio
 import json
 import logging
+from dataclasses import asdict, dataclass
 from datetime import datetime
-from typing import Dict, List, Set, Optional, Any
-from dataclasses import dataclass, asdict
 from enum import Enum
+from functools import wraps
+from typing import Any, Dict, List, Optional, Set
+
+import jwt
 import websockets
 from websockets.server import WebSocketServerProtocol
-import jwt
-from functools import wraps
 
 # Configuration du logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class NotificationType(Enum):
     """Types de notifications supportées"""
+
     STUDENT_PROGRESS = "student_progress"
     TEACHER_MESSAGE = "teacher_message"
     COURSE_UPDATE = "course_update"
@@ -32,16 +35,20 @@ class NotificationType(Enum):
     REMINDER = "reminder"
     EMERGENCY = "emergency"
 
+
 class UserRole(Enum):
     """Rôles utilisateur pour les notifications"""
+
     STUDENT = "student"
     PARENT = "parent"
     TEACHER = "teacher"
     ADMIN = "admin"
 
+
 @dataclass
 class Notification:
     """Structure d'une notification"""
+
     id: str
     type: NotificationType
     title: str
@@ -61,18 +68,21 @@ class Notification:
     def to_dict(self) -> Dict[str, Any]:
         """Convertit la notification en dictionnaire"""
         result = asdict(self)
-        result['type'] = self.type.value
-        result['recipient_role'] = self.recipient_role.value
+        result["type"] = self.type.value
+        result["recipient_role"] = self.recipient_role.value
         return result
+
 
 @dataclass
 class WebSocketConnection:
     """Représente une connexion WebSocket active"""
+
     websocket: WebSocketServerProtocol
     user_id: str
     user_role: UserRole
     connected_at: datetime
     last_ping: datetime
+
 
 class WebSocketService:
     """Service de gestion des WebSockets et notifications"""
@@ -80,7 +90,9 @@ class WebSocketService:
     def __init__(self, jwt_secret: str = "nexus_secret_key"):
         self.jwt_secret = jwt_secret
         self.connections: Dict[str, WebSocketConnection] = {}
-        self.user_connections: Dict[str, Set[str]] = {}  # user_id -> set of connection_ids
+        self.user_connections: Dict[str, Set[str]] = (
+            {}
+        )  # user_id -> set of connection_ids
         self.notification_history: List[Notification] = []
         self.running = False
 
@@ -98,7 +110,9 @@ class WebSocketService:
         timestamp = datetime.utcnow().timestamp()
         return f"{user_id}_{int(timestamp * 1000)}"
 
-    async def register_connection(self, websocket: WebSocketServerProtocol, user_id: str, user_role: UserRole) -> str:
+    async def register_connection(
+        self, websocket: WebSocketServerProtocol, user_id: str, user_role: UserRole
+    ) -> str:
         """Enregistre une nouvelle connexion WebSocket"""
         connection_id = self.generate_connection_id(user_id)
 
@@ -107,7 +121,7 @@ class WebSocketService:
             user_id=user_id,
             user_role=user_role,
             connected_at=datetime.utcnow(),
-            last_ping=datetime.utcnow()
+            last_ping=datetime.utcnow(),
         )
 
         self.connections[connection_id] = connection
@@ -116,7 +130,9 @@ class WebSocketService:
             self.user_connections[user_id] = set()
         self.user_connections[user_id].add(connection_id)
 
-        logger.info(f"Nouvelle connexion WebSocket: {connection_id} pour {user_id} ({user_role.value})")
+        logger.info(
+            f"Nouvelle connexion WebSocket: {connection_id} pour {user_id} ({user_role.value})"
+        )
 
         # Envoyer les notifications non lues
         await self.send_unread_notifications(user_id, user_role)
@@ -138,7 +154,9 @@ class WebSocketService:
 
             logger.info(f"Connexion WebSocket fermée: {connection_id}")
 
-    async def send_to_connection(self, connection_id: str, message: Dict[str, Any]) -> bool:
+    async def send_to_connection(
+        self, connection_id: str, message: Dict[str, Any]
+    ) -> bool:
         """Envoie un message à une connexion spécifique"""
         if connection_id not in self.connections:
             return False
@@ -197,52 +215,57 @@ class WebSocketService:
         self.notification_history.append(notification)
 
         # Préparer le message
-        message = {
-            "type": "notification",
-            "data": notification.to_dict()
-        }
+        message = {"type": "notification", "data": notification.to_dict()}
 
         # Envoyer à l'utilisateur
         sent_count = await self.send_to_user(notification.recipient_id, message)
 
         if sent_count > 0:
-            logger.info(f"Notification envoyée à {notification.recipient_id}: {notification.title}")
+            logger.info(
+                f"Notification envoyée à {notification.recipient_id}: {notification.title}"
+            )
             return True
         else:
-            logger.warning(f"Impossible d'envoyer la notification à {notification.recipient_id}")
+            logger.warning(
+                f"Impossible d'envoyer la notification à {notification.recipient_id}"
+            )
             return False
 
     async def send_unread_notifications(self, user_id: str, user_role: UserRole):
         """Envoie les notifications non lues à un utilisateur"""
         unread_notifications = [
-            notif for notif in self.notification_history
+            notif
+            for notif in self.notification_history
             if notif.recipient_id == user_id and not notif.read
         ]
 
         for notification in unread_notifications:
-            message = {
-                "type": "notification",
-                "data": notification.to_dict()
-            }
+            message = {"type": "notification", "data": notification.to_dict()}
             await self.send_to_user(user_id, message)
 
     def mark_notification_as_read(self, notification_id: str, user_id: str) -> bool:
         """Marque une notification comme lue"""
         for notification in self.notification_history:
-            if notification.id == notification_id and notification.recipient_id == user_id:
+            if (
+                notification.id == notification_id
+                and notification.recipient_id == user_id
+            ):
                 notification.read = True
                 return True
         return False
 
-    def get_user_notifications(self, user_id: str, limit: int = 50) -> List[Dict[str, Any]]:
+    def get_user_notifications(
+        self, user_id: str, limit: int = 50
+    ) -> List[Dict[str, Any]]:
         """Récupère les notifications d'un utilisateur"""
         user_notifications = [
-            notif.to_dict() for notif in self.notification_history
+            notif.to_dict()
+            for notif in self.notification_history
             if notif.recipient_id == user_id
         ]
 
         # Trier par timestamp décroissant
-        user_notifications.sort(key=lambda x: x['timestamp'], reverse=True)
+        user_notifications.sort(key=lambda x: x["timestamp"], reverse=True)
 
         return user_notifications[:limit]
 
@@ -253,10 +276,7 @@ class WebSocketService:
 
         for connection_id, connection in self.connections.items():
             try:
-                ping_message = {
-                    "type": "ping",
-                    "timestamp": current_time.isoformat()
-                }
+                ping_message = {"type": "ping", "timestamp": current_time.isoformat()}
                 await connection.websocket.send(json.dumps(ping_message))
                 connection.last_ping = current_time
             except websockets.exceptions.ConnectionClosed:
@@ -279,42 +299,50 @@ class WebSocketService:
             auth_data = json.loads(auth_message)
 
             if auth_data.get("type") != "auth":
-                await websocket.send(json.dumps({
-                    "type": "error",
-                    "message": "Message d'authentification requis"
-                }))
+                await websocket.send(
+                    json.dumps(
+                        {
+                            "type": "error",
+                            "message": "Message d'authentification requis",
+                        }
+                    )
+                )
                 return
 
             # Vérifier le token
             token = auth_data.get("token")
             if not token:
-                await websocket.send(json.dumps({
-                    "type": "error",
-                    "message": "Token manquant"
-                }))
+                await websocket.send(
+                    json.dumps({"type": "error", "message": "Token manquant"})
+                )
                 return
 
             user_data = self.authenticate_token(token)
             if not user_data:
-                await websocket.send(json.dumps({
-                    "type": "error",
-                    "message": "Token invalide"
-                }))
+                await websocket.send(
+                    json.dumps({"type": "error", "message": "Token invalide"})
+                )
                 return
 
             user_id = user_data.get("user_id")
             user_role = UserRole(user_data.get("role", "student"))
 
             # Enregistrer la connexion
-            connection_id = await self.register_connection(websocket, user_id, user_role)
+            connection_id = await self.register_connection(
+                websocket, user_id, user_role
+            )
 
             # Confirmer l'authentification
-            await websocket.send(json.dumps({
-                "type": "auth_success",
-                "connection_id": connection_id,
-                "user_id": user_id,
-                "role": user_role.value
-            }))
+            await websocket.send(
+                json.dumps(
+                    {
+                        "type": "auth_success",
+                        "connection_id": connection_id,
+                        "user_id": user_id,
+                        "role": user_role.value,
+                    }
+                )
+            )
 
             # Boucle de traitement des messages
             async for message in websocket:
@@ -322,10 +350,9 @@ class WebSocketService:
                     data = json.loads(message)
                     await self.handle_message(connection_id, data)
                 except json.JSONDecodeError:
-                    await websocket.send(json.dumps({
-                        "type": "error",
-                        "message": "Format JSON invalide"
-                    }))
+                    await websocket.send(
+                        json.dumps({"type": "error", "message": "Format JSON invalide"})
+                    )
                 except Exception as e:
                     logger.error(f"Erreur lors du traitement du message: {e}")
 
@@ -356,7 +383,7 @@ class WebSocketService:
                 response = {
                     "type": "mark_read_response",
                     "notification_id": notification_id,
-                    "success": success
+                    "success": success,
                 }
                 await self.send_to_connection(connection_id, response)
 
@@ -369,7 +396,7 @@ class WebSocketService:
 
                 response = {
                     "type": "notifications_list",
-                    "notifications": notifications
+                    "notifications": notifications,
                 }
                 await self.send_to_connection(connection_id, response)
 
@@ -400,9 +427,13 @@ class WebSocketService:
         finally:
             self.running = False
 
+
 # Fonctions utilitaires pour créer des notifications
 
-def create_student_progress_notification(student_id: str, subject: str, progress: float) -> Notification:
+
+def create_student_progress_notification(
+    student_id: str, subject: str, progress: float
+) -> Notification:
     """Crée une notification de progression d'élève"""
     return Notification(
         id=f"progress_{student_id}_{datetime.utcnow().timestamp()}",
@@ -411,10 +442,13 @@ def create_student_progress_notification(student_id: str, subject: str, progress
         message=f"Votre progression en {subject} est maintenant de {progress}%",
         recipient_id=student_id,
         recipient_role=UserRole.STUDENT,
-        data={"subject": subject, "progress": progress}
+        data={"subject": subject, "progress": progress},
     )
 
-def create_teacher_message_notification(student_id: str, teacher_name: str, message: str) -> Notification:
+
+def create_teacher_message_notification(
+    student_id: str, teacher_name: str, message: str
+) -> Notification:
     """Crée une notification de message d'enseignant"""
     return Notification(
         id=f"teacher_msg_{student_id}_{datetime.utcnow().timestamp()}",
@@ -424,10 +458,13 @@ def create_teacher_message_notification(student_id: str, teacher_name: str, mess
         recipient_id=student_id,
         recipient_role=UserRole.STUDENT,
         data={"teacher_name": teacher_name},
-        priority="high"
+        priority="high",
     )
 
-def create_achievement_notification(student_id: str, achievement_name: str, description: str) -> Notification:
+
+def create_achievement_notification(
+    student_id: str, achievement_name: str, description: str
+) -> Notification:
     """Crée une notification de réussite débloquée"""
     return Notification(
         id=f"achievement_{student_id}_{datetime.utcnow().timestamp()}",
@@ -437,10 +474,13 @@ def create_achievement_notification(student_id: str, achievement_name: str, desc
         recipient_id=student_id,
         recipient_role=UserRole.STUDENT,
         data={"achievement_name": achievement_name, "description": description},
-        priority="high"
+        priority="high",
     )
 
-def create_parent_notification(parent_id: str, student_name: str, message: str, data: Dict[str, Any] = None) -> Notification:
+
+def create_parent_notification(
+    parent_id: str, student_name: str, message: str, data: Dict[str, Any] = None
+) -> Notification:
     """Crée une notification pour un parent"""
     return Notification(
         id=f"parent_{parent_id}_{datetime.utcnow().timestamp()}",
@@ -449,10 +489,13 @@ def create_parent_notification(parent_id: str, student_name: str, message: str, 
         message=message,
         recipient_id=parent_id,
         recipient_role=UserRole.PARENT,
-        data=data or {}
+        data=data or {},
     )
 
-def create_system_alert(admin_id: str, title: str, message: str, priority: str = "normal") -> Notification:
+
+def create_system_alert(
+    admin_id: str, title: str, message: str, priority: str = "normal"
+) -> Notification:
     """Crée une alerte système pour un administrateur"""
     return Notification(
         id=f"system_{admin_id}_{datetime.utcnow().timestamp()}",
@@ -461,8 +504,9 @@ def create_system_alert(admin_id: str, title: str, message: str, priority: str =
         message=message,
         recipient_id=admin_id,
         recipient_role=UserRole.ADMIN,
-        priority=priority
+        priority=priority,
     )
+
 
 # Instance globale du service
 websocket_service = WebSocketService()
@@ -471,4 +515,3 @@ if __name__ == "__main__":
     # Test du serveur WebSocket
     service = WebSocketService()
     service.start_server("0.0.0.0", 8765)
-

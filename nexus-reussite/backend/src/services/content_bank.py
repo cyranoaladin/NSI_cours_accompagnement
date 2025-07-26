@@ -5,13 +5,19 @@ Nexus Réussite - Content Bank Service
 
 import json
 import os
-from typing import List, Optional, Dict, Any
-from datetime import datetime
 import uuid
+from datetime import datetime
+from typing import Any, Dict, List, Optional
+
 from ..models.content_system import (
-    ContentBrick, BrickType, Subject, TargetProfile,
-    LearningStep, DocumentRequest
+    BrickType,
+    ContentBrick,
+    DocumentRequest,
+    LearningStep,
+    Subject,
+    TargetProfile,
 )
+
 
 class ContentBankService:
     """Service de gestion de la banque de contenu"""
@@ -25,9 +31,9 @@ class ContentBankService:
         """Charge les données depuis le fichier JSON"""
         if os.path.exists(self.data_file):
             try:
-                with open(self.data_file, 'r', encoding='utf-8') as f:
+                with open(self.data_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                    for brick_data in data.get('bricks', []):
+                    for brick_data in data.get("bricks", []):
                         brick = ContentBrick.from_dict(brick_data)
                         self.bricks[brick.id] = brick
             except Exception as e:
@@ -40,10 +46,10 @@ class ContentBankService:
         """Sauvegarde les données dans le fichier JSON"""
         try:
             data = {
-                'bricks': [brick.to_dict() for brick in self.bricks.values()],
-                'last_updated': datetime.now().isoformat()
+                "bricks": [brick.to_dict() for brick in self.bricks.values()],
+                "last_updated": datetime.now().isoformat(),
             }
-            with open(self.data_file, 'w', encoding='utf-8') as f:
+            with open(self.data_file, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
         except Exception as e:
             print(f"Erreur lors de la sauvegarde: {e}")
@@ -78,9 +84,8 @@ La fonction exponentielle, notée exp ou e^x, est définie sur ℝ par :
                 created_at=datetime.now(),
                 updated_at=datetime.now(),
                 author_id="coach_dubois",
-                author_name="M. Dubois"
+                author_name="M. Dubois",
             ),
-
             ContentBrick(
                 id=str(uuid.uuid4()),
                 content="""# Propriété fondamentale de l'exponentielle
@@ -107,9 +112,8 @@ Cette propriété fait de l'exponentielle un **morphisme** de (ℝ,+) vers (ℝ*
                 created_at=datetime.now(),
                 updated_at=datetime.now(),
                 author_id="coach_dubois",
-                author_name="M. Dubois"
+                author_name="M. Dubois",
             ),
-
             # NSI - Graphes
             ContentBrick(
                 id=str(uuid.uuid4()),
@@ -141,9 +145,8 @@ Un **graphe** G = (V, E) est une structure de données composée de :
                 created_at=datetime.now(),
                 updated_at=datetime.now(),
                 author_id="coach_martin",
-                author_name="Mme Martin"
+                author_name="Mme Martin",
             ),
-
             ContentBrick(
                 id=str(uuid.uuid4()),
                 content="""# Exercice : Parcours en largeur (BFS)
@@ -178,8 +181,8 @@ F: [C, E]
                 created_at=datetime.now(),
                 updated_at=datetime.now(),
                 author_id="coach_martin",
-                author_name="Mme Martin"
-            )
+                author_name="Mme Martin",
+            ),
         ]
 
         for brick in sample_bricks:
@@ -225,16 +228,18 @@ F: [C, E]
             return True
         return False
 
-    def search_bricks(self,
-                     subject: Optional[Subject] = None,
-                     chapter: Optional[str] = None,
-                     brick_type: Optional[BrickType] = None,
-                     difficulty_min: Optional[int] = None,
-                     difficulty_max: Optional[int] = None,
-                     target_profile: Optional[TargetProfile] = None,
-                     learning_step: Optional[LearningStep] = None,
-                     tags: Optional[List[str]] = None,
-                     limit: Optional[int] = None) -> List[ContentBrick]:
+    def search_bricks(
+        self,
+        subject: Optional[Subject] = None,
+        chapter: Optional[str] = None,
+        brick_type: Optional[BrickType] = None,
+        difficulty_min: Optional[int] = None,
+        difficulty_max: Optional[int] = None,
+        target_profile: Optional[TargetProfile] = None,
+        learning_step: Optional[LearningStep] = None,
+        tags: Optional[List[str]] = None,
+        limit: Optional[int] = None,
+    ) -> List[ContentBrick]:
         """Recherche des briques selon des critères"""
 
         results = []
@@ -268,7 +273,9 @@ F: [C, E]
 
             # Filtrage par tags
             if tags:
-                if not any(tag.lower() in [t.lower() for t in brick.tags] for tag in tags):
+                if not any(
+                    tag.lower() in [t.lower() for t in brick.tags] for tag in tags
+                ):
                     continue
 
             results.append(brick)
@@ -303,11 +310,11 @@ F: [C, E]
             by_difficulty[diff_key] = by_difficulty.get(diff_key, 0) + 1
 
         return {
-            'total_bricks': total_bricks,
-            'by_subject': by_subject,
-            'by_type': by_type,
-            'by_difficulty': by_difficulty,
-            'last_updated': datetime.now().isoformat()
+            "total_bricks": total_bricks,
+            "by_subject": by_subject,
+            "by_type": by_type,
+            "by_difficulty": by_difficulty,
+            "last_updated": datetime.now().isoformat(),
         }
 
     def increment_usage(self, brick_id: str):
@@ -323,4 +330,3 @@ F: [C, E]
             # Calcul simple de moyenne pondérée (à améliorer avec un vrai système de votes)
             brick.average_rating = (brick.average_rating + rating) / 2
             self.save_data()
-

@@ -4,9 +4,9 @@ Script d'initialisation professionnel pour Nexus Réussite
 Vérifie l'environnement, initialise la base de données et lance l'application
 """
 
+import logging
 import os
 import sys
-import logging
 from pathlib import Path
 
 # Ajouter le répertoire du projet au Python path
@@ -15,8 +15,7 @@ sys.path.insert(0, str(project_root))
 
 # Configuration du logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -26,7 +25,7 @@ def check_environment():
     logger.info("🔍 Vérification de l'environnement...")
 
     # Vérifier les variables d'environnement critiques
-    required_vars = ['OPENAI_API_KEY']
+    required_vars = ["OPENAI_API_KEY"]
     missing_vars = []
 
     for var in required_vars:
@@ -34,7 +33,9 @@ def check_environment():
             missing_vars.append(var)
 
     if missing_vars:
-        logger.error("❌ Variables d'environnement manquantes: %s", ', '.join(missing_vars))
+        logger.error(
+            "❌ Variables d'environnement manquantes: %s", ", ".join(missing_vars)
+        )
         logger.error("💡 Copiez .env.example vers .env et configurez vos variables")
         return False
 
@@ -48,10 +49,10 @@ def check_dependencies():
 
     try:
         # Import pour vérifier la disponibilité sans utiliser les modules
-        __import__('flask')
-        __import__('sqlalchemy')
-        __import__('openai')
-        __import__('redis')
+        __import__("flask")
+        __import__("sqlalchemy")
+        __import__("openai")
+        __import__("redis")
         logger.info("✅ Toutes les dépendances principales sont installées")
         return True
     except ImportError as e:
@@ -83,21 +84,25 @@ def initialize_database():
             if not admin:
                 logger.info("👤 Création de l'utilisateur admin par défaut...")
                 admin = User(
-                    email='admin@nexus-reussite.com',
-                    first_name='Admin',
-                    last_name='Nexus',
+                    email="admin@nexus-reussite.com",
+                    first_name="Admin",
+                    last_name="Nexus",
                     role=UserRole.ADMIN,
-                    password='admin123'  # Sera hashé automatiquement
+                    password="admin123",  # Sera hashé automatiquement
                 )
                 db.session.add(admin)
                 db.session.commit()
-                logger.info("✅ Utilisateur admin créé (admin@nexus-reussite.com / admin123)")
+                logger.info(
+                    "✅ Utilisateur admin créé (admin@nexus-reussite.com / admin123)"
+                )
 
         logger.info("✅ Base de données initialisée avec succès")
         return True
 
     except (ImportError, AttributeError, ValueError) as e:
-        logger.error("❌ Erreur lors de l'initialisation de la base de données: %s", str(e))
+        logger.error(
+            "❌ Erreur lors de l'initialisation de la base de données: %s", str(e)
+        )
         return False
 
 
@@ -109,12 +114,7 @@ def run_development_server():
         from src.main_production import create_app
 
         app = create_app()
-        app.run(
-            host='0.0.0.0',
-            port=5000,
-            debug=True,
-            use_reloader=True
-        )
+        app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=True)
 
     except (ImportError, OSError) as e:
         logger.error("❌ Erreur lors du lancement du serveur: %s", str(e))
@@ -131,14 +131,19 @@ def main():
     # Charger les variables d'environnement
     try:
         from dotenv import load_dotenv
-        env_path = project_root / '.env'
+
+        env_path = project_root / ".env"
         if env_path.exists():
             load_dotenv(env_path)
             logger.info("📋 Fichier .env chargé")
         else:
-            logger.warning("⚠️  Aucun fichier .env trouvé, utilisation des variables système")
+            logger.warning(
+                "⚠️  Aucun fichier .env trouvé, utilisation des variables système"
+            )
     except ImportError:
-        logger.warning("⚠️  python-dotenv non installé, variables d'environnement non chargées")
+        logger.warning(
+            "⚠️  python-dotenv non installé, variables d'environnement non chargées"
+        )
 
     # Vérifications préalables
     if not check_dependencies():

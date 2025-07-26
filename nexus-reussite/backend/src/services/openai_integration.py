@@ -1,24 +1,27 @@
-import os
-import json
 import asyncio
-from typing import Dict, List, Optional, Any
-from datetime import datetime, timedelta
-import openai
-from openai import OpenAI
-import logging
-from dataclasses import dataclass, asdict
 import base64
-import requests
-from PIL import Image
 import io
+import json
+import logging
+import os
+from dataclasses import asdict, dataclass
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional
+
+import openai
+import requests
+from openai import OpenAI
+from PIL import Image
 
 # Configuration du logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class StudentProfile:
     """Profil d'étudiant pour la personnalisation IA"""
+
     id: str
     name: str
     level: str  # "premiere", "terminale"
@@ -31,15 +34,19 @@ class StudentProfile:
     language: str = "fr"
     timezone: str = "Africa/Tunis"
 
+
 @dataclass
 class ConversationContext:
     """Contexte de conversation avec ARIA"""
+
     student_id: str
     session_id: str
     subject: str
     topic: Optional[str] = None
     difficulty_level: str = "medium"
-    conversation_type: str = "tutoring"  # "tutoring", "evaluation", "explanation", "motivation"
+    conversation_type: str = (
+        "tutoring"  # "tutoring", "evaluation", "explanation", "motivation"
+    )
     previous_messages: List[Dict] = None
     learning_objectives: List[str] = None
     time_limit: Optional[int] = None  # minutes
@@ -50,13 +57,14 @@ class ConversationContext:
         if self.learning_objectives is None:
             self.learning_objectives = []
 
+
 class OpenAIIntegration:
     """Service d'intégration OpenAI pour ARIA"""
 
     def __init__(self):
         self.client = None
-        self.api_key = os.getenv('OPENAI_API_KEY')
-        self.api_base = os.getenv('OPENAI_API_BASE', 'https://api.openai.com/v1')
+        self.api_key = os.getenv("OPENAI_API_KEY")
+        self.api_base = os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1")
         self.model_chat = "gpt-4-turbo-preview"
         self.model_vision = "gpt-4-vision-preview"
         self.model_embedding = "text-embedding-3-small"
@@ -74,17 +82,14 @@ class OpenAIIntegration:
             "explanation": self._get_explanation_prompt(),
             "motivation": self._get_motivation_prompt(),
             "document_generation": self._get_document_generation_prompt(),
-            "quiz_generation": self._get_quiz_generation_prompt()
+            "quiz_generation": self._get_quiz_generation_prompt(),
         }
 
     def _initialize_client(self):
         """Initialise le client OpenAI"""
         try:
             if self.api_key:
-                self.client = OpenAI(
-                    api_key=self.api_key,
-                    base_url=self.api_base
-                )
+                self.client = OpenAI(api_key=self.api_key, base_url=self.api_base)
                 logger.info("Client OpenAI initialisé avec succès")
             else:
                 logger.warning("Clé API OpenAI non trouvée - Mode simulation activé")
@@ -314,7 +319,7 @@ FORMAT DE SORTIE:
         self,
         message: str,
         context: ConversationContext,
-        student_profile: StudentProfile
+        student_profile: StudentProfile,
     ) -> Dict[str, Any]:
         """Conversation principale avec ARIA"""
 
@@ -329,11 +334,12 @@ FORMAT DE SORTIE:
             messages = [{"role": "system", "content": system_prompt}]
 
             # Ajout de l'historique
-            for msg in context.previous_messages[-10:]:  # Garde les 10 derniers messages
-                messages.append({
-                    "role": msg.get("role", "user"),
-                    "content": msg.get("content", "")
-                })
+            for msg in context.previous_messages[
+                -10:
+            ]:  # Garde les 10 derniers messages
+                messages.append(
+                    {"role": msg.get("role", "user"), "content": msg.get("content", "")}
+                )
 
             # Message actuel
             messages.append({"role": "user", "content": message})
@@ -353,10 +359,10 @@ FORMAT DE SORTIE:
                 "usage": {
                     "prompt_tokens": response.usage.prompt_tokens,
                     "completion_tokens": response.usage.completion_tokens,
-                    "total_tokens": response.usage.total_tokens
+                    "total_tokens": response.usage.total_tokens,
                 },
                 "model": response.model,
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now().isoformat(),
             }
 
         except Exception as e:
@@ -364,13 +370,13 @@ FORMAT DE SORTIE:
             return self._simulate_aria_response(message, context, student_profile)
 
     def _build_personalized_prompt(
-        self,
-        context: ConversationContext,
-        student_profile: StudentProfile
+        self, context: ConversationContext, student_profile: StudentProfile
     ) -> str:
         """Construit un prompt personnalisé selon le contexte et le profil"""
 
-        base_prompt = self.system_prompts.get(context.conversation_type, self.system_prompts["tutoring"])
+        base_prompt = self.system_prompts.get(
+            context.conversation_type, self.system_prompts["tutoring"]
+        )
 
         personalization = f"""
 PROFIL DE L'ÉLÈVE:
@@ -394,12 +400,16 @@ CONTEXTE DE LA SESSION:
 
         return base_prompt + "\n" + personalization
 
-    async def _make_openai_request(self, messages: List[Dict], context: ConversationContext) -> Any:
+    async def _make_openai_request(
+        self, messages: List[Dict], context: ConversationContext
+    ) -> Any:
         """Effectue la requête vers l'API OpenAI"""
 
         # Paramètres adaptatifs selon le contexte
         temperature = 0.3 if context.conversation_type == "evaluation" else 0.7
-        max_tokens = 2000 if context.time_limit and context.time_limit < 30 else self.max_tokens
+        max_tokens = (
+            2000 if context.time_limit and context.time_limit < 30 else self.max_tokens
+        )
 
         return await asyncio.to_thread(
             self.client.chat.completions.create,
@@ -409,33 +419,44 @@ CONTEXTE DE LA SESSION:
             max_tokens=max_tokens,
             top_p=0.9,
             frequency_penalty=0.1,
-            presence_penalty=0.1
+            presence_penalty=0.1,
         )
 
-    def _analyze_response(self, response: str, context: ConversationContext) -> Dict[str, Any]:
+    def _analyze_response(
+        self, response: str, context: ConversationContext
+    ) -> Dict[str, Any]:
         """Analyse la réponse d'ARIA pour extraire des métadonnées"""
 
         metadata = {
             "sentiment": "positive",  # Analyse de sentiment basique
-            "complexity": "medium",   # Complexité de la réponse
-            "topics_covered": [],     # Sujets abordés
-            "recommendations": [],    # Recommandations générées
-            "next_steps": [],        # Étapes suivantes suggérées
-            "difficulty_assessment": context.difficulty_level
+            "complexity": "medium",  # Complexité de la réponse
+            "topics_covered": [],  # Sujets abordés
+            "recommendations": [],  # Recommandations générées
+            "next_steps": [],  # Étapes suivantes suggérées
+            "difficulty_assessment": context.difficulty_level,
         }
 
         # Analyse basique du contenu
-        if any(word in response.lower() for word in ["excellent", "parfait", "bravo", "félicitations"]):
+        if any(
+            word in response.lower()
+            for word in ["excellent", "parfait", "bravo", "félicitations"]
+        ):
             metadata["sentiment"] = "very_positive"
-        elif any(word in response.lower() for word in ["attention", "erreur", "incorrect", "réviser"]):
+        elif any(
+            word in response.lower()
+            for word in ["attention", "erreur", "incorrect", "réviser"]
+        ):
             metadata["sentiment"] = "constructive"
 
         # Détection de recommandations
         if "je recommande" in response.lower() or "je suggère" in response.lower():
             # Extraction basique des recommandations
-            lines = response.split('\n')
+            lines = response.split("\n")
             for line in lines:
-                if any(word in line.lower() for word in ["recommande", "suggère", "conseil"]):
+                if any(
+                    word in line.lower()
+                    for word in ["recommande", "suggère", "conseil"]
+                ):
                     metadata["recommendations"].append(line.strip())
 
         return metadata
@@ -444,24 +465,21 @@ CONTEXTE DE LA SESSION:
         self,
         message: str,
         context: ConversationContext,
-        student_profile: StudentProfile
+        student_profile: StudentProfile,
     ) -> Dict[str, Any]:
         """Simule une réponse d'ARIA quand l'API n'est pas disponible"""
 
         # Réponses simulées selon le contexte
         simulated_responses = {
             "tutoring": f"Bonjour {student_profile.name} ! Je comprends que vous travaillez sur {context.subject}. Pouvez-vous me dire où vous en êtes dans votre apprentissage ? Je vais adapter mes explications à votre style d'apprentissage {student_profile.learning_style}.",
-
             "evaluation": f"Très bien {student_profile.name}, commençons cette évaluation en {context.subject}. Je vais adapter les questions à votre niveau {student_profile.level}. Êtes-vous prêt(e) ?",
-
             "explanation": f"Excellente question sur {context.topic} ! Laissez-moi vous expliquer cela de manière claire et adaptée à votre profil d'apprentissage {student_profile.learning_style}.",
-
-            "motivation": f"Je vois que vous travaillez dur, {student_profile.name} ! Vos efforts en {context.subject} vont porter leurs fruits. Continuons ensemble vers vos objectifs : {', '.join(student_profile.goals[:2])}."
+            "motivation": f"Je vois que vous travaillez dur, {student_profile.name} ! Vos efforts en {context.subject} vont porter leurs fruits. Continuons ensemble vers vos objectifs : {', '.join(student_profile.goals[:2])}.",
         }
 
         response = simulated_responses.get(
             context.conversation_type,
-            f"Bonjour {student_profile.name} ! Comment puis-je vous aider aujourd'hui en {context.subject} ?"
+            f"Bonjour {student_profile.name} ! Comment puis-je vous aider aujourd'hui en {context.subject} ?",
         )
 
         return {
@@ -473,11 +491,11 @@ CONTEXTE DE LA SESSION:
                 "recommendations": ["Continuez vos efforts !"],
                 "next_steps": ["Posez-moi vos questions spécifiques"],
                 "difficulty_assessment": context.difficulty_level,
-                "simulated": True
+                "simulated": True,
             },
             "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
             "model": "simulation",
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
         }
 
     async def generate_document(
@@ -486,29 +504,39 @@ CONTEXTE DE LA SESSION:
         subject: str,
         topic: str,
         student_profile: StudentProfile,
-        specifications: Dict[str, Any] = None
+        specifications: Dict[str, Any] = None,
     ) -> Dict[str, Any]:
         """Génère un document pédagogique personnalisé"""
 
         if not self.client:
-            return self._simulate_document_generation(document_type, subject, topic, student_profile)
+            return self._simulate_document_generation(
+                document_type, subject, topic, student_profile
+            )
 
         try:
             # Construction du prompt pour la génération de document
-            prompt = self._build_document_prompt(document_type, subject, topic, student_profile, specifications)
+            prompt = self._build_document_prompt(
+                document_type, subject, topic, student_profile, specifications
+            )
 
             messages = [
-                {"role": "system", "content": self.system_prompts["document_generation"]},
-                {"role": "user", "content": prompt}
+                {
+                    "role": "system",
+                    "content": self.system_prompts["document_generation"],
+                },
+                {"role": "user", "content": prompt},
             ]
 
-            response = await self._make_openai_request(messages, ConversationContext(
-                student_id=student_profile.id,
-                session_id=f"doc_{datetime.now().timestamp()}",
-                subject=subject,
-                topic=topic,
-                conversation_type="document_generation"
-            ))
+            response = await self._make_openai_request(
+                messages,
+                ConversationContext(
+                    student_id=student_profile.id,
+                    session_id=f"doc_{datetime.now().timestamp()}",
+                    subject=subject,
+                    topic=topic,
+                    conversation_type="document_generation",
+                ),
+            )
 
             document_content = response.choices[0].message.content
 
@@ -522,13 +550,15 @@ CONTEXTE DE LA SESSION:
                 "metadata": {
                     "level": student_profile.level,
                     "learning_style": student_profile.learning_style,
-                    "personalized": True
-                }
+                    "personalized": True,
+                },
             }
 
         except Exception as e:
             logger.error(f"Erreur lors de la génération de document: {e}")
-            return self._simulate_document_generation(document_type, subject, topic, student_profile)
+            return self._simulate_document_generation(
+                document_type, subject, topic, student_profile
+            )
 
     def _build_document_prompt(
         self,
@@ -536,7 +566,7 @@ CONTEXTE DE LA SESSION:
         subject: str,
         topic: str,
         student_profile: StudentProfile,
-        specifications: Dict[str, Any] = None
+        specifications: Dict[str, Any] = None,
     ) -> str:
         """Construit le prompt pour la génération de document"""
 
@@ -566,7 +596,7 @@ EXIGENCES:
             "fiche_revision": "Structure: Définitions, Formules clés, Méthodes, Exercices types, Points à retenir",
             "exercices": "Inclure: Énoncés variés, Solutions détaillées, Barème de notation, Conseils méthodologiques",
             "cours": "Organisation: Introduction, Développement structuré, Exemples, Applications, Synthèse",
-            "evaluation": "Composer: Questions progressives, Barème détaillé, Critères d'évaluation, Correction type"
+            "evaluation": "Composer: Questions progressives, Barème détaillé, Critères d'évaluation, Correction type",
         }
 
         if document_type in document_specs:
@@ -579,7 +609,7 @@ EXIGENCES:
         document_type: str,
         subject: str,
         topic: str,
-        student_profile: StudentProfile
+        student_profile: StudentProfile,
     ) -> Dict[str, Any]:
         """Simule la génération de document"""
 
@@ -630,8 +660,8 @@ EXIGENCES:
                 "level": student_profile.level,
                 "learning_style": student_profile.learning_style,
                 "personalized": True,
-                "simulated": True
-            }
+                "simulated": True,
+            },
         }
 
     async def generate_quiz(
@@ -640,12 +670,14 @@ EXIGENCES:
         topic: str,
         difficulty: str,
         num_questions: int,
-        student_profile: StudentProfile
+        student_profile: StudentProfile,
     ) -> Dict[str, Any]:
         """Génère un quiz personnalisé"""
 
         if not self.client:
-            return self._simulate_quiz_generation(subject, topic, difficulty, num_questions, student_profile)
+            return self._simulate_quiz_generation(
+                subject, topic, difficulty, num_questions, student_profile
+            )
 
         try:
             prompt = f"""
@@ -662,17 +694,20 @@ Format de sortie JSON requis avec questions variées (QCM, Vrai/Faux, réponses 
 
             messages = [
                 {"role": "system", "content": self.system_prompts["quiz_generation"]},
-                {"role": "user", "content": prompt}
+                {"role": "user", "content": prompt},
             ]
 
-            response = await self._make_openai_request(messages, ConversationContext(
-                student_id=student_profile.id,
-                session_id=f"quiz_{datetime.now().timestamp()}",
-                subject=subject,
-                topic=topic,
-                difficulty_level=difficulty,
-                conversation_type="evaluation"
-            ))
+            response = await self._make_openai_request(
+                messages,
+                ConversationContext(
+                    student_id=student_profile.id,
+                    session_id=f"quiz_{datetime.now().timestamp()}",
+                    subject=subject,
+                    topic=topic,
+                    difficulty_level=difficulty,
+                    conversation_type="evaluation",
+                ),
+            )
 
             quiz_content = response.choices[0].message.content
 
@@ -681,7 +716,9 @@ Format de sortie JSON requis avec questions variées (QCM, Vrai/Faux, réponses 
                 quiz_data = json.loads(quiz_content)
             except json.JSONDecodeError:
                 # Fallback vers simulation si le JSON n'est pas valide
-                return self._simulate_quiz_generation(subject, topic, difficulty, num_questions, student_profile)
+                return self._simulate_quiz_generation(
+                    subject, topic, difficulty, num_questions, student_profile
+                )
 
             return {
                 "quiz": quiz_data,
@@ -691,13 +728,15 @@ Format de sortie JSON requis avec questions variées (QCM, Vrai/Faux, réponses 
                     "topic": topic,
                     "difficulty": difficulty,
                     "student_level": student_profile.level,
-                    "personalized": True
-                }
+                    "personalized": True,
+                },
             }
 
         except Exception as e:
             logger.error(f"Erreur lors de la génération de quiz: {e}")
-            return self._simulate_quiz_generation(subject, topic, difficulty, num_questions, student_profile)
+            return self._simulate_quiz_generation(
+                subject, topic, difficulty, num_questions, student_profile
+            )
 
     def _simulate_quiz_generation(
         self,
@@ -705,7 +744,7 @@ Format de sortie JSON requis avec questions variées (QCM, Vrai/Faux, réponses 
         topic: str,
         difficulty: str,
         num_questions: int,
-        student_profile: StudentProfile
+        student_profile: StudentProfile,
     ) -> Dict[str, Any]:
         """Simule la génération de quiz"""
 
@@ -717,7 +756,7 @@ Format de sortie JSON requis avec questions variées (QCM, Vrai/Faux, réponses 
             "level": student_profile.level,
             "difficulty": difficulty,
             "duration": num_questions * 2,  # 2 minutes par question
-            "questions": []
+            "questions": [],
         }
 
         # Questions simulées selon la matière
@@ -731,7 +770,7 @@ Format de sortie JSON requis avec questions variées (QCM, Vrai/Faux, réponses 
                     "correct_answer": "2x + 3",
                     "explanation": "La dérivée de x² est 2x, la dérivée de 3x est 3, et la dérivée d'une constante est 0.",
                     "difficulty": difficulty,
-                    "points": 2
+                    "points": 2,
                 }
             ],
             "nsi": [
@@ -743,9 +782,9 @@ Format de sortie JSON requis avec questions variées (QCM, Vrai/Faux, réponses 
                     "correct_answer": "O(n²)",
                     "explanation": "Dans le pire cas, le tri par insertion compare chaque élément avec tous les précédents.",
                     "difficulty": difficulty,
-                    "points": 3
+                    "points": 3,
                 }
-            ]
+            ],
         }
 
         # Génération des questions selon la matière
@@ -761,7 +800,7 @@ Format de sortie JSON requis avec questions variées (QCM, Vrai/Faux, réponses 
                     "correct_answer": f"Réponse attendue sur {topic}",
                     "explanation": f"Explication détaillée du concept {topic}.",
                     "difficulty": difficulty,
-                    "points": 5
+                    "points": 5,
                 }
             ]
 
@@ -780,15 +819,12 @@ Format de sortie JSON requis avec questions variées (QCM, Vrai/Faux, réponses 
                 "difficulty": difficulty,
                 "student_level": student_profile.level,
                 "personalized": True,
-                "simulated": True
-            }
+                "simulated": True,
+            },
         }
 
     async def generate_image(
-        self,
-        prompt: str,
-        style: str = "educational",
-        size: str = "1024x1024"
+        self, prompt: str, style: str = "educational", size: str = "1024x1024"
     ) -> Dict[str, Any]:
         """Génère une image pédagogique avec DALL-E"""
 
@@ -810,7 +846,7 @@ high contrast, pedagogical diagram
                 prompt=educational_prompt,
                 size=size,
                 quality="standard",
-                n=1
+                n=1,
             )
 
             image_url = response.data[0].url
@@ -821,17 +857,16 @@ high contrast, pedagogical diagram
                 "style": style,
                 "size": size,
                 "generated_at": datetime.now().isoformat(),
-                "metadata": {
-                    "educational": True,
-                    "model": self.model_image
-                }
+                "metadata": {"educational": True, "model": self.model_image},
             }
 
         except Exception as e:
             logger.error(f"Erreur lors de la génération d'image: {e}")
             return self._simulate_image_generation(prompt, style, size)
 
-    def _simulate_image_generation(self, prompt: str, style: str, size: str) -> Dict[str, Any]:
+    def _simulate_image_generation(
+        self, prompt: str, style: str, size: str
+    ) -> Dict[str, Any]:
         """Simule la génération d'image"""
         return {
             "image_url": "https://via.placeholder.com/1024x1024/4F46E5/FFFFFF?text=Image+Educative",
@@ -839,11 +874,7 @@ high contrast, pedagogical diagram
             "style": style,
             "size": size,
             "generated_at": datetime.now().isoformat(),
-            "metadata": {
-                "educational": True,
-                "simulated": True,
-                "model": "simulation"
-            }
+            "metadata": {"educational": True, "simulated": True, "model": "simulation"},
         }
 
     async def analyze_student_work(
@@ -851,12 +882,14 @@ high contrast, pedagogical diagram
         work_content: str,
         subject: str,
         assignment_type: str,
-        student_profile: StudentProfile
+        student_profile: StudentProfile,
     ) -> Dict[str, Any]:
         """Analyse le travail d'un étudiant et fournit un feedback détaillé"""
 
         if not self.client:
-            return self._simulate_work_analysis(work_content, subject, assignment_type, student_profile)
+            return self._simulate_work_analysis(
+                work_content, subject, assignment_type, student_profile
+            )
 
         try:
             analysis_prompt = f"""
@@ -887,15 +920,18 @@ Sois bienveillant mais rigoureux dans ton analyse.
 
             messages = [
                 {"role": "system", "content": self.system_prompts["evaluation"]},
-                {"role": "user", "content": analysis_prompt}
+                {"role": "user", "content": analysis_prompt},
             ]
 
-            response = await self._make_openai_request(messages, ConversationContext(
-                student_id=student_profile.id,
-                session_id=f"analysis_{datetime.now().timestamp()}",
-                subject=subject,
-                conversation_type="evaluation"
-            ))
+            response = await self._make_openai_request(
+                messages,
+                ConversationContext(
+                    student_id=student_profile.id,
+                    session_id=f"analysis_{datetime.now().timestamp()}",
+                    subject=subject,
+                    conversation_type="evaluation",
+                ),
+            )
 
             analysis = response.choices[0].message.content
 
@@ -907,20 +943,22 @@ Sois bienveillant mais rigoureux dans ton analyse.
                 "analyzed_at": datetime.now().isoformat(),
                 "metadata": {
                     "personalized": True,
-                    "student_level": student_profile.level
-                }
+                    "student_level": student_profile.level,
+                },
             }
 
         except Exception as e:
             logger.error(f"Erreur lors de l'analyse du travail: {e}")
-            return self._simulate_work_analysis(work_content, subject, assignment_type, student_profile)
+            return self._simulate_work_analysis(
+                work_content, subject, assignment_type, student_profile
+            )
 
     def _simulate_work_analysis(
         self,
         work_content: str,
         subject: str,
         assignment_type: str,
-        student_profile: StudentProfile
+        student_profile: StudentProfile,
     ) -> Dict[str, Any]:
         """Simule l'analyse de travail"""
 
@@ -965,8 +1003,8 @@ Continuez vos efforts, vous êtes sur la bonne voie ! 🎯
             "metadata": {
                 "personalized": True,
                 "student_level": student_profile.level,
-                "simulated": True
-            }
+                "simulated": True,
+            },
         }
 
     def get_usage_statistics(self) -> Dict[str, Any]:
@@ -980,15 +1018,17 @@ Continuez vos efforts, vous êtes sur la bonne voie ! 🎯
                 "document_generation": 0,
                 "quiz_generation": 0,
                 "image_generation": 0,
-                "work_analysis": 0
+                "work_analysis": 0,
             },
             "average_response_time": 0,
             "success_rate": 100,
-            "last_updated": datetime.now().isoformat()
+            "last_updated": datetime.now().isoformat(),
         }
+
 
 # Instance globale du service
 openai_service = OpenAIIntegration()
+
 
 # Fonctions utilitaires pour l'utilisation dans l'application
 async def chat_with_aria(message: str, student_id: str, context: Dict = None) -> Dict:
@@ -1003,25 +1043,29 @@ async def chat_with_aria(message: str, student_id: str, context: Dict = None) ->
         learning_style="mixed",
         strengths=["logique", "analyse"],
         weaknesses=["calcul mental", "gestion du temps"],
-        goals=["réussir le bac", "intégrer une CPGE"]
+        goals=["réussir le bac", "intégrer une CPGE"],
     )
 
     # Contexte par défaut
     default_context = ConversationContext(
         student_id=student_id,
-        session_id=context.get("session_id", f"session_{datetime.now().timestamp()}") if context else f"session_{datetime.now().timestamp()}",
+        session_id=(
+            context.get("session_id", f"session_{datetime.now().timestamp()}")
+            if context
+            else f"session_{datetime.now().timestamp()}"
+        ),
         subject=context.get("subject", "général") if context else "général",
         topic=context.get("topic") if context else None,
-        conversation_type=context.get("type", "tutoring") if context else "tutoring"
+        conversation_type=context.get("type", "tutoring") if context else "tutoring",
     )
 
-    return await openai_service.chat_with_aria(message, default_context, default_profile)
+    return await openai_service.chat_with_aria(
+        message, default_context, default_profile
+    )
+
 
 async def generate_personalized_document(
-    document_type: str,
-    subject: str,
-    topic: str,
-    student_id: str
+    document_type: str, subject: str, topic: str, student_id: str
 ) -> Dict:
     """Interface simplifiée pour la génération de documents"""
 
@@ -1033,17 +1077,16 @@ async def generate_personalized_document(
         learning_style="visual",
         strengths=["compréhension", "mémorisation"],
         weaknesses=["application", "rapidité"],
-        goals=["maîtriser le programme", "obtenir une bonne note"]
+        goals=["maîtriser le programme", "obtenir une bonne note"],
     )
 
-    return await openai_service.generate_document(document_type, subject, topic, default_profile)
+    return await openai_service.generate_document(
+        document_type, subject, topic, default_profile
+    )
+
 
 async def create_adaptive_quiz(
-    subject: str,
-    topic: str,
-    difficulty: str,
-    num_questions: int,
-    student_id: str
+    subject: str, topic: str, difficulty: str, num_questions: int, student_id: str
 ) -> Dict:
     """Interface simplifiée pour la génération de quiz"""
 
@@ -1055,8 +1098,9 @@ async def create_adaptive_quiz(
         learning_style="mixed",
         strengths=["raisonnement"],
         weaknesses=["rapidité"],
-        goals=["progresser", "réussir"]
+        goals=["progresser", "réussir"],
     )
 
-    return await openai_service.generate_quiz(subject, topic, difficulty, num_questions, default_profile)
-
+    return await openai_service.generate_quiz(
+        subject, topic, difficulty, num_questions, default_profile
+    )

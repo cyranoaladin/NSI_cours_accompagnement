@@ -1,12 +1,15 @@
 """
 Tests unitaires pour les services d'intelligence artificielle (ARIA)
 """
+
 from unittest.mock import patch
+
 import openai
 import pytest
 
 try:
     from src.services.aria_service import generate_aria_response
+
     SERVICE_AVAILABLE = True
 except ImportError:
     SERVICE_AVAILABLE = False
@@ -15,23 +18,26 @@ except ImportError:
 class TestARIAService:
     """Tests pour le service ARIA d'intelligence artificielle éducative"""
 
-    @patch('openai.ChatCompletion.create')
+    @patch("openai.ChatCompletion.create")
     def test_generate_aria_response_success(self, mock_openai):
         """Test génération réponse ARIA avec succès"""
         # Arrange
         mock_openai.return_value = {
-            "choices": [{
-                "message": {
-                    "content": "Bonjour ! Je suis ARIA, votre assistante IA pour l'éducation."
+            "choices": [
+                {
+                    "message": {
+                        "content": "Bonjour ! Je suis ARIA, votre assistante IA pour l'éducation."
+                    }
                 }
-            }]
+            ]
         }
 
         # Import local pour éviter les erreurs d'import globales
         if SERVICE_AVAILABLE:
             # Act
             response = generate_aria_response(
-                "Aide moi en mathématiques niveau intermediate", "student_1")
+                "Aide moi en mathématiques niveau intermediate", "student_1"
+            )
 
             # Assert
             assert response is not None
@@ -49,7 +55,7 @@ class TestARIAService:
             assert "mathématiques" in simulated_response
             assert len(simulated_response) > len(message)
 
-    @patch('openai.ChatCompletion.create')
+    @patch("openai.ChatCompletion.create")
     def test_generate_aria_response_api_error(self, mock_openai):
         """Test gestion erreur API OpenAI"""
         # Arrange
@@ -93,12 +99,13 @@ class TestARIAService:
             "Je ne peux pas répondre à cette question.",
             "",
             "Erreur: contenu inapproprié détecté",
-            "Les fonctions en informatique sont des blocs de code..."
+            "Les fonctions en informatique sont des blocs de code...",
         ]
 
         # Act - Filtrer réponses valides
         valid_responses = [
-            response for response in raw_responses
+            response
+            for response in raw_responses
             if self._is_valid_educational_response(response)
         ]
 
@@ -115,7 +122,7 @@ class TestARIAService:
             ("user", "Bonjour ARIA"),
             ("aria", "Bonjour ! Comment puis-je vous aider ?"),
             ("user", "Explique les algorithmes"),
-            ("aria", "Un algorithme est une suite d'instructions...")
+            ("aria", "Un algorithme est une suite d'instructions..."),
         ]
 
         # Act - Construire historique
@@ -138,26 +145,27 @@ class TestARIAService:
             "Mathématiques": "Résolvons ce problème étape par étape...",
             "NSI": "Analysons ce code ensemble...",
             "Physique": "Appliquons les lois de la physique...",
-            "Français": "Analysons ce texte littéraire..."
+            "Français": "Analysons ce texte littéraire...",
         }
 
         for subject, expected_style in subjects.items():
             # Act - Simulation adaptation par matière
             adapted_response = self._adapt_response_to_subject(
-                "Aide-moi avec cet exercice",
-                subject
+                "Aide-moi avec cet exercice", subject
             )
 
             # Assert
-            assert (subject.lower() in adapted_response.lower() or
-                    any(keyword in adapted_response
-                        for keyword in expected_style.split()[:3]))
+            assert subject.lower() in adapted_response.lower() or any(
+                keyword in adapted_response for keyword in expected_style.split()[:3]
+            )
 
     # Méthodes utilitaires pour les tests
     def _format_for_education(self, message, context, level):
         """Simulation formatage contexte éducatif"""
-        return (f"[Niveau {level} - {context}] {message}. "
-                "Pouvez-vous m'expliquer de manière pédagogique ?")
+        return (
+            f"[Niveau {level} - {context}] {message}. "
+            "Pouvez-vous m'expliquer de manière pédagogique ?"
+        )
 
     def _is_valid_educational_response(self, response):
         """Validation réponse éducative"""
@@ -170,13 +178,22 @@ class TestARIAService:
     def _adapt_response_to_subject(self, message, subject):
         """Adaptation réponse par matière"""
         adaptations = {
-            "Mathématiques": (f"En mathématiques, pour '{message}', "
-                             "nous devons procéder méthodiquement."),
-            "NSI": (f"En NSI (informatique), pour '{message}', "
-                   "analysons le problème algorithmiquement."),
-            "Physique": (f"En physique, pour '{message}', "
-                        "appliquons les principes fondamentaux."),
-            "Français": (f"En français, pour '{message}', "
-                        "analysons les éléments littéraires.")
+            "Mathématiques": (
+                f"En mathématiques, pour '{message}', "
+                "nous devons procéder méthodiquement."
+            ),
+            "NSI": (
+                f"En NSI (informatique), pour '{message}', "
+                "analysons le problème algorithmiquement."
+            ),
+            "Physique": (
+                f"En physique, pour '{message}', "
+                "appliquons les principes fondamentaux."
+            ),
+            "Français": (
+                f"En français, pour '{message}', " "analysons les éléments littéraires."
+            ),
         }
-        return adaptations.get(subject, f"Pour '{message}', voici mon aide pédagogique.")
+        return adaptations.get(
+            subject, f"Pour '{message}', voici mon aide pédagogique."
+        )

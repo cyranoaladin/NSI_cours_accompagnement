@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import AuthPage from './components/Auth/AuthPage';
 import LandingPage from './components/LandingPage';
@@ -93,8 +94,19 @@ function AppContent() {
   }
 
   return (
-    <Router>
-      <Routes>
+    <>
+      <Helmet>
+        <title>Nexus Réussite - Plateforme Éducative Intelligente</title>
+        <meta name="description" content="Plateforme éducative avec IA pour l'accompagnement personnalisé des élèves du système français en Tunisie" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
+        <meta httpEquiv="X-Frame-Options" content="DENY" />
+        <meta httpEquiv="X-XSS-Protection" content="1; mode=block" />
+        <meta httpEquiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+        <meta httpEquiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none';" />
+      </Helmet>
+      <Router>
+        <Routes>
         {/* Route publique - Page d'accueil */}
         <Route 
           path="/" 
@@ -394,17 +406,20 @@ function AppContent() {
 
         {/* Route par défaut */}
         <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
+        </Routes>
+      </Router>
+    </>
   );
 }
 
 // Composant racine avec le provider d'authentification
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <HelmetProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </HelmetProvider>
   );
 }
 

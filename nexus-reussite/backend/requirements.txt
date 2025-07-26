@@ -33,6 +33,7 @@ bcrypt>=4.1.0
 python-jose>=3.4.0
 passlib>=1.7.0
 cryptography>=41.0.0
+bleach>=6.0.0
 
 # === GÉNÉRATION PDF & DOCUMENTS ===
 reportlab>=4.0.0
@@ -78,6 +79,7 @@ itsdangerous>=2.1.0
 Jinja2>=3.1.0
 MarkupSafe>=2.1.0
 Werkzeug>=3.0.0
+Flask-Compress>=1.15.0
 
 # === LOGS & MONITORING ===
 structlog>=23.2.0
