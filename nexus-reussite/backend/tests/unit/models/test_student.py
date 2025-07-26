@@ -1,25 +1,27 @@
 """
 Tests unitaires pour le modèle Student
 """
+
 from datetime import datetime
 
 try:
-    from src.models.student import Student
     from src.database import db
+    from src.models.student import Student
 except ImportError:
     # Fallback pour les tests - créer des mocks
     class Student:
         """Mock Student class for fallback testing"""
+
         def __init__(self, **kwargs):
             for key, value in kwargs.items():
                 setattr(self, key, value)
             self.created_at = datetime.now()
             self.learning_sessions = []
-            self.specialties = kwargs.get('specialties', [])
+            self.specialties = kwargs.get("specialties", [])
             self.completed_exercises = 0
             self.total_exercises = 1
             self.recent_scores = []
-            self.level = kwargs.get('level', 'Seconde')
+            self.level = kwargs.get("level", "Seconde")
 
         def calculate_progress(self):
             """Calculate progress"""
@@ -41,6 +43,7 @@ except ImportError:
 
     class User:  # pylint: disable=too-few-public-methods
         """Mock User class for fallback testing"""
+
         def __init__(self, **kwargs):
             for key, value in kwargs.items():
                 setattr(self, key, value)
@@ -48,8 +51,10 @@ except ImportError:
 
     class MockDB:  # pylint: disable=too-few-public-methods
         """Mock database for fallback testing"""
+
         class Session:
             """Mock database session class"""
+
             @staticmethod
             def add(obj):
                 """Mock add method"""
@@ -75,7 +80,7 @@ class TestStudentModel:
                 user_id=test_user.id,
                 level="Terminale",
                 specialties=["Mathématiques", "Physique-Chimie", "NSI"],
-                current_year=2025
+                current_year=2025,
             )
             db.session.add(student)
             db.session.commit()
@@ -96,11 +101,13 @@ class TestStudentModel:
             test_student.total_exercises = 20
 
             # Act
-            if hasattr(test_student, 'calculate_progress'):
+            if hasattr(test_student, "calculate_progress"):
                 progress = test_student.calculate_progress()
             else:
                 # Implémentation de base si pas encore dans le modèle
-                progress = (test_student.completed_exercises / test_student.total_exercises) * 100
+                progress = (
+                    test_student.completed_exercises / test_student.total_exercises
+                ) * 100
 
             # Assert
             assert progress == 75.0
@@ -114,22 +121,22 @@ class TestStudentModel:
                 "duration": 60,  # minutes
                 "exercises_completed": 3,
                 "score": 85.5,
-                "date": datetime.now()
+                "date": datetime.now(),
             }
 
             # Act
-            if hasattr(test_student, 'add_learning_session'):
+            if hasattr(test_student, "add_learning_session"):
                 test_student.add_learning_session(session_data)
             else:
                 # Simulation si pas encore implémenté
-                if not hasattr(test_student, 'learning_sessions'):
+                if not hasattr(test_student, "learning_sessions"):
                     test_student.learning_sessions = []
                 test_student.learning_sessions.append(session_data)
 
             # Assert
             assert len(test_student.learning_sessions) == 1
-            assert test_student.learning_sessions[0]['subject'] == "Mathématiques"
-            assert test_student.learning_sessions[0]['score'] == 85.5
+            assert test_student.learning_sessions[0]["subject"] == "Mathématiques"
+            assert test_student.learning_sessions[0]["score"] == 85.5
 
     def test_student_specialty_management(self, app, test_student):
         """Test gestion des spécialités étudiant"""
@@ -153,13 +160,15 @@ class TestStudentModel:
                 {"duration": 60, "subject": "Mathématiques", "score": 88},
             ]
 
-            if not hasattr(test_student, 'learning_sessions'):
-                test_student.learning_sessions = sessions
+            # Always assign sessions for test
+            test_student.learning_sessions = sessions
 
             # Act - Calculer statistiques
             total_time = sum(s["duration"] for s in test_student.learning_sessions)
             sessions_count = len(test_student.learning_sessions)
-            avg_score = sum(s["score"] for s in test_student.learning_sessions) / sessions_count
+            avg_score = (
+                sum(s["score"] for s in test_student.learning_sessions) / sessions_count
+            )
             subjects = list(set(s["subject"] for s in test_student.learning_sessions))
 
             # Assert
@@ -177,9 +186,7 @@ class TestStudentModel:
 
             for level in levels:
                 student = Student(
-                    user_id=1,  # ID temporaire pour test
-                    level=level,
-                    current_year=2025
+                    user_id=1, level=level, current_year=2025  # ID temporaire pour test
                 )
                 assert student.level == level
 
@@ -192,7 +199,7 @@ class TestStudentModel:
                     next_level = "Post-Bac"
 
                 # Simulation progression
-                if hasattr(student, 'get_next_level'):
+                if hasattr(student, "get_next_level"):
                     assert student.get_next_level() == next_level
 
     def test_student_performance_trends(self, app, test_student):
@@ -201,8 +208,8 @@ class TestStudentModel:
             # Arrange - Scores sur plusieurs sessions
             recent_scores = [75, 80, 85, 88, 92]  # Tendance croissante
 
-            if not hasattr(test_student, 'recent_scores'):
-                test_student.recent_scores = recent_scores
+            # Always assign recent_scores for test
+            test_student.recent_scores = recent_scores
 
             # Act - Calculer tendance
             if len(test_student.recent_scores) >= 2:

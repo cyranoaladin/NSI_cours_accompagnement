@@ -4,19 +4,15 @@ Script de validation de l'architecture Nexus Réussite
 Vérifie la cohérence des imports, dépendances et configuration
 """
 
+import importlib.util
 import os
 import sys
-import importlib.util
 from pathlib import Path
+
 
 def validate_environment():
     """Valide les variables d'environnement requises"""
-    required_vars = [
-        'OPENAI_API_KEY',
-        'SECRET_KEY',
-        'JWT_SECRET_KEY',
-        'DATABASE_URL'
-    ]
+    required_vars = ["OPENAI_API_KEY", "SECRET_KEY", "JWT_SECRET_KEY", "DATABASE_URL"]
 
     missing_vars = []
     for var in required_vars:
@@ -30,6 +26,7 @@ def validate_environment():
         print("✅ Variables d'environnement validées")
         return True
 
+
 def validate_imports():
     """Vérifie que tous les modules peuvent être importés"""
     try:
@@ -37,11 +34,11 @@ def validate_imports():
         sys.path.insert(0, str(Path(__file__).parent))
 
         # Import et utilisation des modules pour éviter les warnings
-        from src.database import db, init_database
         from src.config import get_config
-        from src.routes import BLUEPRINTS
-        from src.models.user import User
+        from src.database import db, init_database
         from src.models.student import Student
+        from src.models.user import User
+        from src.routes import BLUEPRINTS
 
         # Vérification que les imports sont utilisables
         assert db is not None
@@ -58,15 +55,16 @@ def validate_imports():
         print(f"❌ Erreur d'import: {e}")
         return False
 
+
 def validate_structure():
     """Vérifie la structure des dossiers"""
     required_dirs = [
-        'src',
-        'src/models',
-        'src/routes',
-        'src/services',
-        'logs',
-        'uploads'
+        "src",
+        "src/models",
+        "src/routes",
+        "src/services",
+        "logs",
+        "uploads",
     ]
 
     base_path = Path(__file__).parent
@@ -75,7 +73,7 @@ def validate_structure():
     for dir_path in required_dirs:
         full_path = base_path / dir_path
         if not full_path.exists():
-            if dir_path in ['logs', 'uploads']:
+            if dir_path in ["logs", "uploads"]:
                 # Créer les dossiers manquants
                 full_path.mkdir(parents=True, exist_ok=True)
                 print(f"📁 Dossier créé: {dir_path}")
@@ -89,16 +87,17 @@ def validate_structure():
         print("✅ Structure des dossiers validée")
         return True
 
+
 def validate_dependencies():
     """Vérifie les dépendances Python"""
     required_packages = [
-        ('flask', 'flask'),
-        ('flask_sqlalchemy', 'flask_sqlalchemy'),
-        ('flask_jwt_extended', 'flask_jwt_extended'),
-        ('flask_cors', 'flask_cors'),
-        ('openai', 'openai'),
-        ('python-dotenv', 'dotenv'),
-        ('bcrypt', 'bcrypt')
+        ("flask", "flask"),
+        ("flask_sqlalchemy", "flask_sqlalchemy"),
+        ("flask_jwt_extended", "flask_jwt_extended"),
+        ("flask_cors", "flask_cors"),
+        ("openai", "openai"),
+        ("python-dotenv", "dotenv"),
+        ("bcrypt", "bcrypt"),
     ]
 
     missing_packages = []
@@ -116,6 +115,7 @@ def validate_dependencies():
         print("✅ Toutes les dépendances sont installées")
         return True
 
+
 def main():
     """Validation complète"""
     print("🔍 VALIDATION DE L'ARCHITECTURE NEXUS RÉUSSITE")
@@ -123,13 +123,14 @@ def main():
 
     # Chargement des variables d'environnement
     from dotenv import load_dotenv
+
     load_dotenv()
 
     checks = [
         ("Structure des dossiers", validate_structure),
         ("Dépendances Python", validate_dependencies),
         ("Variables d'environnement", validate_environment),
-        ("Imports des modules", validate_imports)
+        ("Imports des modules", validate_imports),
     ]
 
     results = {}
@@ -153,6 +154,7 @@ def main():
     else:
         print("\n⚠️  CORRECTIONS NÉCESSAIRES AVANT DÉPLOIEMENT")
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

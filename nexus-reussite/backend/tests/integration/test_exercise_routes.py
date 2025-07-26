@@ -4,6 +4,7 @@ Tests d'intégration pour les routes d'exercices.
 Ce module contient les tests pour les endpoints liés aux exercices,
 incluant la création, récupération, soumission et gestion des exercices.
 """
+
 # pylint: disable=import-error
 import pytest
 
@@ -22,17 +23,17 @@ class TestExerciseRoutes(TestAuthRoutes):
             "password": "Password123!",
             "first_name": "Marie",
             "last_name": "Student",
-            "role": "student"
+            "role": "student",
         }
-        client.post('/api/auth/register', json=student_data)
+        client.post("/api/auth/register", json=student_data)
 
-        login_response = client.post('/api/auth/login', json={
-            "email": "etudiant@test.com",
-            "password": "Password123!"
-        })
-        token = login_response.get_json()['token']
+        login_response = client.post(
+            "/api/auth/login",
+            json={"email": "etudiant@test.com", "password": "Password123!"},
+        )
+        token = login_response.get_json()["token"]
 
-        return client, {'Authorization': f'Bearer {token}'}
+        return client, {"Authorization": f"Bearer {token}"}
 
     @pytest.fixture
     def auth_teacher_client(self, client):
@@ -43,17 +44,17 @@ class TestExerciseRoutes(TestAuthRoutes):
             "password": "Password123!",
             "first_name": "Jean",
             "last_name": "Teacher",
-            "role": "teacher"
+            "role": "teacher",
         }
-        client.post('/api/auth/register', json=teacher_data)
+        client.post("/api/auth/register", json=teacher_data)
 
-        login_response = client.post('/api/auth/login', json={
-            "email": "professeur@test.com",
-            "password": "Password123!"
-        })
-        token = login_response.get_json()['token']
+        login_response = client.post(
+            "/api/auth/login",
+            json={"email": "professeur@test.com", "password": "Password123!"},
+        )
+        token = login_response.get_json()["token"]
 
-        return client, {'Authorization': f'Bearer {token}'}
+        return client, {"Authorization": f"Bearer {token}"}
 
     def test_get_exercises_list_student(self, auth_student_client):
         """Test récupération liste exercices pour étudiant"""
@@ -61,13 +62,13 @@ class TestExerciseRoutes(TestAuthRoutes):
         client, headers = auth_student_client
 
         # Act
-        response = client.get('/api/exercises/', headers=headers)
+        response = client.get("/api/exercises/", headers=headers)
 
         # Assert
         assert response.status_code == 200
         data = response.get_json()
-        assert 'exercises' in data
-        assert isinstance(data['exercises'], list)
+        assert "exercises" in data
+        assert isinstance(data["exercises"], list)
 
     def test_get_exercises_with_filters(self, auth_student_client):
         """Test récupération exercices avec filtres"""
@@ -75,20 +76,21 @@ class TestExerciseRoutes(TestAuthRoutes):
         client, headers = auth_student_client
 
         # Act
-        response = client.get('/api/exercises/?subject=Mathématiques&level=Terminale',
-                              headers=headers)
+        response = client.get(
+            "/api/exercises/?subject=Mathématiques&level=Terminale", headers=headers
+        )
 
         # Assert
         assert response.status_code == 200
         data = response.get_json()
-        assert 'exercises' in data
+        assert "exercises" in data
 
         # Vérifier que les filtres sont appliqués
-        for exercise in data['exercises']:
-            if exercise['subject']:
-                assert exercise['subject'] == 'Mathématiques'
-            if exercise['level']:
-                assert exercise['level'] == 'Terminale'
+        for exercise in data["exercises"]:
+            if exercise["subject"]:
+                assert exercise["subject"] == "Mathématiques"
+            if exercise["level"]:
+                assert exercise["level"] == "Terminale"
 
     def test_get_exercise_by_id(self, auth_student_client):
         """Test récupération exercice par ID"""
@@ -96,14 +98,14 @@ class TestExerciseRoutes(TestAuthRoutes):
         client, headers = auth_student_client
 
         # Act
-        response = client.get('/api/exercises/1', headers=headers)
+        response = client.get("/api/exercises/1", headers=headers)
 
         # Assert
         if response.status_code == 200:
             data = response.get_json()
-            assert 'id' in data
-            assert 'title' in data
-            assert 'description' in data
+            assert "id" in data
+            assert "title" in data
+            assert "description" in data
         else:
             # Si aucun exercice n'existe, doit retourner 404
             assert response.status_code == 404
@@ -117,13 +119,13 @@ class TestExerciseRoutes(TestAuthRoutes):
             "exercise_id": 1,
             "solution": "f'(x) = 2x + 3",
             "reasoning": "Dérivée d'une fonction polynomiale du premier degré",
-            "time_spent": 15  # minutes
+            "time_spent": 15,  # minutes
         }
 
         # Act
-        response = client.post('/api/exercises/submit',
-                               json=solution_data,
-                               headers=headers)
+        response = client.post(
+            "/api/exercises/submit", json=solution_data, headers=headers
+        )
 
         # Assert
         # Peut retourner 201 (créé) ou 404 (exercice inexistant)
@@ -131,10 +133,10 @@ class TestExerciseRoutes(TestAuthRoutes):
 
         if response.status_code == 201:
             data = response.get_json()
-            assert 'score' in data
-            assert 'feedback' in data
-            assert data['score'] >= 0
-            assert data['score'] <= 100
+            assert "score" in data
+            assert "feedback" in data
+            assert data["score"] >= 0
+            assert data["score"] <= 100
 
     def test_submit_exercise_solution_invalid_data(self, auth_student_client):
         """Test soumission solution avec données invalides"""
@@ -147,14 +149,14 @@ class TestExerciseRoutes(TestAuthRoutes):
         }
 
         # Act
-        response = client.post('/api/exercises/submit',
-                               json=invalid_data,
-                               headers=headers)
+        response = client.post(
+            "/api/exercises/submit", json=invalid_data, headers=headers
+        )
 
         # Assert
         assert response.status_code == 400
         data = response.get_json()
-        assert 'error' in data
+        assert "error" in data
 
     def test_create_exercise_teacher_authorized(self, auth_teacher_client):
         """Test création exercice par professeur autorisé"""
@@ -172,22 +174,20 @@ class TestExerciseRoutes(TestAuthRoutes):
                 {
                     "text": "Calculer lim(x→0) sin(x)/x",
                     "points": 5,
-                    "type": "calculation"
+                    "type": "calculation",
                 }
-            ]
+            ],
         }
 
         # Act
-        response = client.post('/api/exercises/',
-                               json=exercise_data,
-                               headers=headers)
+        response = client.post("/api/exercises/", json=exercise_data, headers=headers)
 
         # Assert
         assert response.status_code == 201
         data = response.get_json()
-        assert 'id' in data
-        assert data['title'] == "Calcul de limites"
-        assert data['subject'] == "Mathématiques"
+        assert "id" in data
+        assert data["title"] == "Calcul de limites"
+        assert data["subject"] == "Mathématiques"
 
     def test_create_exercise_student_unauthorized(self, auth_student_client):
         """Test création exercice par étudiant non autorisé"""
@@ -198,19 +198,17 @@ class TestExerciseRoutes(TestAuthRoutes):
             "title": "Test Exercise",
             "description": "Test Description",
             "subject": "Mathématiques",
-            "level": "Terminale"
+            "level": "Terminale",
         }
 
         # Act
-        response = client.post('/api/exercises/',
-                               json=exercise_data,
-                               headers=headers)
+        response = client.post("/api/exercises/", json=exercise_data, headers=headers)
 
         # Assert
         assert response.status_code == 403  # Forbidden
         data = response.get_json()
-        assert 'error' in data
-        assert "autorisé" in data['error'].lower()
+        assert "error" in data
+        assert "autorisé" in data["error"].lower()
 
     def test_update_exercise_teacher(self, auth_teacher_client):
         """Test mise à jour exercice par professeur"""
@@ -220,13 +218,11 @@ class TestExerciseRoutes(TestAuthRoutes):
         update_data = {
             "title": "Titre mis à jour",
             "description": "Description mise à jour",
-            "difficulty": 4
+            "difficulty": 4,
         }
 
         # Act
-        response = client.put('/api/exercises/1',
-                              json=update_data,
-                              headers=headers)
+        response = client.put("/api/exercises/1", json=update_data, headers=headers)
 
         # Assert
         # Peut retourner 200 (mis à jour) ou 404 (exercice inexistant)
@@ -234,8 +230,8 @@ class TestExerciseRoutes(TestAuthRoutes):
 
         if response.status_code == 200:
             data = response.get_json()
-            assert data['title'] == "Titre mis à jour"
-            assert data['difficulty'] == 4
+            assert data["title"] == "Titre mis à jour"
+            assert data["difficulty"] == 4
 
     def test_delete_exercise_teacher(self, auth_teacher_client):
         """Test suppression exercice par professeur"""
@@ -243,7 +239,7 @@ class TestExerciseRoutes(TestAuthRoutes):
         client, headers = auth_teacher_client
 
         # Act
-        response = client.delete('/api/exercises/1', headers=headers)
+        response = client.delete("/api/exercises/1", headers=headers)
 
         # Assert
         # Peut retourner 200 (supprimé) ou 404 (exercice inexistant)
@@ -251,7 +247,7 @@ class TestExerciseRoutes(TestAuthRoutes):
 
         if response.status_code == 200:
             data = response.get_json()
-            assert "supprimé" in data['message'].lower()
+            assert "supprimé" in data["message"].lower()
 
     def test_get_student_exercise_history(self, auth_student_client):
         """Test récupération historique exercices étudiant"""
@@ -259,13 +255,13 @@ class TestExerciseRoutes(TestAuthRoutes):
         client, headers = auth_student_client
 
         # Act
-        response = client.get('/api/exercises/history', headers=headers)
+        response = client.get("/api/exercises/history", headers=headers)
 
         # Assert
         assert response.status_code == 200
         data = response.get_json()
-        assert 'history' in data
-        assert isinstance(data['history'], list)
+        assert "history" in data
+        assert isinstance(data["history"], list)
 
     def test_get_exercise_statistics_teacher(self, auth_teacher_client):
         """Test récupération statistiques exercice pour professeur"""
@@ -273,7 +269,7 @@ class TestExerciseRoutes(TestAuthRoutes):
         client, headers = auth_teacher_client
 
         # Act
-        response = client.get('/api/exercises/1/statistics', headers=headers)
+        response = client.get("/api/exercises/1/statistics", headers=headers)
 
         # Assert
         # Peut retourner 200 (stats) ou 404 (exercice inexistant)
@@ -281,20 +277,20 @@ class TestExerciseRoutes(TestAuthRoutes):
 
         if response.status_code == 200:
             data = response.get_json()
-            assert 'completion_rate' in data
-            assert 'average_score' in data
-            assert 'attempt_count' in data
+            assert "completion_rate" in data
+            assert "average_score" in data
+            assert "attempt_count" in data
 
     def test_get_exercise_unauthenticated(self, client):
         """Test accès exercice sans authentification"""
         # Act
-        response = client.get('/api/exercises/')
+        response = client.get("/api/exercises/")
 
         # Assert
         assert response.status_code == 401
         data = response.get_json()
-        assert 'error' in data
-        assert "token" in data['error'].lower()
+        assert "error" in data
+        assert "token" in data["error"].lower()
 
     def test_bulk_import_exercises_teacher(self, auth_teacher_client):
         """Test import en lot d'exercices par professeur"""
@@ -308,25 +304,25 @@ class TestExerciseRoutes(TestAuthRoutes):
                     "description": "Description 1",
                     "subject": "Mathématiques",
                     "level": "Première",
-                    "difficulty": 2
+                    "difficulty": 2,
                 },
                 {
                     "title": "Exercice 2",
                     "description": "Description 2",
                     "subject": "NSI",
                     "level": "Terminale",
-                    "difficulty": 3
-                }
+                    "difficulty": 3,
+                },
             ]
         }
 
         # Act
-        response = client.post('/api/exercises/bulk-import',
-                               json=exercises_data,
-                               headers=headers)
+        response = client.post(
+            "/api/exercises/bulk-import", json=exercises_data, headers=headers
+        )
 
         # Assert
         assert response.status_code == 201
         data = response.get_json()
-        assert 'imported_count' in data
-        assert data['imported_count'] == 2
+        assert "imported_count" in data
+        assert data["imported_count"] == 2

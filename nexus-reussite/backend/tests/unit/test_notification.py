@@ -1,8 +1,9 @@
 """
 Tests unitaires pour le service de notifications
 """
+
 from datetime import datetime, timedelta
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import MagicMock, Mock, patch
 
 try:
     from src.services.notification_service import NotificationService
@@ -10,6 +11,7 @@ except ImportError:
     # Fallback pour les tests - créer un mock
     class NotificationService:
         """Mock NotificationService class for fallback testing"""
+
         def __init__(self):
             self.scheduled_reminders = []
 
@@ -26,13 +28,15 @@ except ImportError:
         def schedule_reminder(self, user, session_datetime, subject, reminder_minutes):
             """Mock schedule reminder"""
             reminder_id = f"reminder_{len(self.scheduled_reminders) + 1}"
-            self.scheduled_reminders.append({
-                'id': reminder_id,
-                'user': user,
-                'datetime': session_datetime,
-                'subject': subject,
-                'reminder_minutes': reminder_minutes
-            })
+            self.scheduled_reminders.append(
+                {
+                    "id": reminder_id,
+                    "user": user,
+                    "datetime": session_datetime,
+                    "subject": subject,
+                    "reminder_minutes": reminder_minutes,
+                }
+            )
             return reminder_id
 
         def send_realtime_notification(self, user_id, notification_type, data):
@@ -46,7 +50,7 @@ except ImportError:
             return self.send_realtime_notification(
                 user_id=user_id,
                 notification_type="aria_response",
-                data={"message": message}
+                data={"message": message},
             )
 
         def send_exercise_completion_notification(self, student, exercise, score):
@@ -56,11 +60,11 @@ except ImportError:
                 subject="Exercice complété avec succès",
                 template="exercise_completion",
                 context={
-                    'student_name': student.user.first_name,
-                    'exercise_title': exercise.title,
-                    'subject': exercise.subject,
-                    'score': score
-                }
+                    "student_name": student.user.first_name,
+                    "exercise_title": exercise.title,
+                    "subject": exercise.subject,
+                    "score": score,
+                },
             )
 
 
@@ -70,7 +74,7 @@ class TestNotificationService:
     def test_send_email_notification_success(self):
         """Test envoi notification email avec succès"""
         # Arrange
-        with patch('smtplib.SMTP') as mock_smtp:
+        with patch("smtplib.SMTP") as mock_smtp:
             mock_server = MagicMock()
             mock_smtp.return_value.__enter__.return_value = mock_server
 
@@ -84,7 +88,7 @@ class TestNotificationService:
                 user=user,
                 subject="Test Notification",
                 template="welcome_email",
-                context={"course_name": "Mathématiques"}
+                context={"course_name": "Mathématiques"},
             )
 
             # Assert
@@ -94,7 +98,7 @@ class TestNotificationService:
     def test_send_email_notification_failure(self):
         """Test gestion erreur envoi email"""
         # Arrange
-        with patch('smtplib.SMTP') as mock_smtp:
+        with patch("smtplib.SMTP") as mock_smtp:
             mock_smtp.side_effect = Exception("SMTP Error")
 
             service = NotificationService()
@@ -103,10 +107,7 @@ class TestNotificationService:
 
             # Act
             result = service.send_email_notification(
-                user=user,
-                subject="Test",
-                template="test",
-                context={}
+                user=user, subject="Test", template="test", context={}
             )
 
             # Assert
@@ -127,7 +128,7 @@ class TestNotificationService:
             user=user,
             session_datetime=session_datetime,
             subject="Mathématiques",
-            reminder_minutes=30
+            reminder_minutes=30,
         )
 
         # Assert
@@ -137,7 +138,9 @@ class TestNotificationService:
     def test_send_aria_response_notification(self):
         """Test notification réponse ARIA"""
         # Arrange
-        with patch.object(NotificationService, 'send_realtime_notification') as mock_realtime:
+        with patch.object(
+            NotificationService, "send_realtime_notification"
+        ) as mock_realtime:
             service = NotificationService()
             user_id = "user_123"
             message = "Voici votre réponse ARIA"
@@ -149,13 +152,13 @@ class TestNotificationService:
             mock_realtime.assert_called_once_with(
                 user_id=user_id,
                 notification_type="aria_response",
-                data={"message": message}
+                data={"message": message},
             )
 
     def test_send_exercise_completion_notification(self):
         """Test notification complétion exercice"""
         # Arrange
-        with patch.object(NotificationService, 'send_email_notification') as mock_email:
+        with patch.object(NotificationService, "send_email_notification") as mock_email:
             service = NotificationService()
             student = Mock()
             student.user.email = "student@example.com"
@@ -173,6 +176,6 @@ class TestNotificationService:
             # Assert
             mock_email.assert_called_once()
             call_args = mock_email.call_args
-            assert call_args[1]['subject'] == "Exercice complété avec succès"
-            assert call_args[1]['template'] == "exercise_completion"
-            assert call_args[1]['context']['score'] == 85.5
+            assert call_args[1]["subject"] == "Exercice complété avec succès"
+            assert call_args[1]["template"] == "exercise_completion"
+            assert call_args[1]["context"]["score"] == 85.5

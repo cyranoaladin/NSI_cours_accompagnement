@@ -9,7 +9,42 @@ const API_BASE_URL = process.env.NODE_ENV === 'production'
 class ApiService {
   constructor() {
     this.baseURL = API_BASE_URL;
-    this.token = localStorage.getItem('auth_token');
+    this.token = this.getSecureToken();
+  }
+  
+  // Chiffrement simple pour les tokens (Base64 + rotation)
+  encryptToken(token) {
+    try {
+      const encoded = btoa(token);
+      // Simple rotation cipher pour obscurcir
+      return encoded.split('').map(char => 
+        String.fromCharCode(char.charCodeAt(0) + 1)
+      ).join('');
+    } catch (error) {
+      console.error('Erreur de chiffrement:', error);
+      return token;
+    }
+  }
+  
+  // Déchiffrement des tokens
+  decryptToken(encryptedToken) {
+    try {
+      if (!encryptedToken) return null;
+      // Inverse rotation cipher
+      const decoded = encryptedToken.split('').map(char => 
+        String.fromCharCode(char.charCodeAt(0) - 1)
+      ).join('');
+      return atob(decoded);
+    } catch (error) {
+      console.error('Erreur de déchiffrement:', error);
+      return null;
+    }
+  }
+  
+  // Récupération sécurisée du token
+  getSecureToken() {
+    const encrypted = localStorage.getItem('auth_token_enc');
+    return this.decryptToken(encrypted);
   }
 
   // Configuration des headers
@@ -82,8 +117,12 @@ class ApiService {
   setToken(token) {
     this.token = token;
     if (token) {
-      localStorage.setItem('auth_token', token);
+      const encrypted = this.encryptToken(token);
+      localStorage.setItem('auth_token_enc', encrypted);
+      // Supprimer l'ancien token non chiffré
+      localStorage.removeItem('auth_token');
     } else {
+      localStorage.removeItem('auth_token_enc');
       localStorage.removeItem('auth_token');
     }
   }
@@ -94,6 +133,7 @@ class ApiService {
 
   clearToken() {
     this.token = null;
+    localStorage.removeItem('auth_token_enc');
     localStorage.removeItem('auth_token');
   }
 
