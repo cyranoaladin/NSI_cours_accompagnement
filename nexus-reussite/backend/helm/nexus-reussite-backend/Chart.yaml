@@ -1,0 +1,29 @@
+apiVersion: v2
+name: nexus-reussite-backend
+description: A Helm chart for Nexus Réussite Backend - Intelligent Educational Platform
+
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+
+home: https://nexusreussite.tn
+maintainers:
+  - name: Nexus Réussite Team
+    email: team@nexusreussite.tn
+
+keywords:
+  - education
+  - ai
+  - tutoring
+  - flask
+  - python
+
+dependencies:
+  - name: postgresql
+    version: 12.x.x
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+  - name: redis
+    version: 17.x.x
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled

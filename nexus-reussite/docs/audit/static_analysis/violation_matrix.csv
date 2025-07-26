@@ -1,0 +1,11 @@
+Category,Tool,Status,Return_Code,Issues_Count,Severity,Priority,Description,Recommended_Action
+Backend,PyLint,Failed,30,750,High,Critical,Code quality and style violations,Address high-priority PyLint issues (errors and warnings)
+Backend,Flake8,Failed,1,1166,High,Critical,PEP8 style violations,Fix the most critical Flake8 violations (E9xx F8xx)
+Backend,Black,Failed,1,Many_files,Medium,Medium,Code formatting issues,Run Black formatter on entire Python codebase
+Backend,MyPy,Failed,2,Type_errors,Medium,Medium,Type annotation issues,Add proper type annotations to resolve MyPy errors
+Backend,Bandit,Failed,1,Security_issues,Critical,Critical,Security vulnerabilities detected,Review and fix all Bandit security issues immediately
+Backend,Safety,Failed,1,Vulnerable_deps,Critical,Critical,Vulnerable dependencies found,Update all vulnerable dependencies identified by Safety
+Frontend,ESLint,Passed,0,0,Low,Low,No linting issues,Continue maintaining code quality
+Frontend,Prettier,Failed,1,Format_issues,Medium,Medium,Code formatting issues,Run Prettier formatter on entire TypeScript/JavaScript codebase
+Frontend,TypeScript,Failed,1,Type_errors,Medium,Medium,TypeScript compilation errors,Fix TypeScript compilation errors
+Frontend,Depcheck,Failed,255,Dep_issues,Medium,Low,Unused/missing dependencies,Clean up unused dependencies identified by Depcheck
