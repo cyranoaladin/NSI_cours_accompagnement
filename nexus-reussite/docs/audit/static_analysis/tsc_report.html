@@ -1,0 +1,200 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tsc Static Analysis Report</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; margin: -30px -30px 30px -30px; border-radius: 8px 8px 0 0; }
+        .success { color: #27ae60; font-weight: bold; }
+        .error { color: #e74c3c; font-weight: bold; }
+        .warning { color: #f39c12; font-weight: bold; }
+        .info { color: #3498db; font-weight: bold; }
+        .code-block { background: #2c3e50; color: #ecf0f1; padding: 15px; border-radius: 5px; overflow-x: auto; margin: 10px 0; font-family: 'Courier New', monospace; }
+        .section { margin: 20px 0; padding: 15px; border-left: 4px solid #3498db; background: #f8f9fa; }
+        .metric { display: inline-block; margin: 10px; padding: 10px 15px; background: #ecf0f1; border-radius: 5px; }
+        .status-success { background: #d5f4e6; border-left-color: #27ae60; }
+        .status-error { background: #fdf2f2; border-left-color: #e74c3c; }
+        .status-warning { background: #fef9e7; border-left-color: #f39c12; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Tsc Analysis Report</h1>
+            <p>Generated on 2025-07-24 21:54:23</p>
+        </div>
+        
+        <div class="section status-error">
+            <h2>📋 Execution Summary</h2>
+            <div class="metric">
+                <strong>Status:</strong> 
+                <span class="error">
+                    ❌ Failed
+                </span>
+            </div>
+            <div class="metric"><strong>Return Code:</strong> 1</div>
+            <div class="metric"><strong>Command:</strong> <code>npx tsc --noEmit</code></div>
+        </div>
+        
+        <div class="section">
+            <h2>📤 Standard Output</h2>
+            <div class="code-block">
+                <pre>Version 5.8.3
+tsc: The TypeScript Compiler - Version 5.8.3
+
+COMMON COMMANDS
+
+  tsc
+  Compiles the current project (tsconfig.json in the working directory.)
+
+  tsc app.ts util.ts
+  Ignoring tsconfig.json, compiles the specified files with default compiler options.
+
+  tsc -b
+  Build a composite project in the working directory.
+
+  tsc --init
+  Creates a tsconfig.json with the recommended settings in the working directory.
+
+  tsc -p ./path/to/tsconfig.json
+  Compiles the TypeScript project located at the specified path.
+
+  tsc --help --all
+  An expanded version of this information, showing all possible compiler options
+
+  tsc --noEmit
+  tsc --target esnext
+  Compiles the current project, with additional settings.
+
+COMMAND LINE FLAGS
+
+--help, -h
+Print this message.
+
+--watch, -w
+Watch input files.
+
+--all
+Show all compiler options.
+
+--version, -v
+Print the compiler&#x27;s version.
+
+--init
+Initializes a TypeScript project and creates a tsconfig.json file.
+
+--project, -p
+Compile the project given the path to its configuration file, or to a folder with a &#x27;tsconfig.json&#x27;.
+
+--showConfig
+Print the final configuration instead of building.
+
+--build, -b
+Build one or more projects and their dependencies, if out of date
+
+COMMON COMPILER OPTIONS
+
+--pretty
+Enable color and formatting in TypeScript&#x27;s output to make compiler errors easier to read.
+type: boolean
+default: true
+
+--declaration, -d
+Generate .d.ts files from TypeScript and JavaScript files in your project.
+type: boolean
+default: `false`, unless `composite` is set
+
+--declarationMap
+Create sourcemaps for d.ts files.
+type: boolean
+default: false
+
+--emitDeclarationOnly
+Only output d.ts files and not JavaScript files.
+type: boolean
+default: false
+
+--sourceMap
+Create source map files for emitted JavaScript files.
+type: boolean
+default: false
+
+--noEmit
+Disable emitting files from a compilation.
+type: boolean
+default: false
+
+--target, -t
+Set the JavaScript language version for emitted JavaScript and include compatible library declarations.
+one of: es5, es6/es2015, es2016, es2017, es2018, es2019, es2020, es2021, es2022, es2023, es2024, esnext
+default: es5
+
+--module, -m
+Specify what module code is generated.
+one of: none, commonjs, amd, umd, system, es6/es2015, es2020, es2022, esnext, node16, node18, nodenext, preserve
+default: undefined
+
+--lib
+Specify a set of bundled library declaration files that describe the target runtime environment.
+one or more: es5, es6/es2015, es7/es2016, es2017, es2018, es2019, es2020, es2021, es2022, es2023, es2024, esnext, dom, dom.iterable, dom.asynciterable, webworker, webworker.importscripts, webworker.iterable, webworker.asynciterable, scripthost, es2015.core, es2015.collection, es2015.generator, es2015.iterable, es2015.promise, es2015.proxy, es2015.reflect, es2015.symbol, es2015.symbol.wellknown, es2016.array.include, es2016.intl, es2017.arraybuffer, es2017.date, es2017.object, es2017.sharedmemory, es2017.string, es2017.intl, es2017.typedarrays, es2018.asyncgenerator, es2018.asynciterable/esnext.asynciterable, es2018.intl, es2018.promise, es2018.regexp, es2019.array, es2019.object, es2019.string, es2019.symbol/esnext.symbol, es2019.intl, es2020.bigint/esnext.bigint, es2020.date, es2020.promise, es2020.sharedmemory, es2020.string, es2020.symbol.wellknown, es2020.intl, es2020.number, es2021.promise, es2021.string, es2021.weakref/esnext.weakref, es2021.intl, es2022.array, es2022.error, es2022.intl, es2022.object, es2022.string, es2022.regexp, es2023.array, es2023.collection, es2023.intl, es2024.arraybuffer, es2024.collection, es2024.object/esnext.object, es2024.promise, es2024.regexp/esnext.regexp, es2024.sharedmemory, es2024.string/esnext.string, esnext.array, esnext.collection, esnext.intl, esnext.disposable, esnext.promise, esnext.decorators, esnext.iterator, esnext.float16, decorators, decorators.legacy
+default: undefined
+
+--allowJs
+Allow JavaScript files to be a part of your program. Use the &#x27;checkJS&#x27; option to get errors from these files.
+type: boolean
+default: false
+
+--checkJs
+Enable error reporting in type-checked JavaScript files.
+type: boolean
+default: false
+
+--jsx
+Specify what JSX code is generated.
+one of: preserve, react, react-native, react-jsx, react-jsxdev
+default: undefined
+
+--outFile
+Specify a file that bundles all outputs into one JavaScript file. If &#x27;declaration&#x27; is true, also designates a file that bundles all .d.ts output.
+
+--outDir
+Specify an output folder for all emitted files.
+
+--removeComments
+Disable emitting comments.
+type: boolean
+default: false
+
+--strict
+Enable all strict type-checking options.
+type: boolean
+default: false
+
+--types
+Specify type package names to be included without being referenced in a source file.
+
+--esModuleInterop
+Emit additional JavaScript to ease support for importing CommonJS modules. This enables &#x27;allowSyntheticDefaultImports&#x27; for type compatibility.
+type: boolean
+default: false
+
+You can learn about all of the compiler options at https://aka.ms/tsc
+
+</pre>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>📥 Standard Error</h2>
+            <div class="code-block">
+                <pre>No errors</pre>
+            </div>
+        </div>
+        
+    </div>
+</body>
+</html>
