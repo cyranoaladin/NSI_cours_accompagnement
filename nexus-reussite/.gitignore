@@ -1,0 +1,29 @@
+# Node.js
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+.env
+.env.local
+
+# Python
+*.py[cod]
+*.pyo
+__pycache__/
+vendor/
+
+# Editor settings
+*.swp
+*.swo
+*~
+
+# System files
+.DS_Store
+
+# Other
+.cache/
+key.pem
+

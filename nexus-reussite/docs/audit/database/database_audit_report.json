@@ -1,0 +1,4115 @@
+{
+  "audit_date": "2025-07-24T22:28:27.667697",
+  "summary": {
+    "total_models": 25,
+    "total_issues": 92,
+    "high_severity": 51,
+    "medium_severity": 41,
+    "low_severity": 0,
+    "naming_issues": 0,
+    "missing_indices": 74,
+    "n_plus_one_risks": 18
+  },
+  "models": {
+    "Student": {
+      "name": "Student",
+      "tablename": "students",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "full_name",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "email",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": true,
+          "index": false
+        },
+        {
+          "name": "phone",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "grade_level",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "school",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "preferred_subjects",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "learning_style",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "cognitive_profile",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "performance_data",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_active",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [
+        {
+          "name": "sessions",
+          "target": "LearningSession",
+          "backref": null,
+          "lazy": "select",
+          "cascade": null
+        },
+        {
+          "name": "assessments",
+          "target": "Assessment",
+          "backref": null,
+          "lazy": "select",
+          "cascade": null
+        }
+      ],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "LearningSession": {
+      "name": "LearningSession",
+      "tablename": "learning_sessions",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "student_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "subject",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "topic",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "session_type",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "duration_minutes",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "aria_recommendations",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "interaction_data",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "performance_metrics",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "completion_rate",
+          "type": "Float",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "accuracy_rate",
+          "type": "Float",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "difficulty_level",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "started_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "completed_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "Assessment": {
+      "name": "Assessment",
+      "tablename": "assessments",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "student_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "title",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "subject",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "assessment_type",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "questions_data",
+          "type": "Text",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "answers_data",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "score",
+          "type": "Float",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "detailed_results",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "aria_feedback",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "next_steps",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "completed_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_completed",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "ARIAInteraction": {
+      "name": "ARIAInteraction",
+      "tablename": "aria_interactions",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "student_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "interaction_type",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "user_input",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "aria_response",
+          "type": "Text",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "context_data",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "confidence_score",
+          "type": "Float",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "processing_time_ms",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "feedback_rating",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "User": {
+      "name": "User",
+      "tablename": "users",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "email",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": true,
+          "index": true
+        },
+        {
+          "name": "password_hash",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "first_name",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "last_name",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "phone",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "avatar_url",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "role",
+          "type": "Enum",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "status",
+          "type": "Enum",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "last_login",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "email_verified",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "email_verification_token",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "password_reset_token",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "password_reset_expires",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "preferences",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "timezone",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "language",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [
+        {
+          "name": "student_profile",
+          "target": "StudentProfile",
+          "backref": null,
+          "lazy": "select",
+          "cascade": null
+        },
+        {
+          "name": "parent_profile",
+          "target": "ParentProfile",
+          "backref": null,
+          "lazy": "select",
+          "cascade": null
+        },
+        {
+          "name": "teacher_profile",
+          "target": "TeacherProfile",
+          "backref": null,
+          "lazy": "select",
+          "cascade": null
+        },
+        {
+          "name": "admin_profile",
+          "target": "AdminProfile",
+          "backref": null,
+          "lazy": "select",
+          "cascade": null
+        },
+        {
+          "name": "user_sessions",
+          "target": "UserSession",
+          "backref": null,
+          "lazy": "select",
+          "cascade": null
+        }
+      ],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "StudentProfile": {
+      "name": "StudentProfile",
+      "tablename": "student_profiles",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "user_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": true,
+          "index": false
+        },
+        {
+          "name": "grade_level",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "school",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "specialties",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "learning_style",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "cognitive_profile",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "performance_data",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "goals",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "interests",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "motivation_level",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "parent_ids",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "ParentProfile": {
+      "name": "ParentProfile",
+      "tablename": "parent_profiles",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "user_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": true,
+          "index": false
+        },
+        {
+          "name": "profession",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "address",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "emergency_contact",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "children_ids",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "preferred_contact_method",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "notification_preferences",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "report_frequency",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "TeacherProfile": {
+      "name": "TeacherProfile",
+      "tablename": "teacher_profiles",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "user_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": true,
+          "index": false
+        },
+        {
+          "name": "subjects",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "qualifications",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "experience_years",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_aefe_certified",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_nsi_diu",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "can_teach_online",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "can_teach_in_person",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "preferred_formats",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "hourly_rate_online",
+          "type": "Float",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "hourly_rate_in_person",
+          "type": "Float",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "hourly_rate_group",
+          "type": "Float",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "default_availability",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "max_hours_per_week",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "rating",
+          "type": "Float",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "total_reviews",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "total_hours_taught",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "bio",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "specialties_description",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "hire_date",
+          "type": "Unknown",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_active_teacher",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "AdminProfile": {
+      "name": "AdminProfile",
+      "tablename": "admin_profiles",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "user_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": true,
+          "index": false
+        },
+        {
+          "name": "permissions",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "department",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_super_admin",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "can_manage_users",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "can_manage_content",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "can_view_reports",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "can_manage_billing",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "UserSession": {
+      "name": "UserSession",
+      "tablename": "user_sessions",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "user_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "session_token",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": true,
+          "index": false
+        },
+        {
+          "name": "refresh_token",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": true,
+          "index": false
+        },
+        {
+          "name": "expires_at",
+          "type": "DateTime",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "ip_address",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "user_agent",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "device_type",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "location",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_active",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "last_activity",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "ParentChildRelation": {
+      "name": "ParentChildRelation",
+      "tablename": "parent_child_relations",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "parent_user_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "child_user_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "relation_type",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_primary_contact",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "can_view_grades",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "can_book_sessions",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "can_receive_reports",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "confirmed_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "Formula": {
+      "name": "Formula",
+      "tablename": "formulas",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "name",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "type",
+          "type": "Enum",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "level",
+          "type": "Enum",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "price_dt",
+          "type": "Float",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "hours_per_month",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "max_students",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "description",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "features",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "supports_online",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "supports_in_person",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [
+        {
+          "name": "enrollments",
+          "target": "Enrollment",
+          "backref": null,
+          "lazy": "select",
+          "cascade": null
+        }
+      ],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "Location": {
+      "name": "Location",
+      "tablename": "locations",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "name",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "capacity",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "address",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "equipment",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_active",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [
+        {
+          "name": "bookings",
+          "target": "Booking",
+          "backref": null,
+          "lazy": "select",
+          "cascade": null
+        }
+      ],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "Availability": {
+      "name": "Availability",
+      "tablename": "availabilities",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "teacher_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "start_time",
+          "type": "DateTime",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "end_time",
+          "type": "DateTime",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_for_in_person",
+          "type": "Boolean",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_recurring",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "recurring_pattern",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_booked",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "Booking": {
+      "name": "Booking",
+      "tablename": "bookings",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "student_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "teacher_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "availability_id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "start_time",
+          "type": "DateTime",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "end_time",
+          "type": "DateTime",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "format",
+          "type": "Enum",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "location_id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "subject",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "topic",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "description",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "duration_minutes",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "status",
+          "type": "Enum",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "booking_notes",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "cancellation_reason",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "meeting_url",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "meeting_password",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_by",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [
+        {
+          "name": "session_report",
+          "target": "SessionReport",
+          "backref": null,
+          "lazy": "select",
+          "cascade": null
+        }
+      ],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "SessionReport": {
+      "name": "SessionReport",
+      "tablename": "session_reports",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "booking_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "topics_covered",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "student_performance",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "participation_level",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "comprehension_level",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "teacher_notes",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "homework_assigned",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "next_session_recommendations",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "parent_feedback_requested",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "teacher_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "Group": {
+      "name": "Group",
+      "tablename": "groups",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "name",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "subject",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "level",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "max_students",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "current_students",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "teacher_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "default_location_id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "supports_online",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "schedule",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [
+        {
+          "name": "enrollments",
+          "target": "Enrollment",
+          "backref": null,
+          "lazy": "select",
+          "cascade": null
+        },
+        {
+          "name": "sessions",
+          "target": "GroupSession",
+          "backref": null,
+          "lazy": "select",
+          "cascade": null
+        }
+      ],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "Teacher": {
+      "name": "Teacher",
+      "tablename": "teachers",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "first_name",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "last_name",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "email",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": true,
+          "index": false
+        },
+        {
+          "name": "phone",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "subjects",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "qualifications",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "experience_years",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_aefe_certified",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_nsi_diu",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "can_teach_online",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "can_teach_in_person",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "hourly_rate_online",
+          "type": "Float",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "hourly_rate_in_person",
+          "type": "Float",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [
+        {
+          "name": "groups",
+          "target": "Group",
+          "backref": null,
+          "lazy": "select",
+          "cascade": null
+        },
+        {
+          "name": "individual_sessions",
+          "target": "IndividualSession",
+          "backref": null,
+          "lazy": "select",
+          "cascade": null
+        },
+        {
+          "name": "availabilities",
+          "target": "Availability",
+          "backref": null,
+          "lazy": "select",
+          "cascade": null
+        },
+        {
+          "name": "bookings",
+          "target": "Booking",
+          "backref": null,
+          "lazy": "select",
+          "cascade": null
+        },
+        {
+          "name": "session_reports",
+          "target": "SessionReport",
+          "backref": null,
+          "lazy": "select",
+          "cascade": null
+        }
+      ],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "Enrollment": {
+      "name": "Enrollment",
+      "tablename": "enrollments",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "student_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "formula_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "group_id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "teacher_id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "start_date",
+          "type": "Unknown",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "end_date",
+          "type": "Unknown",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_active",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "preferred_format",
+          "type": "Enum",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "IndividualSession": {
+      "name": "IndividualSession",
+      "tablename": "individual_sessions",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "student_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "teacher_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "subject",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "scheduled_at",
+          "type": "DateTime",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "duration_minutes",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "format",
+          "type": "Enum",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "location_id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "status",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "topics_covered",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "homework_assigned",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "teacher_notes",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "student_performance",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "meeting_url",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "GroupSession": {
+      "name": "GroupSession",
+      "tablename": "group_sessions",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "group_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "subject",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "scheduled_at",
+          "type": "DateTime",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "duration_minutes",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "format",
+          "type": "Enum",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "location_id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "status",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "topics_covered",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "homework_assigned",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "teacher_notes",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "meeting_url",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [
+        {
+          "name": "attendances",
+          "target": "SessionAttendance",
+          "backref": null,
+          "lazy": "select",
+          "cascade": null
+        }
+      ],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "SessionAttendance": {
+      "name": "SessionAttendance",
+      "tablename": "session_attendances",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "session_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "student_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_present",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "participation_score",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "individual_notes",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "WeeklyReport": {
+      "name": "WeeklyReport",
+      "tablename": "weekly_reports",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "student_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "week_start_date",
+          "type": "Unknown",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "week_end_date",
+          "type": "Unknown",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "subjects_progress",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "aria_insights",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "teacher_comments",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "next_week_objectives",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "parent_feedback",
+          "type": "Text",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_sent_to_parents",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "ParentCommunication": {
+      "name": "ParentCommunication",
+      "tablename": "parent_communications",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "student_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "sender_type",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "sender_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "recipient_type",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "recipient_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "subject",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "message",
+          "type": "Text",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_read",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "priority",
+          "type": "String",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    },
+    "StudentObjective": {
+      "name": "StudentObjective",
+      "tablename": "student_objectives",
+      "columns": [
+        {
+          "name": "id",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": true,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "student_id",
+          "type": "Integer",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": true,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "subject",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "objective_text",
+          "type": "Text",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "target_date",
+          "type": "Unknown",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "is_achieved",
+          "type": "Boolean",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "achievement_date",
+          "type": "Unknown",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "progress_percentage",
+          "type": "Integer",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_by",
+          "type": "String",
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        },
+        {
+          "name": "updated_at",
+          "type": "DateTime",
+          "nullable": true,
+          "primary_key": false,
+          "foreign_key": false,
+          "unique": false,
+          "index": false
+        }
+      ],
+      "relationships": [],
+      "foreign_keys": [],
+      "indices": [],
+      "issues": []
+    }
+  },
+  "issues": {
+    "high": [
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "LearningSession",
+        "table": "learning_sessions",
+        "column": "student_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_learning_sessions_student_id ON learning_sessions(student_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "Assessment",
+        "table": "assessments",
+        "column": "student_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_assessments_student_id ON assessments(student_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "ARIAInteraction",
+        "table": "aria_interactions",
+        "column": "student_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_aria_interactions_student_id ON aria_interactions(student_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "StudentProfile",
+        "table": "student_profiles",
+        "column": "user_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_student_profiles_user_id ON student_profiles(user_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "ParentProfile",
+        "table": "parent_profiles",
+        "column": "user_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_parent_profiles_user_id ON parent_profiles(user_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "TeacherProfile",
+        "table": "teacher_profiles",
+        "column": "user_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_teacher_profiles_user_id ON teacher_profiles(user_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "AdminProfile",
+        "table": "admin_profiles",
+        "column": "user_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_admin_profiles_user_id ON admin_profiles(user_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "UserSession",
+        "table": "user_sessions",
+        "column": "user_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_user_sessions_user_id ON user_sessions(user_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "ParentChildRelation",
+        "table": "parent_child_relations",
+        "column": "parent_user_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_parent_child_relations_parent_user_id ON parent_child_relations(parent_user_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "ParentChildRelation",
+        "table": "parent_child_relations",
+        "column": "child_user_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_parent_child_relations_child_user_id ON parent_child_relations(child_user_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "Availability",
+        "table": "availabilities",
+        "column": "teacher_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_availabilities_teacher_id ON availabilities(teacher_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "Booking",
+        "table": "bookings",
+        "column": "student_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_bookings_student_id ON bookings(student_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "Booking",
+        "table": "bookings",
+        "column": "teacher_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_bookings_teacher_id ON bookings(teacher_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "Booking",
+        "table": "bookings",
+        "column": "availability_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_bookings_availability_id ON bookings(availability_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "Booking",
+        "table": "bookings",
+        "column": "location_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_bookings_location_id ON bookings(location_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "SessionReport",
+        "table": "session_reports",
+        "column": "booking_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_session_reports_booking_id ON session_reports(booking_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "SessionReport",
+        "table": "session_reports",
+        "column": "teacher_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_session_reports_teacher_id ON session_reports(teacher_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "Group",
+        "table": "groups",
+        "column": "teacher_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_groups_teacher_id ON groups(teacher_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "Group",
+        "table": "groups",
+        "column": "default_location_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_groups_default_location_id ON groups(default_location_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "Enrollment",
+        "table": "enrollments",
+        "column": "student_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_enrollments_student_id ON enrollments(student_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "Enrollment",
+        "table": "enrollments",
+        "column": "formula_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_enrollments_formula_id ON enrollments(formula_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "Enrollment",
+        "table": "enrollments",
+        "column": "group_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_enrollments_group_id ON enrollments(group_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "Enrollment",
+        "table": "enrollments",
+        "column": "teacher_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_enrollments_teacher_id ON enrollments(teacher_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "IndividualSession",
+        "table": "individual_sessions",
+        "column": "student_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_individual_sessions_student_id ON individual_sessions(student_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "IndividualSession",
+        "table": "individual_sessions",
+        "column": "teacher_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_individual_sessions_teacher_id ON individual_sessions(teacher_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "IndividualSession",
+        "table": "individual_sessions",
+        "column": "location_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_individual_sessions_location_id ON individual_sessions(location_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "GroupSession",
+        "table": "group_sessions",
+        "column": "group_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_group_sessions_group_id ON group_sessions(group_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "GroupSession",
+        "table": "group_sessions",
+        "column": "location_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_group_sessions_location_id ON group_sessions(location_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "SessionAttendance",
+        "table": "session_attendances",
+        "column": "session_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_session_attendances_session_id ON session_attendances(session_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "SessionAttendance",
+        "table": "session_attendances",
+        "column": "student_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_session_attendances_student_id ON session_attendances(student_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "WeeklyReport",
+        "table": "weekly_reports",
+        "column": "student_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_weekly_reports_student_id ON weekly_reports(student_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "ParentCommunication",
+        "table": "parent_communications",
+        "column": "student_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_parent_communications_student_id ON parent_communications(student_id);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "high",
+        "model": "StudentObjective",
+        "table": "student_objectives",
+        "column": "student_id",
+        "reason": "Foreign key without index",
+        "sql": "CREATE INDEX idx_student_objectives_student_id ON student_objectives(student_id);"
+      },
+      {
+        "type": "n_plus_one_risk",
+        "severity": "high",
+        "model": "Student",
+        "relationship": "sessions",
+        "target": "LearningSession",
+        "issue": "Relationship Student.sessions uses lazy='select'",
+        "recommendation": "Consider using lazy='joined' or lazy='subquery' for sessions"
+      },
+      {
+        "type": "n_plus_one_risk",
+        "severity": "high",
+        "model": "Student",
+        "relationship": "assessments",
+        "target": "Assessment",
+        "issue": "Relationship Student.assessments uses lazy='select'",
+        "recommendation": "Consider using lazy='joined' or lazy='subquery' for assessments"
+      },
+      {
+        "type": "n_plus_one_risk",
+        "severity": "high",
+        "model": "User",
+        "relationship": "student_profile",
+        "target": "StudentProfile",
+        "issue": "Relationship User.student_profile uses lazy='select'",
+        "recommendation": "Consider using lazy='joined' or lazy='subquery' for student_profile"
+      },
+      {
+        "type": "n_plus_one_risk",
+        "severity": "high",
+        "model": "User",
+        "relationship": "parent_profile",
+        "target": "ParentProfile",
+        "issue": "Relationship User.parent_profile uses lazy='select'",
+        "recommendation": "Consider using lazy='joined' or lazy='subquery' for parent_profile"
+      },
+      {
+        "type": "n_plus_one_risk",
+        "severity": "high",
+        "model": "User",
+        "relationship": "teacher_profile",
+        "target": "TeacherProfile",
+        "issue": "Relationship User.teacher_profile uses lazy='select'",
+        "recommendation": "Consider using lazy='joined' or lazy='subquery' for teacher_profile"
+      },
+      {
+        "type": "n_plus_one_risk",
+        "severity": "high",
+        "model": "User",
+        "relationship": "admin_profile",
+        "target": "AdminProfile",
+        "issue": "Relationship User.admin_profile uses lazy='select'",
+        "recommendation": "Consider using lazy='joined' or lazy='subquery' for admin_profile"
+      },
+      {
+        "type": "n_plus_one_risk",
+        "severity": "high",
+        "model": "User",
+        "relationship": "user_sessions",
+        "target": "UserSession",
+        "issue": "Relationship User.user_sessions uses lazy='select'",
+        "recommendation": "Consider using lazy='joined' or lazy='subquery' for user_sessions"
+      },
+      {
+        "type": "n_plus_one_risk",
+        "severity": "high",
+        "model": "Formula",
+        "relationship": "enrollments",
+        "target": "Enrollment",
+        "issue": "Relationship Formula.enrollments uses lazy='select'",
+        "recommendation": "Consider using lazy='joined' or lazy='subquery' for enrollments"
+      },
+      {
+        "type": "n_plus_one_risk",
+        "severity": "high",
+        "model": "Location",
+        "relationship": "bookings",
+        "target": "Booking",
+        "issue": "Relationship Location.bookings uses lazy='select'",
+        "recommendation": "Consider using lazy='joined' or lazy='subquery' for bookings"
+      },
+      {
+        "type": "n_plus_one_risk",
+        "severity": "high",
+        "model": "Booking",
+        "relationship": "session_report",
+        "target": "SessionReport",
+        "issue": "Relationship Booking.session_report uses lazy='select'",
+        "recommendation": "Consider using lazy='joined' or lazy='subquery' for session_report"
+      },
+      {
+        "type": "n_plus_one_risk",
+        "severity": "high",
+        "model": "Group",
+        "relationship": "enrollments",
+        "target": "Enrollment",
+        "issue": "Relationship Group.enrollments uses lazy='select'",
+        "recommendation": "Consider using lazy='joined' or lazy='subquery' for enrollments"
+      },
+      {
+        "type": "n_plus_one_risk",
+        "severity": "high",
+        "model": "Group",
+        "relationship": "sessions",
+        "target": "GroupSession",
+        "issue": "Relationship Group.sessions uses lazy='select'",
+        "recommendation": "Consider using lazy='joined' or lazy='subquery' for sessions"
+      },
+      {
+        "type": "n_plus_one_risk",
+        "severity": "high",
+        "model": "Teacher",
+        "relationship": "groups",
+        "target": "Group",
+        "issue": "Relationship Teacher.groups uses lazy='select'",
+        "recommendation": "Consider using lazy='joined' or lazy='subquery' for groups"
+      },
+      {
+        "type": "n_plus_one_risk",
+        "severity": "high",
+        "model": "Teacher",
+        "relationship": "individual_sessions",
+        "target": "IndividualSession",
+        "issue": "Relationship Teacher.individual_sessions uses lazy='select'",
+        "recommendation": "Consider using lazy='joined' or lazy='subquery' for individual_sessions"
+      },
+      {
+        "type": "n_plus_one_risk",
+        "severity": "high",
+        "model": "Teacher",
+        "relationship": "availabilities",
+        "target": "Availability",
+        "issue": "Relationship Teacher.availabilities uses lazy='select'",
+        "recommendation": "Consider using lazy='joined' or lazy='subquery' for availabilities"
+      },
+      {
+        "type": "n_plus_one_risk",
+        "severity": "high",
+        "model": "Teacher",
+        "relationship": "bookings",
+        "target": "Booking",
+        "issue": "Relationship Teacher.bookings uses lazy='select'",
+        "recommendation": "Consider using lazy='joined' or lazy='subquery' for bookings"
+      },
+      {
+        "type": "n_plus_one_risk",
+        "severity": "high",
+        "model": "Teacher",
+        "relationship": "session_reports",
+        "target": "SessionReport",
+        "issue": "Relationship Teacher.session_reports uses lazy='select'",
+        "recommendation": "Consider using lazy='joined' or lazy='subquery' for session_reports"
+      },
+      {
+        "type": "n_plus_one_risk",
+        "severity": "high",
+        "model": "GroupSession",
+        "relationship": "attendances",
+        "target": "SessionAttendance",
+        "issue": "Relationship GroupSession.attendances uses lazy='select'",
+        "recommendation": "Consider using lazy='joined' or lazy='subquery' for attendances"
+      }
+    ],
+    "medium": [
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "Student",
+        "table": "students",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_students_created_at ON students(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "Student",
+        "table": "students",
+        "column": "updated_at",
+        "reason": "Common query field \"updated_at\" without index",
+        "sql": "CREATE INDEX idx_students_updated_at ON students(updated_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "LearningSession",
+        "table": "learning_sessions",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_learning_sessions_created_at ON learning_sessions(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "Assessment",
+        "table": "assessments",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_assessments_created_at ON assessments(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "ARIAInteraction",
+        "table": "aria_interactions",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_aria_interactions_created_at ON aria_interactions(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "User",
+        "table": "users",
+        "column": "status",
+        "reason": "Common query field \"status\" without index",
+        "sql": "CREATE INDEX idx_users_status ON users(status);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "User",
+        "table": "users",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_users_created_at ON users(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "User",
+        "table": "users",
+        "column": "updated_at",
+        "reason": "Common query field \"updated_at\" without index",
+        "sql": "CREATE INDEX idx_users_updated_at ON users(updated_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "StudentProfile",
+        "table": "student_profiles",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_student_profiles_created_at ON student_profiles(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "StudentProfile",
+        "table": "student_profiles",
+        "column": "updated_at",
+        "reason": "Common query field \"updated_at\" without index",
+        "sql": "CREATE INDEX idx_student_profiles_updated_at ON student_profiles(updated_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "ParentProfile",
+        "table": "parent_profiles",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_parent_profiles_created_at ON parent_profiles(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "ParentProfile",
+        "table": "parent_profiles",
+        "column": "updated_at",
+        "reason": "Common query field \"updated_at\" without index",
+        "sql": "CREATE INDEX idx_parent_profiles_updated_at ON parent_profiles(updated_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "TeacherProfile",
+        "table": "teacher_profiles",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_teacher_profiles_created_at ON teacher_profiles(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "TeacherProfile",
+        "table": "teacher_profiles",
+        "column": "updated_at",
+        "reason": "Common query field \"updated_at\" without index",
+        "sql": "CREATE INDEX idx_teacher_profiles_updated_at ON teacher_profiles(updated_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "AdminProfile",
+        "table": "admin_profiles",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_admin_profiles_created_at ON admin_profiles(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "AdminProfile",
+        "table": "admin_profiles",
+        "column": "updated_at",
+        "reason": "Common query field \"updated_at\" without index",
+        "sql": "CREATE INDEX idx_admin_profiles_updated_at ON admin_profiles(updated_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "UserSession",
+        "table": "user_sessions",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_user_sessions_created_at ON user_sessions(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "ParentChildRelation",
+        "table": "parent_child_relations",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_parent_child_relations_created_at ON parent_child_relations(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "Formula",
+        "table": "formulas",
+        "column": "type",
+        "reason": "Common query field \"type\" without index",
+        "sql": "CREATE INDEX idx_formulas_type ON formulas(type);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "Formula",
+        "table": "formulas",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_formulas_created_at ON formulas(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "Formula",
+        "table": "formulas",
+        "column": "updated_at",
+        "reason": "Common query field \"updated_at\" without index",
+        "sql": "CREATE INDEX idx_formulas_updated_at ON formulas(updated_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "Location",
+        "table": "locations",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_locations_created_at ON locations(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "Location",
+        "table": "locations",
+        "column": "updated_at",
+        "reason": "Common query field \"updated_at\" without index",
+        "sql": "CREATE INDEX idx_locations_updated_at ON locations(updated_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "Availability",
+        "table": "availabilities",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_availabilities_created_at ON availabilities(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "Availability",
+        "table": "availabilities",
+        "column": "updated_at",
+        "reason": "Common query field \"updated_at\" without index",
+        "sql": "CREATE INDEX idx_availabilities_updated_at ON availabilities(updated_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "Booking",
+        "table": "bookings",
+        "column": "status",
+        "reason": "Common query field \"status\" without index",
+        "sql": "CREATE INDEX idx_bookings_status ON bookings(status);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "Booking",
+        "table": "bookings",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_bookings_created_at ON bookings(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "Booking",
+        "table": "bookings",
+        "column": "updated_at",
+        "reason": "Common query field \"updated_at\" without index",
+        "sql": "CREATE INDEX idx_bookings_updated_at ON bookings(updated_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "SessionReport",
+        "table": "session_reports",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_session_reports_created_at ON session_reports(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "Group",
+        "table": "groups",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_groups_created_at ON groups(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "Teacher",
+        "table": "teachers",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_teachers_created_at ON teachers(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "Enrollment",
+        "table": "enrollments",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_enrollments_created_at ON enrollments(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "IndividualSession",
+        "table": "individual_sessions",
+        "column": "status",
+        "reason": "Common query field \"status\" without index",
+        "sql": "CREATE INDEX idx_individual_sessions_status ON individual_sessions(status);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "IndividualSession",
+        "table": "individual_sessions",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_individual_sessions_created_at ON individual_sessions(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "GroupSession",
+        "table": "group_sessions",
+        "column": "status",
+        "reason": "Common query field \"status\" without index",
+        "sql": "CREATE INDEX idx_group_sessions_status ON group_sessions(status);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "GroupSession",
+        "table": "group_sessions",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_group_sessions_created_at ON group_sessions(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "SessionAttendance",
+        "table": "session_attendances",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_session_attendances_created_at ON session_attendances(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "WeeklyReport",
+        "table": "weekly_reports",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_weekly_reports_created_at ON weekly_reports(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "ParentCommunication",
+        "table": "parent_communications",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_parent_communications_created_at ON parent_communications(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "StudentObjective",
+        "table": "student_objectives",
+        "column": "created_at",
+        "reason": "Common query field \"created_at\" without index",
+        "sql": "CREATE INDEX idx_student_objectives_created_at ON student_objectives(created_at);"
+      },
+      {
+        "type": "missing_index",
+        "severity": "medium",
+        "model": "StudentObjective",
+        "table": "student_objectives",
+        "column": "updated_at",
+        "reason": "Common query field \"updated_at\" without index",
+        "sql": "CREATE INDEX idx_student_objectives_updated_at ON student_objectives(updated_at);"
+      }
+    ],
+    "low": []
+  },
+  "dbml_schema": "// Nexus Réussite Database Schema\n// Generated on 2025-07-24 22:28:27\n\nTable students {\n  id int [pk]\n  full_name varchar [not null]\n  email varchar [not null, unique]\n  phone varchar\n  grade_level varchar [not null]\n  school varchar\n  preferred_subjects text\n  learning_style varchar\n  cognitive_profile text\n  performance_data text\n  created_at datetime\n  updated_at datetime\n  is_active boolean\n}\n\nTable learning_sessions {\n  id int [pk]\n  student_id int [not null]\n  subject varchar [not null]\n  topic varchar [not null]\n  session_type varchar [not null]\n  duration_minutes int\n  aria_recommendations text\n  interaction_data text\n  performance_metrics text\n  completion_rate float\n  accuracy_rate float\n  difficulty_level varchar\n  started_at datetime\n  completed_at datetime\n  created_at datetime\n}\n\nTable assessments {\n  id int [pk]\n  student_id int [not null]\n  title varchar [not null]\n  subject varchar [not null]\n  assessment_type varchar [not null]\n  questions_data text [not null]\n  answers_data text\n  score float\n  detailed_results text\n  aria_feedback text\n  next_steps text\n  created_at datetime\n  completed_at datetime\n  is_completed boolean\n}\n\nTable aria_interactions {\n  id int [pk]\n  student_id int [not null]\n  interaction_type varchar [not null]\n  user_input text\n  aria_response text [not null]\n  context_data text\n  confidence_score float\n  processing_time_ms int\n  feedback_rating int\n  created_at datetime\n}\n\nTable users {\n  id int [pk]\n  email varchar [not null, unique]\n  password_hash varchar [not null]\n  first_name varchar [not null]\n  last_name varchar [not null]\n  phone varchar\n  avatar_url varchar\n  role varchar [not null]\n  status varchar\n  last_login datetime\n  email_verified boolean\n  email_verification_token varchar\n  password_reset_token varchar\n  password_reset_expires datetime\n  preferences json\n  timezone varchar\n  language varchar\n  created_at datetime\n  updated_at datetime\n}\n\nTable student_profiles {\n  id int [pk]\n  user_id int [not null, unique]\n  grade_level varchar [not null]\n  school varchar\n  specialties json\n  learning_style varchar\n  cognitive_profile json\n  performance_data json\n  goals json\n  interests json\n  motivation_level varchar\n  parent_ids json\n  created_at datetime\n  updated_at datetime\n}\n\nTable parent_profiles {\n  id int [pk]\n  user_id int [not null, unique]\n  profession varchar\n  address text\n  emergency_contact varchar\n  children_ids json\n  preferred_contact_method varchar\n  notification_preferences json\n  report_frequency varchar\n  created_at datetime\n  updated_at datetime\n}\n\nTable teacher_profiles {\n  id int [pk]\n  user_id int [not null, unique]\n  subjects json [not null]\n  qualifications json\n  experience_years int\n  is_aefe_certified boolean\n  is_nsi_diu boolean\n  can_teach_online boolean\n  can_teach_in_person boolean\n  preferred_formats json\n  hourly_rate_online float\n  hourly_rate_in_person float\n  hourly_rate_group float\n  default_availability json\n  max_hours_per_week int\n  rating float\n  total_reviews int\n  total_hours_taught int\n  bio text\n  specialties_description text\n  hire_date varchar\n  is_active_teacher boolean\n  created_at datetime\n  updated_at datetime\n}\n\nTable admin_profiles {\n  id int [pk]\n  user_id int [not null, unique]\n  permissions json\n  department varchar\n  is_super_admin boolean\n  can_manage_users boolean\n  can_manage_content boolean\n  can_view_reports boolean\n  can_manage_billing boolean\n  created_at datetime\n  updated_at datetime\n}\n\nTable user_sessions {\n  id int [pk]\n  user_id int [not null]\n  session_token varchar [not null, unique]\n  refresh_token varchar [unique]\n  expires_at datetime [not null]\n  ip_address varchar\n  user_agent varchar\n  device_type varchar\n  location varchar\n  is_active boolean\n  last_activity datetime\n  created_at datetime\n}\n\nTable parent_child_relations {\n  id int [pk]\n  parent_user_id int [not null]\n  child_user_id int [not null]\n  relation_type varchar\n  is_primary_contact boolean\n  can_view_grades boolean\n  can_book_sessions boolean\n  can_receive_reports boolean\n  confirmed_at datetime\n  created_at datetime\n}\n\nTable formulas {\n  id int [pk]\n  name varchar [not null]\n  type varchar [not null]\n  level varchar [not null]\n  price_dt float [not null]\n  hours_per_month int [not null]\n  max_students int\n  description text\n  features json\n  supports_online boolean\n  supports_in_person boolean\n  created_at datetime\n  updated_at datetime\n}\n\nTable locations {\n  id int [pk]\n  name varchar [not null]\n  capacity int [not null]\n  address varchar\n  equipment json\n  is_active boolean\n  created_at datetime\n  updated_at datetime\n}\n\nTable availabilities {\n  id int [pk]\n  teacher_id int [not null]\n  start_time datetime [not null]\n  end_time datetime [not null]\n  is_for_in_person boolean [not null]\n  is_recurring boolean\n  recurring_pattern json\n  is_booked boolean\n  created_at datetime\n  updated_at datetime\n}\n\nTable bookings {\n  id int [pk]\n  student_id int [not null]\n  teacher_id int [not null]\n  availability_id int\n  start_time datetime [not null]\n  end_time datetime [not null]\n  format varchar [not null]\n  location_id int\n  subject varchar [not null]\n  topic varchar\n  description text\n  duration_minutes int\n  status varchar\n  booking_notes text\n  cancellation_reason varchar\n  meeting_url varchar\n  meeting_password varchar\n  created_at datetime\n  updated_at datetime\n  created_by varchar\n}\n\nTable session_reports {\n  id int [pk]\n  booking_id int [not null]\n  topics_covered json\n  student_performance int\n  participation_level varchar\n  comprehension_level varchar\n  teacher_notes text\n  homework_assigned text\n  next_session_recommendations text\n  parent_feedback_requested boolean\n  created_at datetime\n  teacher_id int [not null]\n}\n\nTable groups {\n  id int [pk]\n  name varchar [not null]\n  subject varchar [not null]\n  level varchar [not null]\n  max_students int\n  current_students int\n  teacher_id int [not null]\n  default_location_id int\n  supports_online boolean\n  schedule json\n  created_at datetime\n}\n\nTable teachers {\n  id int [pk]\n  first_name varchar [not null]\n  last_name varchar [not null]\n  email varchar [not null, unique]\n  phone varchar\n  subjects json\n  qualifications json\n  experience_years int\n  is_aefe_certified boolean\n  is_nsi_diu boolean\n  can_teach_online boolean\n  can_teach_in_person boolean\n  hourly_rate_online float\n  hourly_rate_in_person float\n  created_at datetime\n}\n\nTable enrollments {\n  id int [pk]\n  student_id int [not null]\n  formula_id int [not null]\n  group_id int\n  teacher_id int\n  start_date varchar [not null]\n  end_date varchar\n  is_active boolean\n  preferred_format varchar\n  created_at datetime\n}\n\nTable individual_sessions {\n  id int [pk]\n  student_id int [not null]\n  teacher_id int [not null]\n  subject varchar [not null]\n  scheduled_at datetime [not null]\n  duration_minutes int\n  format varchar\n  location_id int\n  status varchar\n  topics_covered json\n  homework_assigned text\n  teacher_notes text\n  student_performance int\n  meeting_url varchar\n  created_at datetime\n}\n\nTable group_sessions {\n  id int [pk]\n  group_id int [not null]\n  subject varchar [not null]\n  scheduled_at datetime [not null]\n  duration_minutes int\n  format varchar\n  location_id int\n  status varchar\n  topics_covered json\n  homework_assigned text\n  teacher_notes text\n  meeting_url varchar\n  created_at datetime\n}\n\nTable session_attendances {\n  id int [pk]\n  session_id int [not null]\n  student_id int [not null]\n  is_present boolean\n  participation_score int\n  individual_notes text\n  created_at datetime\n}\n\nTable weekly_reports {\n  id int [pk]\n  student_id int [not null]\n  week_start_date varchar [not null]\n  week_end_date varchar [not null]\n  subjects_progress json\n  aria_insights text\n  teacher_comments json\n  next_week_objectives json\n  parent_feedback text\n  is_sent_to_parents boolean\n  created_at datetime\n}\n\nTable parent_communications {\n  id int [pk]\n  student_id int [not null]\n  sender_type varchar [not null]\n  sender_id int [not null]\n  recipient_type varchar [not null]\n  recipient_id int [not null]\n  subject varchar [not null]\n  message text [not null]\n  is_read boolean\n  priority varchar\n  created_at datetime\n}\n\nTable student_objectives {\n  id int [pk]\n  student_id int [not null]\n  subject varchar [not null]\n  objective_text text [not null]\n  target_date varchar [not null]\n  is_achieved boolean\n  achievement_date varchar\n  progress_percentage int\n  created_by varchar [not null]\n  created_at datetime\n  updated_at datetime\n}\n\n// Relationships\nRef: learning_sessions.student_id > students.id\nRef: assessments.student_id > students.id\nRef: aria_interactions.student_id > students.id\nRef: student_profiles.user_id > users.id\nRef: parent_profiles.user_id > users.id\nRef: teacher_profiles.user_id > users.id\nRef: admin_profiles.user_id > users.id\nRef: user_sessions.user_id > users.id\nRef: parent_child_relations.parent_user_id > parent_users.id\nRef: parent_child_relations.child_user_id > child_users.id\nRef: availabilities.teacher_id > teachers.id\nRef: bookings.student_id > students.id\nRef: bookings.teacher_id > teachers.id\nRef: bookings.availability_id > availabilitys.id\nRef: bookings.location_id > locations.id\nRef: session_reports.booking_id > bookings.id\nRef: session_reports.teacher_id > teachers.id\nRef: groups.teacher_id > teachers.id\nRef: groups.default_location_id > default_locations.id\nRef: enrollments.student_id > students.id\nRef: enrollments.formula_id > formulas.id\nRef: enrollments.group_id > groups.id\nRef: enrollments.teacher_id > teachers.id\nRef: individual_sessions.student_id > students.id\nRef: individual_sessions.teacher_id > teachers.id\nRef: individual_sessions.location_id > locations.id\nRef: group_sessions.group_id > groups.id\nRef: group_sessions.location_id > locations.id\nRef: session_attendances.session_id > sessions.id\nRef: session_attendances.student_id > students.id\nRef: weekly_reports.student_id > students.id\nRef: parent_communications.student_id > students.id\nRef: student_objectives.student_id > students.id"
+}

@@ -43,7 +43,10 @@ import {
   ChevronRight,
   Quote,
   Eye,
-  Monitor
+  Monitor,
+  Coffee,
+  Navigation,
+  Car
 } from 'lucide-react'
 
 const LandingPage = ({ onLogin }) => {

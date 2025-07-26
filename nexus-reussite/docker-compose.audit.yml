@@ -1,0 +1,69 @@
+services:
+  # PostgreSQL for audit environment
+  postgres-audit:
+    image: postgres:15-alpine
+    container_name: nexus-audit-postgres
+    environment:
+      POSTGRES_DB: nexus_reussite_audit
+      POSTGRES_USER: nexus_audit_user
+      POSTGRES_PASSWORD: nexus_audit_password
+    volumes:
+      - postgres_audit_data:/var/lib/postgresql/data
+      - ./scripts/init-audit-db.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5433:5432"
+    networks:
+      - nexus-audit-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nexus_audit_user -d nexus_reussite_audit"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for audit environment
+  redis-audit:
+    image: redis:7-alpine
+    container_name: nexus-audit-redis
+    volumes:
+      - redis_audit_data:/data
+    ports:
+      - "6380:6379"
+    networks:
+      - nexus-audit-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Audit runner container
+  audit-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile.audit
+    container_name: nexus-audit-runner
+    environment:
+      - DATABASE_URL=postgresql://nexus_audit_user:nexus_audit_password@postgres-audit:5432/nexus_reussite_audit
+      - REDIS_URL=redis://redis-audit:6379/0
+      - FLASK_ENV=audit
+      - NODE_ENV=audit
+    volumes:
+      - ./:/workspace
+      - audit_logs:/workspace/logs
+    depends_on:
+      postgres-audit:
+        condition: service_healthy
+      redis-audit:
+        condition: service_healthy
+    networks:
+      - nexus-audit-network
+    command: ["/workspace/scripts/run-audit.sh"]
+
+volumes:
+  postgres_audit_data:
+  redis_audit_data:
+  audit_logs:
+
+networks:
+  nexus-audit-network:
+    driver: bridge
