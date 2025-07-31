@@ -7,7 +7,6 @@ Usage: python scripts/check_schema_drift.py
 """
 
 import os
-import sys
 import tempfile
 from pathlib import Path
 
@@ -95,7 +94,7 @@ def check_schema_drift():
                 if os.path.exists(temp_db_path):
                     os.unlink(temp_db_path)
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         print(f"❌ Erreur lors de la vérification: {e}")
         return False
 

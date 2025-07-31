@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import { 
-  Menu, 
-  X, 
-  Home, 
-  User, 
-  BookOpen, 
-  MessageSquare, 
-  Video, 
-  FileText, 
-  Settings, 
-  LogOut,
+import {
   Bell,
-  Search
+  BookOpen,
+  FileText,
+  Home,
+  LogOut,
+  Menu,
+  MessageSquare,
+  Search,
+  Settings,
+  User,
+  Video,
+  X
 } from 'lucide-react';
+import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
 import Logo from '../Logo';
 import NotificationSystem from '../NotificationSystem';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
 
 export default function DashboardLayout({ children, currentPage = 'dashboard' }) {
   const { user, logout, isStudent, isParent, isTeacher, isAdmin } = useAuth();
@@ -69,7 +69,7 @@ export default function DashboardLayout({ children, currentPage = 'dashboard' })
       {/* Sidebar mobile */}
       <div className={`fixed inset-0 flex z-40 md:hidden ${sidebarOpen ? '' : 'hidden'}`}>
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
-        
+
         <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white">
           <div className="absolute top-0 right-0 -mr-12 pt-2">
             <button
@@ -80,33 +80,31 @@ export default function DashboardLayout({ children, currentPage = 'dashboard' })
               <X className="h-6 w-6 text-white" />
             </button>
           </div>
-          
+
           <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-            <div className="flex-shrink-0 flex items-center px-4">
-              <Logo className="h-8 w-auto" />
+            <div className="flex-shrink-0 flex items-center px-4 py-2">
+              <Logo size="small" className="h-10 w-auto" />
             </div>
             <nav className="mt-5 px-2 space-y-1">
               {navigation.map((item) => (
                 <a
                   key={item.name}
                   href={item.href}
-                  className={`${
-                    item.current
+                  className={`${item.current
                       ? 'bg-blue-100 text-blue-900'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  } group flex items-center px-2 py-2 text-base font-medium rounded-md`}
+                    } group flex items-center px-2 py-2 text-base font-medium rounded-md`}
                 >
                   <item.icon
-                    className={`${
-                      item.current ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500'
-                    } mr-4 flex-shrink-0 h-6 w-6`}
+                    className={`${item.current ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500'
+                      } mr-4 flex-shrink-0 h-6 w-6`}
                   />
                   {item.name}
                 </a>
               ))}
             </nav>
           </div>
-          
+
           <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -127,31 +125,29 @@ export default function DashboardLayout({ children, currentPage = 'dashboard' })
       <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
         <div className="flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-white">
           <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-            <div className="flex items-center flex-shrink-0 px-4">
-              <Logo className="h-8 w-auto" />
+            <div className="flex items-center flex-shrink-0 px-4 py-2">
+              <Logo size="small" className="h-10 w-auto" />
             </div>
             <nav className="mt-5 flex-1 px-2 bg-white space-y-1">
               {navigation.map((item) => (
                 <a
                   key={item.name}
                   href={item.href}
-                  className={`${
-                    item.current
+                  className={`${item.current
                       ? 'bg-blue-100 text-blue-900'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  } group flex items-center px-2 py-2 text-sm font-medium rounded-md`}
+                    } group flex items-center px-2 py-2 text-sm font-medium rounded-md`}
                 >
                   <item.icon
-                    className={`${
-                      item.current ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500'
-                    } mr-3 flex-shrink-0 h-6 w-6`}
+                    className={`${item.current ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500'
+                      } mr-3 flex-shrink-0 h-6 w-6`}
                   />
                   {item.name}
                 </a>
               ))}
             </nav>
           </div>
-          
+
           <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
             <div className="flex items-center w-full">
               <div className="flex-shrink-0">
@@ -209,7 +205,7 @@ export default function DashboardLayout({ children, currentPage = 'dashboard' })
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex items-center">
                 {/* Notifications */}
                 <div className="relative">
@@ -224,7 +220,7 @@ export default function DashboardLayout({ children, currentPage = 'dashboard' })
                       3
                     </span>
                   </Button>
-                  
+
                   {notificationsOpen && (
                     <div className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
                       <NotificationSystem />
@@ -257,4 +253,3 @@ export default function DashboardLayout({ children, currentPage = 'dashboard' })
     </div>
   );
 }
-

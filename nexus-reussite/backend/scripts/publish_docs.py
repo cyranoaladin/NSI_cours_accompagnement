@@ -5,7 +5,6 @@ Generates and publishes API documentation to the docs site
 """
 
 import os
-import sys
 import json
 import shutil
 import argparse
@@ -101,7 +100,7 @@ def generate_api_documentation(output_dir: str = "docs/api") -> bool:
             
             return True
             
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         print(f"❌ Error generating documentation: {str(e)}")
         import traceback
         traceback.print_exc()
@@ -521,14 +520,14 @@ def publish_to_github_pages(docs_dir: str, branch: str = "gh-pages") -> bool:
         
         # Check if we're in a git repository
         result = subprocess.run(['git', 'rev-parse', '--git-dir'], 
-                              capture_output=True, text=True)
+                              capture_output=True, text=True, check=False)
         if result.returncode != 0:
             print("❌ Not in a git repository")
             return False
         
         # Create or switch to GitHub Pages branch
         print(f"🌿 Switching to {branch} branch...")
-        subprocess.run(['git', 'checkout', '-B', branch], check=True)
+        subprocess.run(['git', 'checkout', '-B', branch], check=True, check=False)
         
         # Copy documentation files
         print("📁 Copying documentation files...")
@@ -540,9 +539,9 @@ def publish_to_github_pages(docs_dir: str, branch: str = "gh-pages") -> bool:
         
         # Commit and push
         print("📤 Committing and pushing to GitHub...")
-        subprocess.run(['git', 'add', '.'], check=True)
-        subprocess.run(['git', 'commit', '-m', f'Update API documentation - {datetime.utcnow().isoformat()}'], check=True)
-        subprocess.run(['git', 'push', 'origin', branch], check=True)
+        subprocess.run(['git', 'add', '.'], check=True, check=False)
+        subprocess.run(['git', 'commit', '-m', f'Update API documentation - {datetime.utcnow(, check=False).isoformat()}'], check=True)
+        subprocess.run(['git', 'push', 'origin', branch], check=True, check=False)
         
         print(f"✅ Documentation published to GitHub Pages!")
         print(f"   🌐 Available at: https://your-username.github.io/your-repo/")
@@ -552,7 +551,7 @@ def publish_to_github_pages(docs_dir: str, branch: str = "gh-pages") -> bool:
     except subprocess.CalledProcessError as e:
         print(f"❌ Git operation failed: {e}")
         return False
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         print(f"❌ Publishing failed: {e}")
         return False
 

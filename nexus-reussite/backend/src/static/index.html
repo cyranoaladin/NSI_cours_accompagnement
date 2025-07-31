@@ -15,6 +15,11 @@
         .tab-button.active { background-color: #3b82f6; color: white; }
         .testimonial-card { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
     </style>
+    <!-- CSS et JS modulaires Nexus Réussite -->
+    <link href="css/components.css" rel="stylesheet">
+    <script src="components/hero-section.js"></script>
+    <script src="components/testimonials-section.js"></script>
+    <script src="components/teachers-section.js"></script>
 </head>
 <body class="bg-white">
     <!-- Header -->
@@ -22,15 +27,15 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-lg">N</span>
+                    <div class="h-12 w-24">
+                        <img src="images/nexus-logo.svg" alt="Nexus Réussite" class="h-full w-full object-contain">
                     </div>
                     <div>
                         <h1 class="text-xl font-bold text-gray-900">Nexus Réussite</h1>
                         <p class="text-xs text-gray-600">Formation d'Excellence</p>
                     </div>
                 </div>
-                
+
                 <nav class="hidden md:flex space-x-8">
                     <a href="#approche" class="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors">
                         <i data-lucide="layers" class="w-4 h-4"></i>
@@ -57,7 +62,7 @@
                         <span>Espace Parent</span>
                     </a>
                 </nav>
-                
+
                 <button onclick="openARIAChat()" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-300 flex items-center space-x-2">
                     <i data-lucide="bot" class="w-4 h-4"></i>
                     <span>Parler à ARIA</span>
@@ -67,7 +72,7 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="relative bg-gradient-to-br from-blue-50 via-white to-purple-50 py-20">
+    <section id="hero-section" class="hero-section relative bg-gradient-to-br from-blue-50 via-white to-purple-50 py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <div>
@@ -75,15 +80,15 @@
                         <i data-lucide="flag" class="w-4 h-4 mr-2"></i>
                         Coaching, soutien et excellence pour les élèves de Première et Terminale du système français en Tunisie
                     </div>
-                    
+
                     <h1 class="text-5xl font-bold text-gray-900 mb-6">
                         Le meilleur des <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">deux mondes</span><br>
                         pour votre réussite
                     </h1>
-                    
+
                     <p class="text-xl text-gray-600 mb-8 leading-relaxed">
                         <strong>Accompagnement présentiel + plateforme intelligente 24/7.</strong><br>
-                        Nexus Réussite combine l'expertise humaine de nos professeurs certifiés AEFE 
+                        Nexus Réussite combine l'expertise humaine de nos professeurs certifiés AEFE
                         avec la puissance de notre IA adaptative ARIA pour une formation d'excellence personna                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
                         <a href="#diagnostic" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center space-x-2">
                             <i data-lucide="clipboard-check" class="w-5 h-5"></i>
@@ -94,7 +99,7 @@
                             <span>Parler à notre Référent</span>
                         </button>
                     </div>       </div>
-                
+
                 <div class="relative">
                     <div class="bg-white rounded-2xl shadow-2xl p-8">
                         <div class="grid grid-cols-2 gap-6 text-center">
@@ -129,7 +134,7 @@
             <div class="text-center mb-16">
                 <h2 class="text-4xl font-bold text-gray-900 mb-4">Notre Approche Hybride Révolutionnaire</h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Nexus associe technologie et humain pour un suivi adapté. Chaque élève dispose d'un cockpit personnel, 
+                    Nexus associe technologie et humain pour un suivi adapté. Chaque élève dispose d'un cockpit personnel,
                     de cours sur mesure, et d'un coach dédié.
                 </p>
             </div>
@@ -286,7 +291,7 @@
             <div class="text-center mb-16">
                 <h2 class="text-4xl font-bold text-gray-900 mb-4">Nos Formules & Offres</h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Des parcours adaptés à chaque profil : accompagnement individuel, mini-groupes, stages intensifs. 
+                    Des parcours adaptés à chaque profil : accompagnement individuel, mini-groupes, stages intensifs.
                     Choisissez la formule qui correspond à vos ambitions et votre rythme d'apprentissage.
                 </p>
             </div>
@@ -336,7 +341,7 @@
                                 320<span class="text-lg text-gray-600">DT/mois</span>
                             </div>
                         </div>
-                        
+
                         <ul class="space-y-4 mb-8">
                             <li class="flex items-center">
                                 <i data-lucide="check" class="w-5 h-5 text-green-600 mr-3"></i>
@@ -359,7 +364,7 @@
                                 <span>Suivi personnalisé continu</span>
                             </li>
                         </ul>
-                        
+
                         <button onclick="chooseFormula('coaching-premium')" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
                             Choisir cette formule
                         </button>
@@ -370,7 +375,7 @@
                         <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
                             <span class="bg-purple-500 text-white px-4 py-2 rounded-full text-sm font-medium">Recommandé</span>
                         </div>
-                        
+
                         <div class="text-center mb-8">
                             <div class="w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-4">
                                 <i data-lucide="graduation-cap" class="w-8 h-8 text-purple-600"></i>
@@ -381,7 +386,7 @@
                                 420<span class="text-lg text-gray-600">DT/mois</span>
                             </div>
                         </div>
-                        
+
                         <ul class="space-y-4 mb-8">
                             <li class="flex items-center">
                                 <i data-lucide="check" class="w-5 h-5 text-green-600 mr-3"></i>
@@ -404,7 +409,7 @@
                                 <span>Suivi intensif progression</span>
                             </li>
                         </ul>
-                        
+
                         <button onclick="chooseFormula('excellence-bac')" class="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition-colors">
                             Choisir cette formule
                         </button>
@@ -422,7 +427,7 @@
                                 390<span class="text-lg text-gray-600">DT/forfait</span>
                             </div>
                         </div>
-                        
+
                         <ul class="space-y-4 mb-8">
                             <li class="flex items-center">
                                 <i data-lucide="check" class="w-5 h-5 text-green-600 mr-3"></i>
@@ -445,7 +450,7 @@
                                 <span>Stratégie orientation</span>
                             </li>
                         </ul>
-                        
+
                         <button onclick="chooseFormula('coaching-parcoursup')" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors">
                             Je veux en savoir plus
                         </button>
@@ -476,7 +481,7 @@
                                 180<span class="text-lg text-gray-600">DT/mois</span>
                             </div>
                         </div>
-                        
+
                         <ul class="space-y-4 mb-8">
                             <li class="flex items-center">
                                 <i data-lucide="check" class="w-5 h-5 text-green-600 mr-3"></i>
@@ -499,7 +504,7 @@
                                 <span>Suivi individuel dans le groupe</span>
                             </li>
                         </ul>
-                        
+
                         <button onclick="chooseFormula('groupe-reussite')" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
                             Choisir cette formule
                         </button>
@@ -510,7 +515,7 @@
                         <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
                             <span class="bg-orange-500 text-white px-4 py-2 rounded-full text-sm font-medium">Populaire</span>
                         </div>
-                        
+
                         <div class="text-center mb-8">
                             <div class="w-16 h-16 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
                                 <i data-lucide="layers" class="w-8 h-8 text-orange-600"></i>
@@ -521,7 +526,7 @@
                                 290<span class="text-lg text-gray-600">DT/mois</span>
                             </div>
                         </div>
-                        
+
                         <ul class="space-y-4 mb-8">
                             <li class="flex items-center">
                                 <i data-lucide="check" class="w-5 h-5 text-green-600 mr-3"></i>
@@ -544,7 +549,7 @@
                                 <span>Économie substantielle</span>
                             </li>
                         </ul>
-                        
+
                         <button onclick="chooseFormula('combo-revision')" class="w-full bg-orange-600 text-white py-3 rounded-lg hover:bg-orange-700 transition-colors">
                             Choisir cette formule
                         </button>
@@ -575,7 +580,7 @@
                                 400<span class="text-lg text-purple-200">DT/mois</span>
                             </div>
                         </div>
-                        
+
                         <ul class="space-y-4 mb-8">
                             <li class="flex items-center">
                                 <i data-lucide="check" class="w-5 h-5 text-green-300 mr-3"></i>
@@ -598,7 +603,7 @@
                                 <span>Professeurs DIU NSI</span>
                             </li>
                         </ul>
-                        
+
                         <button onclick="chooseFormula('duo-sciences')" class="w-full bg-white text-purple-600 py-3 rounded-lg hover:bg-purple-50 transition-colors font-semibold">
                             Choisir cette formule
                         </button>
@@ -616,7 +621,7 @@
                                 390<span class="text-lg text-gray-600">DT/forfait</span>
                             </div>
                         </div>
-                        
+
                         <ul class="space-y-4 mb-8">
                             <li class="flex items-center">
                                 <i data-lucide="check" class="w-5 h-5 text-green-600 mr-3"></i>
@@ -639,7 +644,7 @@
                                 <span>Feedback détaillé</span>
                             </li>
                         </ul>
-                        
+
                         <button onclick="chooseFormula('grand-oral')" class="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors">
                             Je veux en savoir plus
                         </button>
@@ -670,7 +675,7 @@
                                 290<span class="text-sm text-gray-600">DT/stage</span>
                             </div>
                         </div>
-                        
+
                         <ul class="space-y-3 mb-6 text-sm">
                             <li class="flex items-center">
                                 <i data-lucide="check" class="w-4 h-4 text-green-600 mr-2"></i>
@@ -685,7 +690,7 @@
                                 <span>Préparation rentrée</span>
                             </li>
                         </ul>
-                        
+
                         <button onclick="chooseFormula('stage-aout')" class="w-full bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700 transition-colors text-sm">
                             M'inscrire au prochain stage
                         </button>
@@ -703,7 +708,7 @@
                                 200<span class="text-sm text-gray-600">DT/stage</span>
                             </div>
                         </div>
-                        
+
                         <ul class="space-y-3 mb-6 text-sm">
                             <li class="flex items-center">
                                 <i data-lucide="check" class="w-4 h-4 text-green-600 mr-2"></i>
@@ -718,7 +723,7 @@
                                 <span>Révisions ciblées</span>
                             </li>
                         </ul>
-                        
+
                         <button onclick="chooseFormula('stage-vacances')" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm">
                             M'inscrire au prochain stage
                         </button>
@@ -736,7 +741,7 @@
                                 240<span class="text-sm text-green-200">DT/semaine</span>
                             </div>
                         </div>
-                        
+
                         <ul class="space-y-3 mb-6 text-sm">
                             <li class="flex items-center">
                                 <i data-lucide="check" class="w-4 h-4 text-green-300 mr-2"></i>
@@ -751,7 +756,7 @@
                                 <span>Projets concrets</span>
                             </li>
                         </ul>
-                        
+
                         <button onclick="chooseFormula('python-express')" class="w-full bg-white text-green-600 py-2 rounded-lg hover:bg-green-50 transition-colors text-sm font-semibold">
                             M'inscrire au prochain stage
                         </button>
@@ -774,7 +779,7 @@
             <div class="text-center mb-16">
                 <h2 class="text-4xl font-bold text-gray-900 mb-4">Notre Centre Nexus</h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Situé au cœur de Tunis, notre centre Nexus est un lieu moderne et équipé 
+                    Situé au cœur de Tunis, notre centre Nexus est un lieu moderne et équipé
                     pour accueillir vos cours présentiels en toute sérénité.
                 </p>
             </div>
@@ -883,7 +888,7 @@
                         </div>
                     </div>
                     <p class="text-gray-700 italic mb-4">
-                        "ARIA m'a aidée à comprendre mes points faibles en maths. Les cours avec M. Dubois 
+                        "ARIA m'a aidée à comprendre mes points faibles en maths. Les cours avec M. Dubois
                         et les exercices personnalisés m'ont permis de passer de 12 à 18 de moyenne !"
                     </p>
                     <div class="flex text-yellow-500">
@@ -906,7 +911,7 @@
                         </div>
                     </div>
                     <p class="text-gray-700 italic mb-4">
-                        "L'interface parent est fantastique ! Je peux suivre les progrès de mon fils en temps réel. 
+                        "L'interface parent est fantastique ! Je peux suivre les progrès de mon fils en temps réel.
                         Les rapports hebdomadaires sont très détaillés et rassurants."
                     </p>
                     <div class="flex text-yellow-500">
@@ -929,7 +934,7 @@
                         </div>
                     </div>
                     <p class="text-gray-700 italic mb-4">
-                        "Les cours de NSI avec des profs diplômés DIU font toute la différence. 
+                        "Les cours de NSI avec des profs diplômés DIU font toute la différence.
                         J'ai pu intégrer Polytechnique grâce à leur préparation d'excellence !"
                     </p>
                     <div class="flex text-yellow-500">
@@ -962,7 +967,7 @@
                     Découvrez nos professeurs certifiés et agrégés, experts du système français AEFE et spécialisés dans l'accompagnement vers l'excellence.
                 </p>
             </div>
-            
+
             <div class="grid md:grid-cols-3 gap-8 mb-12">
                 <!-- Professeur 1 -->
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
@@ -1135,7 +1140,7 @@
                     Découvrez le potentiel de votre enfant avec notre diagnostic personnalisé. Notre Référent de Réussite analyse ses besoins et propose un parcours sur mesure.
                 </p>
             </div>
-            
+
             <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-8">
                 <div class="grid md:grid-cols-2 gap-8">
                     <div>
@@ -1179,7 +1184,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="bg-white rounded-xl p-6 shadow-lg">
                         <h3 class="text-xl font-bold text-gray-900 mb-4">Réservez votre bilan gratuit</h3>
                         <form class="space-y-4">
@@ -1230,7 +1235,7 @@
 
     <!-- Intelligence Artificielle Révolutionnaire -->             <h2 class="text-4xl font-bold mb-4">ARIA : Votre Assistant IA Personnel</h2>
                 <p class="text-xl text-blue-100 max-w-3xl mx-auto">
-                    ARIA (Assistant d'Apprentissage Adaptatif) analyse votre style d'apprentissage, 
+                    ARIA (Assistant d'Apprentissage Adaptatif) analyse votre style d'apprentissage,
                     accède à notre base documentaire et crée un parcours éducatif unique et optimisé.
                 </p>
             </div>
@@ -1298,7 +1303,7 @@
             <div class="text-center mb-16">
                 <h2 class="text-4xl font-bold text-gray-900 mb-4">Commencez Votre Parcours d'Excellence</h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Rejoignez les centaines d'élèves qui ont choisi Nexus Réussite pour transformer 
+                    Rejoignez les centaines d'élèves qui ont choisi Nexus Réussite pour transformer
                     leur parcours académique et préparer leur avenir avec confiance.
                 </p>
             </div>
@@ -1414,8 +1419,8 @@
             <div class="grid md:grid-cols-4 gap-8">
                 <div>
                     <div class="flex items-center space-x-3 mb-6">
-                        <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                            <span class="text-white font-bold text-lg">N</span>
+                        <div class="h-12 w-24">
+                            <img src="images/nexus-logo.svg" alt="Nexus Réussite" class="h-full w-full object-contain">
                         </div>
                         <div>
                             <h3 class="text-xl font-bold">Nexus Réussite</h3>
@@ -1497,7 +1502,7 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="p-6 h-96 overflow-y-auto" id="chatMessages">
                     <div class="flex items-start space-x-3 mb-4">
                         <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
@@ -1508,7 +1513,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="border-t p-4">
                     <div class="flex space-x-2">
                         <input type="text" id="chatInput" placeholder="Tapez votre message..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
@@ -1533,7 +1538,7 @@
             tabContents.forEach(content => {
                 content.classList.remove('active');
             });
-            
+
             // Remove active class from all tab buttons
             const tabButtons = document.querySelectorAll('.tab-button');
             tabButtons.forEach(button => {
@@ -1541,10 +1546,10 @@
                 button.style.backgroundColor = '';
                 button.style.color = '';
             });
-            
+
             // Show selected tab content
             document.getElementById(formule).classList.add('active');
-            
+
             // Add active class to clicked button
             event.target.classList.add('active');
             event.target.style.backgroundColor = '#3b82f6';
@@ -1563,12 +1568,12 @@
         function sendMessage() {
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
-            
+
             if (message) {
                 // Add user message
                 addMessage(message, 'user');
                 input.value = '';
-                
+
                 // Simulate ARIA response with document suggestions
                 setTimeout(() => {
                     const responses = [
@@ -1587,7 +1592,7 @@
             const chatMessages = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
             messageDiv.className = 'flex items-start space-x-3 mb-4';
-            
+
             if (sender === 'user') {
                 messageDiv.innerHTML = `
                     <div class="flex-1"></div>
@@ -1608,10 +1613,10 @@
                     </div>
                 `;
             }
-            
+
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
-            
+
             // Re-initialize icons for new elements
             lucide.createIcons();
         }
@@ -1648,11 +1653,11 @@
         // Contact form handling
         document.getElementById('contactForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
             const formData = new FormData(this);
             const data = Object.fromEntries(formData.entries());
             data.create_account = formData.has('create_account');
-            
+
             try {
                 const response = await fetch('/api/contact', {
                     method: 'POST',
@@ -1661,7 +1666,7 @@
                 });
 
                 const result = await response.json();
-                
+
                 if (result.success) {
                     alert(result.message);
                     if (result.account_created) {
@@ -1700,4 +1705,3 @@
     </script>
 </body>
 </html>
-

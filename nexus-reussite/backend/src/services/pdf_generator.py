@@ -1,35 +1,23 @@
-import base64
 import io
-import json
 import logging
-import os
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
-from reportlab.graphics.charts.barcharts import VerticalBarChart
-from reportlab.graphics.charts.linecharts import HorizontalLineChart
-from reportlab.graphics.charts.piecharts import Pie
-from reportlab.graphics.shapes import Circle, Drawing, Line, Rect
-from reportlab.lib import colors
-from reportlab.lib.colors import Color, black, blue, green, orange, purple, red, white
-from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT, TA_RIGHT
+from reportlab.lib.colors import Color, black, white
+from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 
 # Imports pour la génération PDF
-from reportlab.lib.pagesizes import A4, letter
+from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-from reportlab.lib.units import cm, inch
-from reportlab.pdfgen import canvas
+from reportlab.lib.units import cm
 from reportlab.platypus import (
-    Image,
-    PageBreak,
     Paragraph,
     SimpleDocTemplate,
     Spacer,
     Table,
     TableStyle,
 )
-from reportlab.platypus.flowables import HRFlowable
 
 # Configuration du logging
 logging.basicConfig(level=logging.INFO)
@@ -438,7 +426,7 @@ class NexusPDFGenerator:
             # Création d'un tableau pour les points clés
             key_points_data = []
             for point in content["key_points"]:
-                key_points_data.append([f"✓", point])
+                key_points_data.append(["✓", point])
 
             if key_points_data:
                 key_table = Table(
@@ -655,7 +643,7 @@ class NexusPDFGenerator:
 
         # Résumé exécutif
         if "summary" in content:
-            story.append(Paragraph("📊 Résumé exécutif", self.styles["NexusSubtitle"]))
+            story.append(Paragraph("📊 Résumé exécuti", self.styles["NexusSubtitle"]))
             story.append(Paragraph(content["summary"], self.styles["NexusNormal"]))
             story.append(Spacer(1, 15))
 

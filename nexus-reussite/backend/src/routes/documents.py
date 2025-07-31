@@ -2,16 +2,15 @@ import asyncio
 import io
 import json
 import logging
-import os
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 from flask import Blueprint, jsonify, request, send_file
 from flask_cors import cross_origin
 
-from ..services.content_engine import content_engine
-from ..services.openai_integration import StudentProfile, openai_service
-from ..services.pdf_generator import (
+from services.content_engine import content_engine
+from services.openai_integration import StudentProfile, openai_service
+from services.pdf_generator import (
     DocumentMetadata,
     create_evaluation_report_pdf,
     create_exercise_sheet_pdf,
@@ -51,8 +50,8 @@ def health_check():
 
         return jsonify(status), 200
 
-    except Exception as e:
-        logger.error(f"Erreur lors de la vérification de santé: {e}")
+    except (ValueError, TypeError, RuntimeError):
+        logger.error("Erreur lors de la vérification de santé: {e}")
         return jsonify({"error": "Service unavailable"}), 503
 
 
@@ -119,8 +118,8 @@ def generate_revision_sheet():
                 finally:
                     loop.close()
 
-            except Exception as e:
-                logger.warning(f"Erreur IA, utilisation du contenu par défaut: {e}")
+            except (RuntimeError, OSError, ValueError):
+                logger.warning("Erreur IA, utilisation du contenu par défaut: {e}")
                 content = _get_default_revision_content(subject, topic)
         else:
             # Utilisation du moteur de contenu par défaut
@@ -142,13 +141,13 @@ def generate_revision_sheet():
 
         return send_file(
             pdf_buffer,
-            mimetype="application/pdf",
+            mimetype="application/pd",
             as_attachment=True,
             download_name=filename,
         )
 
-    except Exception as e:
-        logger.error(f"Erreur lors de la génération de fiche de révision: {e}")
+    except (ValueError, TypeError, RuntimeError) as e:
+        logger.error("Erreur lors de la génération de fiche de révision: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
 
@@ -206,8 +205,8 @@ def generate_exercise_sheet():
                 finally:
                     loop.close()
 
-            except Exception as e:
-                logger.warning(f"Erreur IA, utilisation du contenu par défaut: {e}")
+            except (RuntimeError, OSError, ValueError):
+                logger.warning("Erreur IA, utilisation du contenu par défaut: {e}")
                 content = _get_default_exercise_content(
                     subject, topic, difficulty, num_exercises
                 )
@@ -226,13 +225,13 @@ def generate_exercise_sheet():
 
         return send_file(
             pdf_buffer,
-            mimetype="application/pdf",
+            mimetype="application/pd",
             as_attachment=True,
             download_name=filename,
         )
 
-    except Exception as e:
-        logger.error(f"Erreur lors de la génération d'exercices: {e}")
+    except (ValueError, TypeError, RuntimeError) as e:
+        logger.error("Erreur lors de la génération d'exercices: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
 
@@ -289,8 +288,8 @@ def generate_evaluation_report():
                 finally:
                     loop.close()
 
-            except Exception as e:
-                logger.warning(f"Erreur IA, utilisation du contenu par défaut: {e}")
+            except (RuntimeError, OSError, ValueError):
+                logger.warning("Erreur IA, utilisation du contenu par défaut: {e}")
                 content = _get_default_evaluation_content(evaluation_data, subject)
         else:
             content = _get_default_evaluation_content(evaluation_data, subject)
@@ -305,13 +304,13 @@ def generate_evaluation_report():
 
         return send_file(
             pdf_buffer,
-            mimetype="application/pdf",
+            mimetype="application/pd",
             as_attachment=True,
             download_name=filename,
         )
 
-    except Exception as e:
-        logger.error(f"Erreur lors de la génération du rapport d'évaluation: {e}")
+    except (ValueError, TypeError, RuntimeError) as e:
+        logger.error("Erreur lors de la génération du rapport d'évaluation: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
 
@@ -373,8 +372,8 @@ def generate_progress_report():
                 finally:
                     loop.close()
 
-            except Exception as e:
-                logger.warning(f"Erreur IA, utilisation des données par défaut: {e}")
+            except (RuntimeError, OSError, ValueError):
+                logger.warning("Erreur IA, utilisation des données par défaut: {e}")
 
         # Génération du PDF
         pdf_bytes = create_progress_report_pdf(progress_data, student_name)
@@ -386,13 +385,13 @@ def generate_progress_report():
 
         return send_file(
             pdf_buffer,
-            mimetype="application/pdf",
+            mimetype="application/pd",
             as_attachment=True,
             download_name=filename,
         )
 
-    except Exception as e:
-        logger.error(f"Erreur lors de la génération du rapport de progression: {e}")
+    except (ValueError, TypeError, RuntimeError) as e:
+        logger.error("Erreur lors de la génération du rapport de progression: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
 
@@ -447,13 +446,13 @@ def generate_custom_document():
 
         return send_file(
             pdf_buffer,
-            mimetype="application/pdf",
+            mimetype="application/pd",
             as_attachment=True,
             download_name=filename,
         )
 
-    except Exception as e:
-        logger.error(f"Erreur lors de la génération du document personnalisé: {e}")
+    except (ValueError, TypeError, RuntimeError) as e:
+        logger.error("Erreur lors de la génération du document personnalisé: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
 
@@ -551,8 +550,8 @@ def get_document_templates():
             200,
         )
 
-    except Exception as e:
-        logger.error(f"Erreur lors de la récupération des templates: {e}")
+    except (ValueError, TypeError, RuntimeError) as e:
+        logger.error("Erreur lors de la récupération des templates: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
 
@@ -604,7 +603,7 @@ def preview_document():
             preview = {
                 "title": "Rapport d'évaluation",
                 "sections": [
-                    "📊 Résumé exécutif",
+                    "📊 Résumé exécuti",
                     "📈 Résultats globaux",
                     "✅ Points forts",
                     "📈 Axes d'amélioration",
@@ -648,8 +647,8 @@ def preview_document():
             200,
         )
 
-    except Exception as e:
-        logger.error(f"Erreur lors de la génération de l'aperçu: {e}")
+    except (ValueError, TypeError, RuntimeError) as e:
+        logger.error("Erreur lors de la génération de l'aperçu: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
 

@@ -3,11 +3,9 @@ Schémas de validation de base pour Nexus Réussite
 Utilise Marshmallow pour la validation et sérialisation
 """
 
-from datetime import datetime
-from typing import Any, Dict
+import json
 
-from marshmallow import Schema, ValidationError, fields, post_load, pre_load, validate
-from marshmallow_enum import EnumField
+from marshmallow import Schema, ValidationError, fields, pre_load, validate
 
 
 class BaseSchema(Schema):
@@ -113,7 +111,6 @@ def validate_json_list(value) -> list:
 
     if isinstance(value, str):
         try:
-            import json
 
             result = json.loads(value)
             if not isinstance(result, list):
@@ -135,7 +132,6 @@ def validate_json_dict(value) -> dict:
 
     if isinstance(value, str):
         try:
-            import json
 
             result = json.loads(value)
             if not isinstance(result, dict):

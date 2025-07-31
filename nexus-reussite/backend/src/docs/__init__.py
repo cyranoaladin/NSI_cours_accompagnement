@@ -1,10 +1,15 @@
 """
+    from flask_restx import Namespace
+    from flask_restx import Namespace
+    from flask_restx import Namespace
+    from flask_restx import Namespace
+    from flask_restx import Namespace
 API Documentation Module for Nexus Réussite Backend
 Provides Swagger/OpenAPI documentation generation using Flask-RestX
 """
 
 from flask import Flask
-from flask_restx import Api, Resource, fields
+from flask_restx import Api, fields
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 # API Documentation Configuration
@@ -102,7 +107,6 @@ def init_api_docs(app: Flask) -> Api:
 
 def create_auth_namespace():
     """Create authentication endpoints namespace"""
-    from flask_restx import Namespace
 
     auth_ns = Namespace(
         "auth", description="Authentication and user management operations"
@@ -139,7 +143,6 @@ def create_auth_namespace():
 
 def create_students_namespace():
     """Create students management namespace"""
-    from flask_restx import Namespace
 
     students_ns = Namespace(
         "students", description="Student profile and progress management"
@@ -167,7 +170,6 @@ def create_students_namespace():
 
 def create_documents_namespace():
     """Create document generation namespace"""
-    from flask_restx import Namespace
 
     docs_ns = Namespace(
         "documents", description="AI-powered document generation services"
@@ -200,7 +202,6 @@ def create_documents_namespace():
 
 def create_formulas_namespace():
     """Create formulas management namespace"""
-    from flask_restx import Namespace
 
     formulas_ns = Namespace(
         "formulas", description="Mathematical formulas and concepts database"
@@ -224,7 +225,6 @@ def create_formulas_namespace():
 
 def create_health_namespace():
     """Create health monitoring namespace"""
-    from flask_restx import Namespace
 
     health_ns = Namespace(
         "health", description="System health and monitoring endpoints"

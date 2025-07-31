@@ -1,12 +1,12 @@
-from datetime import date, datetime, timedelta
+import json
+from datetime import date, datetime
 
 from flask import Blueprint, jsonify, request
 from flask_cors import cross_origin
 
-from src.models.formulas import (
+from models.formulas import (
     Enrollment,
     Formula,
-    FormulaLevel,
     FormulaType,
     Group,
     GroupSession,
@@ -18,7 +18,7 @@ from src.models.formulas import (
     WeeklyReport,
     db,
 )
-from src.models.student import Student
+from models.student import Student
 
 formulas_bp = Blueprint("formulas", __name__)
 
@@ -48,7 +48,7 @@ def get_formulas():
                 ],
             }
         )
-    except Exception as e:
+    except (ValueError, json.JSONDecodeError) as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -75,7 +75,7 @@ def get_individual_formulas():
                 ],
             }
         )
-    except Exception as e:
+    except (ValueError, json.JSONDecodeError) as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -103,7 +103,7 @@ def get_group_formulas():
                 ],
             }
         )
-    except Exception as e:
+    except (ValueError, json.JSONDecodeError) as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -140,7 +140,7 @@ def get_groups():
                 ],
             }
         )
-    except Exception as e:
+    except (ValueError, json.JSONDecodeError) as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -166,7 +166,7 @@ def get_group_students(group_id):
                 )
 
         return jsonify({"success": True, "students": students})
-    except Exception as e:
+    except (ValueError, json.JSONDecodeError) as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -195,7 +195,7 @@ def get_teachers():
                 ],
             }
         )
-    except Exception as e:
+    except (ValueError, json.JSONDecodeError) as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -245,7 +245,7 @@ def enroll_student(student_id):
                 "message": "Inscription réussie",
             }
         )
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         db.session.rollback()
         return jsonify({"success": False, "error": str(e)}), 500
 
@@ -348,7 +348,7 @@ def get_student_sessions(student_id):
         sessions_data.sort(key=lambda x: x["scheduled_at"], reverse=True)
 
         return jsonify({"success": True, "sessions": sessions_data})
-    except Exception as e:
+    except (ValueError, json.JSONDecodeError) as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -381,8 +381,8 @@ def get_student_weekly_reports(student_id):
             )
 
         return jsonify({"success": True, "reports": reports_data})
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
+    except (ValueError, JSONDecodeError) as e:
+        ify({"success": False, "error": str(e)}), 500
 
 
 @formulas_bp.route("/api/students/<int:student_id>/communications", methods=["GET"])
@@ -414,7 +414,7 @@ def get_student_communications(student_id):
             )
 
         return jsonify({"success": True, "communications": communications_data})
-    except Exception as e:
+    except (ValueError, json.JSONDecodeError) as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -451,7 +451,7 @@ def get_student_objectives(student_id):
             )
 
         return jsonify({"success": True, "objectives": objectives_data})
-    except Exception as e:
+    except (ValueError, json.JSONDecodeError) as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -589,5 +589,5 @@ def get_student_dashboard(student_id):
                 },
             }
         )
-    except Exception as e:
+    except (ValueError, json.JSONDecodeError) as e:
         return jsonify({"success": False, "error": str(e)}), 500

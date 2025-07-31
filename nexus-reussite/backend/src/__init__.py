@@ -6,7 +6,8 @@ Plateforme éducative intelligente avec IA adaptative
 __version__ = "1.0.0"
 __author__ = "Nexus Réussite Team"
 
-# Imports principaux pour faciliter l'utilisation - imports retardés pour éviter les problèmes circulaires
+# Imports principaux pour faciliter l'utilisation
+# imports retardés pour éviter les problèmes circulaires
 from .config import (
     Config,
     DevelopmentConfig,

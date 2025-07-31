@@ -3,10 +3,8 @@ Service IA ARIA - Version simplifiée pour déploiement
 Cette version fonctionne sans dépendances externes lourdes
 """
 
-import json
 import random
-from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 
 class ARIAService:
@@ -90,8 +88,8 @@ class ARIAService:
             response_text = random.choice(responses)
 
             # Personnalisation selon le profil
-            learning_style = student_profile.get("learning_style", "adaptatif")
-            grade_level = student_profile.get("grade_level", "lycée")
+            learning_style = student_profile.get("learning_style", "adaptati")
+            student_profile.get("grade_level", "lycée")
 
             # Ajout de badges contextuels
             badges = [
@@ -127,7 +125,7 @@ class ARIAService:
                 "personalized": True,
             }
 
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             # Réponse de fallback en cas d'erreur
             return {
                 "response": "Je rencontre une petite difficulté technique. Pouvez-vous reformuler votre question ?",
@@ -142,14 +140,14 @@ class ARIAService:
     def analyze_learning_style(self, student_data: Dict) -> Dict[str, Any]:
         """Analyse le style d'apprentissage de l'étudiant"""
         # Simulation d'analyse basée sur les données d'interaction
-        styles = ["visuel", "auditif", "kinesthésique", "lecture/écriture"]
+        styles = ["visuel", "auditi", "kinesthésique", "lecture/écriture"]
 
         # Analyse simulée
         dominant_style = random.choice(styles)
 
         scores = {
             "visuel": random.uniform(0.6, 0.9),
-            "auditif": random.uniform(0.5, 0.8),
+            "auditi": random.uniform(0.5, 0.8),
             "kinesthésique": random.uniform(0.4, 0.7),
             "lecture_ecriture": random.uniform(0.5, 0.8),
         }
@@ -208,7 +206,7 @@ class ARIAService:
         self, student_id: int, session_data: Dict
     ) -> Dict[str, Any]:
         """Évalue les performances de l'étudiant"""
-        answers = session_data.get("answers", [])
+        session_data.get("answers", [])
         questions = session_data.get("questions", [])
 
         if not questions:

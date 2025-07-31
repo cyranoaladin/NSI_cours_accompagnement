@@ -13,6 +13,7 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
+from sqlalchemy.exc import InterfaceError, SQLAlchemyError
 
 # Instance SQLAlchemy centralisée
 db = SQLAlchemy()
@@ -64,15 +65,14 @@ def _import_all_models():
     """
     try:
         # Import de tous les modules de modèles
-        from models import base  # Modèles de base
-        from models import content_system  # Modèles système de contenu
-        from models import formulas  # Modèles formules et cours
-        from models import student  # Modèles étudiant
-        from models import user  # Modèles utilisateur
+        import models.base  # Modèles de base
+        import models.formulas  # Modèles formules et cours
+        import models.student  # Modèles étudiant
+        import models.user  # Modèles utilisateur
 
         logger.info("📁 Tous les modèles importés avec succès")
-    except ImportError as e:
-        logger.error(f"❌ Erreur lors de l'import des modèles: {e}")
+    except ImportError as import_error:
+        logger.error("❌ Erreur lors de l'import des modèles: %s", import_error)
         # Ne pas faire crash l'application si les modèles ne peuvent pas être importés
         logger.warning("⚠️ Certains modèles n'ont pas pu être importés, continuons...")
 
@@ -190,7 +190,9 @@ def setup_sql_profiling():
                 query_stats["slowest_query"] = query_info
 
             logger.warning(
-                f"🐌 Requête lente détectée ({total_time:.3f}s): {statement[:100]}..."
+                "🐌 Requête lente détectée (%.3fs): %s...",
+                total_time,
+                statement[:100],
             )
 
 
@@ -241,11 +243,13 @@ def profile_query(func):
         try:
             result = func(*args, **kwargs)
             duration = time.time() - start_time
-            logger.info(f"⚡ {func.__name__} exécuté en {duration:.3f}s")
+            logger.info("⚡ %s exécuté en %.3fs", func.__name__, duration)
             return result
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as exception:
             duration = time.time() - start_time
-            logger.error(f"❌ {func.__name__} a échoué après {duration:.3f}s: {e}")
+            logger.error(
+                "❌ %s a échoué après %.3fs: %s", func.__name__, duration, exception
+            )
             raise
 
     return wrapper
@@ -267,15 +271,21 @@ def create_database_indices():
                 # Indices pour la table students (si elle existe)
                 "CREATE INDEX IF NOT EXISTS idx_students_user_id ON students(user_id);",
                 "CREATE INDEX IF NOT EXISTS idx_students_level ON students(level);",
-                "CREATE INDEX IF NOT EXISTS idx_students_created_at ON students(created_at);",
+                "CREATE INDEX IF NOT EXISTS idx_students_created_at ON "
+                + "students(created_at);",
                 # Indices pour les tables de contenu (si elles existent)
-                "CREATE INDEX IF NOT EXISTS idx_content_created_at ON content_items(created_at);",
-                "CREATE INDEX IF NOT EXISTS idx_content_type ON content_items(content_type);",
-                "CREATE INDEX IF NOT EXISTS idx_content_status ON content_items(status);",
+                "CREATE INDEX IF NOT EXISTS idx_content_created_at ON "
+                + "content_items(created_at);",
+                "CREATE INDEX IF NOT EXISTS idx_content_type ON "
+                + "content_items(content_type);",
+                "CREATE INDEX IF NOT EXISTS idx_content_status ON "
+                + "content_items(status);",
                 # Indices pour les formules (si la table existe)
-                "CREATE INDEX IF NOT EXISTS idx_formulas_subject ON formulas(subject);",
+                "CREATE INDEX IF NOT EXISTS idx_formulas_subject ON "
+                + "formulas(subject);",
                 "CREATE INDEX IF NOT EXISTS idx_formulas_level ON formulas(level);",
-                "CREATE INDEX IF NOT EXISTS idx_formulas_created_at ON formulas(created_at);",
+                "CREATE INDEX IF NOT EXISTS idx_formulas_created_at ON "
+                + "formulas(created_at);",
             ]
 
             created_indices = 0
@@ -283,15 +293,15 @@ def create_database_indices():
                 try:
                     conn.execute(db.text(sql))
                     created_indices += 1
-                except Exception as e:
+                except (SQLAlchemyError, InterfaceError) as exception:
                     # L'indice existe déjà ou la table n'existe pas
-                    logger.debug(f"Indice non créé: {e}")
+                    logger.debug("Indice non créé: %s", exception)
 
             conn.commit()
-            logger.info(f"📈 {created_indices} indices de performance créés/vérifiés")
+            logger.info("📈 %s indices de performance créés/vérifiés", created_indices)
 
-    except Exception as e:
-        logger.error(f"❌ Erreur lors de la création des indices: {e}")
+    except (ValueError, TypeError, RuntimeError) as exception:
+        logger.error("❌ Erreur lors de la création des indices: %s", exception)
 
 
 def analyze_table_performance() -> Dict[str, Any]:
@@ -326,9 +336,9 @@ def analyze_table_performance() -> Dict[str, Any]:
                 "database_type": str(db.engine.url).split(":")[0],
                 "tables_stats": [dict(row._mapping) for row in result],
             }
-    except Exception as e:
-        logger.error(f"❌ Erreur lors de l'analyse des performances: {e}")
-        return {"error": str(e)}
+    except (ValueError, TypeError, RuntimeError) as exception:
+        logger.error("❌ Erreur lors de l'analyse des performances: %s", exception)
+        return {"error": str(exception)}
 
 
 # Fonction de compatibilité avec l'ancien nom

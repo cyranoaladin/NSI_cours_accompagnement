@@ -1,17 +1,11 @@
 import asyncio
-import base64
-import io
 import json
 import logging
 import os
-from dataclasses import asdict, dataclass
-from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from dataclasses import dataclass
+from datetime import datetime
 
-import openai
-import requests
 from openai import OpenAI
-from PIL import Image
 
 # Configuration du logging
 logging.basicConfig(level=logging.INFO)
@@ -94,8 +88,8 @@ class OpenAIIntegration:
             else:
                 logger.warning("Clé API OpenAI non trouvée - Mode simulation activé")
                 self.client = None
-        except Exception as e:
-            logger.error(f"Erreur lors de l'initialisation du client OpenAI: {e}")
+        except (ValueError, ImportError, RuntimeError) as error:
+            logger.error("Erreur lors de l'initialisation du client OpenAI: %s", error)
             self.client = None
 
     def _get_tutoring_prompt(self) -> str:
@@ -365,7 +359,7 @@ FORMAT DE SORTIE:
                 "timestamp": datetime.now().isoformat(),
             }
 
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             logger.error(f"Erreur lors de la conversation avec ARIA: {e}")
             return self._simulate_aria_response(message, context, student_profile)
 
@@ -554,7 +548,7 @@ CONTEXTE DE LA SESSION:
                 },
             }
 
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             logger.error(f"Erreur lors de la génération de document: {e}")
             return self._simulate_document_generation(
                 document_type, subject, topic, student_profile
@@ -732,7 +726,7 @@ Format de sortie JSON requis avec questions variées (QCM, Vrai/Faux, réponses 
                 },
             }
 
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             logger.error(f"Erreur lors de la génération de quiz: {e}")
             return self._simulate_quiz_generation(
                 subject, topic, difficulty, num_questions, student_profile
@@ -860,7 +854,7 @@ high contrast, pedagogical diagram
                 "metadata": {"educational": True, "model": self.model_image},
             }
 
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             logger.error(f"Erreur lors de la génération d'image: {e}")
             return self._simulate_image_generation(prompt, style, size)
 
@@ -947,7 +941,7 @@ Sois bienveillant mais rigoureux dans ton analyse.
                 },
             }
 
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             logger.error(f"Erreur lors de l'analyse du travail: {e}")
             return self._simulate_work_analysis(
                 work_content, subject, assignment_type, student_profile

@@ -6,7 +6,7 @@ import logging
 import uuid
 from datetime import datetime, timedelta
 
-from flask import Blueprint, current_app, jsonify, request
+from flask import Blueprint, jsonify, request
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -15,13 +15,12 @@ from flask_jwt_extended import (
     jwt_required,
     verify_jwt_in_request,
 )
-from werkzeug.security import check_password_hash
 
-from ..database import db
-from ..models.user import User
-from ..services.jwt_blacklist import get_jwt_blacklist_service
-from ..utils.rate_limit import auth_rate_limit
-from ..utils.validators import validate_email, validate_password
+from database import db
+from models.user import User
+from services.jwt_blacklist import get_jwt_blacklist_service
+from utils.rate_limit import auth_rate_limit
+from utils.validators import validate_email, validate_password
 
 logger = logging.getLogger(__name__)
 auth_bp = Blueprint("auth", __name__)
@@ -81,7 +80,7 @@ def login():
         user = User.query.filter_by(email=email).first()
 
         if not user or not user.check_password(password):
-            logger.warning(f"Tentative de connexion échouée pour {email}")
+            logger.warning("Tentative de connexion échouée pour {email}")
             return (
                 jsonify(
                     {
@@ -141,7 +140,7 @@ def login():
         user.last_login = datetime.utcnow()
 
         # Création d'une session utilisateur
-        from ..models.user import UserSession
+        from models.user import UserSession
 
         session = UserSession(
             user_id=user.id,
@@ -156,10 +155,10 @@ def login():
 
         try:
             db.session.commit()
-            logger.info(f"Connexion réussie pour {user.email}")
-        except Exception as e:
+            logger.info("Connexion réussie pour {user.email}")
+        except (RuntimeError, OSError, ValueError):
             db.session.rollback()
-            logger.error(f"Erreur lors de la sauvegarde de session: {e}")
+            logger.error("Erreur lors de la sauvegarde de session: {e}")
             return (
                 jsonify(
                     {
@@ -185,8 +184,8 @@ def login():
             200,
         )
 
-    except Exception as e:
-        logger.error(f"Erreur lors de la connexion: {e}")
+    except (ValueError, TypeError, RuntimeError):
+        logger.error("Erreur lors de la connexion: {e}")
         return (
             jsonify(
                 {
@@ -275,7 +274,7 @@ def register():
             )
 
         # Création de l'utilisateur
-        from ..models.user import UserRole, create_user_with_profile
+        from models.user import UserRole, create_user_with_profile
 
         try:
             user_role = UserRole(role)
@@ -299,7 +298,7 @@ def register():
 
             db.session.commit()
 
-            logger.info(f"Nouvel utilisateur créé: {user.email} ({user_role.value})")
+            logger.info("Nouvel utilisateur créé: {user.email} ({user_role.value})")
 
             return (
                 jsonify(
@@ -312,9 +311,9 @@ def register():
                 201,
             )
 
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError):
             db.session.rollback()
-            logger.error(f"Erreur lors de la création de l'utilisateur: {e}")
+            logger.error("Erreur lors de la création de l'utilisateur: {e}")
             return (
                 jsonify(
                     {
@@ -326,8 +325,8 @@ def register():
                 500,
             )
 
-    except Exception as e:
-        logger.error(f"Erreur lors de l'inscription: {e}")
+    except (ValueError, TypeError, RuntimeError):
+        logger.error("Erreur lors de l'inscription: {e}")
         return (
             jsonify(
                 {
@@ -392,7 +391,7 @@ def refresh():
         )
 
         # Mise à jour de la session
-        from ..models.user import UserSession
+        from models.user import UserSession
 
         session = UserSession.query.filter_by(
             user_id=user.id, refresh_token=jwt_data.get("jti")
@@ -416,8 +415,8 @@ def refresh():
             200,
         )
 
-    except Exception as e:
-        logger.error(f"Erreur lors du rafraîchissement: {e}")
+    except (ValueError, TypeError, RuntimeError):
+        logger.error("Erreur lors du rafraîchissement: {e}")
         return (
             jsonify(
                 {
@@ -445,19 +444,19 @@ def logout():
         blacklist_service.add_token_to_blacklist(jti)
 
         # Désactiver la session
-        from ..models.user import UserSession
+        from models.user import UserSession
 
         session = UserSession.query.filter_by(session_token=jti).first()
         if session:
             session.is_active = False
             db.session.commit()
 
-        logger.info(f"Déconnexion réussie pour le token {jti}")
+        logger.info("Déconnexion réussie pour le token {jti}")
 
         return jsonify({"success": True, "message": "Déconnexion réussie"}), 200
 
-    except Exception as e:
-        logger.error(f"Erreur lors de la déconnexion: {e}")
+    except (ValueError, TypeError, RuntimeError):
+        logger.error("Erreur lors de la déconnexion: {e}")
         return (
             jsonify(
                 {
@@ -494,8 +493,8 @@ def get_current_user():
 
         return jsonify({"success": True, "user": user.to_dict()}), 200
 
-    except Exception as e:
-        logger.error(f"Erreur lors de la récupération de l'utilisateur: {e}")
+    except (ValueError, TypeError, RuntimeError):
+        logger.error("Erreur lors de la récupération de l'utilisateur: {e}")
         return (
             jsonify(
                 {
@@ -544,7 +543,7 @@ def validate_token():
             200,
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError):
         return (
             jsonify(
                 {

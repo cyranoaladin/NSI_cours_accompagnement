@@ -2,13 +2,12 @@
 Routes API pour la gestion des visioconférences
 """
 
-from datetime import datetime, timedelta
-from typing import Any, Dict, List
+from datetime import datetime
 
 from flask import Blueprint, current_app, jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
-from ..services.video_conference import (
+from services.video_conference import (
     ConferenceStatus,
     ParticipantRole,
     create_instant_meeting,
@@ -73,8 +72,8 @@ def create_conference():
             }
         )
 
-    except Exception as e:
-        current_app.logger.error(f"Erreur lors de la création de la conférence: {e}")
+    except (RuntimeError, OSError, ValueError):
+        current_app.logger.error("Erreur lors de la création de la conférence: {e}")
         return (
             jsonify(
                 {
@@ -109,7 +108,7 @@ def create_instant_conference():
 
         return jsonify(result)
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         current_app.logger.error(
             f"Erreur lors de la création de la conférence instantanée: {e}"
         )
@@ -153,8 +152,8 @@ def join_conference(room_id):
 
         return jsonify(result)
 
-    except Exception as e:
-        current_app.logger.error(f"Erreur lors de la connexion à la conférence: {e}")
+    except (RuntimeError, OSError, ValueError):
+        current_app.logger.error("Erreur lors de la connexion à la conférence: {e}")
         return (
             jsonify(
                 {
@@ -177,8 +176,8 @@ def leave_conference(room_id):
         result = video_conference_service.leave_conference(room_id, user_id)
         return jsonify(result)
 
-    except Exception as e:
-        current_app.logger.error(f"Erreur lors de la déconnexion de la conférence: {e}")
+    except (RuntimeError, OSError, ValueError):
+        current_app.logger.error("Erreur lors de la déconnexion de la conférence: {e}")
         return (
             jsonify({"success": False, "error": "Erreur lors de la déconnexion"}),
             500,
@@ -201,8 +200,8 @@ def end_conference(room_id):
         result = video_conference_service.end_conference(room_id, teacher_id)
         return jsonify(result)
 
-    except Exception as e:
-        current_app.logger.error(f"Erreur lors de la fin de la conférence: {e}")
+    except (RuntimeError, OSError, ValueError):
+        current_app.logger.error("Erreur lors de la fin de la conférence: {e}")
         return (
             jsonify(
                 {"success": False, "error": "Erreur lors de la fin de la conférence"}
@@ -229,8 +228,8 @@ def get_user_rooms():
 
         return jsonify({"success": True, "rooms": rooms})
 
-    except Exception as e:
-        current_app.logger.error(f"Erreur lors de la récupération des salles: {e}")
+    except (RuntimeError, OSError, ValueError):
+        current_app.logger.error("Erreur lors de la récupération des salles: {e}")
         return (
             jsonify(
                 {"success": False, "error": "Erreur lors de la récupération des salles"}
@@ -251,7 +250,7 @@ def get_room_info(room_id):
 
         return jsonify({"success": True, "room_info": room_info})
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         current_app.logger.error(
             f"Erreur lors de la récupération des informations: {e}"
         )
@@ -322,8 +321,8 @@ def schedule_recurring_conference():
             }
         )
 
-    except Exception as e:
-        current_app.logger.error(f"Erreur lors de la programmation récurrente: {e}")
+    except (RuntimeError, OSError, ValueError):
+        current_app.logger.error("Erreur lors de la programmation récurrente: {e}")
         return (
             jsonify({"success": False, "error": "Erreur lors de la programmation"}),
             500,
@@ -349,7 +348,7 @@ def get_conference_statistics():
 
         return jsonify({"success": True, "statistics": stats})
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         current_app.logger.error(
             f"Erreur lors de la récupération des statistiques: {e}"
         )
@@ -394,7 +393,7 @@ def get_active_conferences():
 
         return jsonify({"success": True, "active_conferences": active_rooms})
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         current_app.logger.error(
             f"Erreur lors de la récupération des conférences actives: {e}"
         )
@@ -426,8 +425,8 @@ def get_quick_link(room_id):
                 400,
             )
 
-    except Exception as e:
-        current_app.logger.error(f"Erreur lors de la génération du lien: {e}")
+    except (RuntimeError, OSError, ValueError):
+        current_app.logger.error("Erreur lors de la génération du lien: {e}")
         return (
             jsonify(
                 {"success": False, "error": "Erreur lors de la génération du lien"}
@@ -488,8 +487,8 @@ def update_conference(room_id):
             }
         )
 
-    except Exception as e:
-        current_app.logger.error(f"Erreur lors de la mise à jour: {e}")
+    except (RuntimeError, OSError, ValueError):
+        current_app.logger.error("Erreur lors de la mise à jour: {e}")
         return (
             jsonify({"success": False, "error": "Erreur lors de la mise à jour"}),
             500,
@@ -538,6 +537,6 @@ def cancel_conference(room_id):
 
         return jsonify({"success": True, "message": "Conférence annulée"})
 
-    except Exception as e:
-        current_app.logger.error(f"Erreur lors de l'annulation: {e}")
+    except (RuntimeError, OSError, ValueError):
+        current_app.logger.error("Erreur lors de l'annulation: {e}")
         return jsonify({"success": False, "error": "Erreur lors de l'annulation"}), 500

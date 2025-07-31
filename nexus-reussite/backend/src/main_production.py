@@ -7,25 +7,25 @@ import os
 from datetime import datetime
 from typing import Any, Dict
 
+import sentry_sdk
+
 # Configuration du logging structuré
 import structlog
 from flask import Flask, jsonify, request, send_from_directory
+from flask_compress import Compress
 from flask_jwt_extended import JWTManager
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_talisman import Talisman
-from flask_compress import Compress
-from werkzeug.exceptions import RequestEntityTooLarge
-import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+from werkzeug.exceptions import RequestEntityTooLarge
 
 # Configuration et initialisation
 from config import get_config, validate_config
 from database import init_app as init_database
 from middleware.cors_enhanced import enhanced_cors
 from middleware.security import security_middleware
-from services.jwt_blacklist import get_jwt_blacklist_service
 
 structlog.configure(
     processors=[
@@ -46,7 +46,6 @@ from services.cache_service import init_cache
 def setup_prometheus_metrics(app):
     from prometheus_client import (
         Counter,
-        Summary,
         generate_latest,
     )
     from prometheus_client.exposition import CONTENT_TYPE_LATEST
@@ -156,11 +155,11 @@ def create_app(config_name=None):  # pylint: disable=unused-argument
     }
 
     talisman.init_app(flask_app, **talisman_config)
-    security_middleware.init_app(flask_app)
+    security_middleware(flask_app)
     logger.info(f"✅ Security headers configured (Production: {is_production})")
 
     # Configuration CORS avec middleware amélioré
-    enhanced_cors.init_app(flask_app)
+    enhanced_cors(flask_app)
 
     # Configuration du service de blacklist JWT
     # blacklist_service = get_jwt_blacklist_service()
@@ -286,7 +285,73 @@ def register_main_routes(flask_app):
                 ),
                 404,
             )
-        except Exception as exc:  # pylint: disable=broad-exception-caught
+
+    @flask_app.route("/parent")
+    def parent_dashboard():
+        """Page tableau de bord parents"""
+        try:
+            return send_from_directory("static/parent", "index.html")
+        except FileNotFoundError:
+            logger.warning("Page parent non trouvée, redirection vers accueil")
+            return send_from_directory("static", "index.html")
+
+    # Routes pour fichiers statiques avec MIME types corrects et sans rate limiting
+    @flask_app.route("/css/<path:filename>")
+    def serve_css(filename):
+        """Serve CSS files with correct MIME type"""
+        try:
+            return send_from_directory(
+                os.path.join(flask_app.root_path, "static", "css"),
+                filename,
+                mimetype='text/css'
+            )
+        except FileNotFoundError:
+            return jsonify({"error": "CSS file not found"}), 404
+
+    @flask_app.route("/components/<path:filename>")
+    def serve_js_components(filename):
+        """Serve JavaScript components with correct MIME type"""
+        try:
+            return send_from_directory(
+                os.path.join(flask_app.root_path, "static", "components"),
+                filename,
+                mimetype='application/javascript'
+            )
+        except FileNotFoundError:
+            return jsonify({"error": "JS component not found"}), 404
+
+    @flask_app.route("/images/<path:filename>")
+    def serve_images(filename):
+        """Serve images with correct MIME type"""
+        try:
+            # Déterminer le MIME type selon l'extension
+            ext = filename.lower().split('.')[-1]
+            mime_types = {
+                'png': 'image/png',
+                'jpg': 'image/jpeg',
+                'jpeg': 'image/jpeg',
+                'gif': 'image/gif',
+                'svg': 'image/svg+xml',
+                'webp': 'image/webp'
+            }
+            mimetype = mime_types.get(ext, 'application/octet-stream')
+
+            return send_from_directory(
+                os.path.join(flask_app.root_path, "static", "images"),
+                filename,
+                mimetype=mimetype
+            )
+        except FileNotFoundError:
+            return jsonify({"error": "Image not found"}), 404
+
+    @flask_app.route("/favicon.ico")
+    def favicon():
+        """Favicon du site"""
+        try:
+            return send_from_directory("static", "favicon.ico", mimetype='image/vnd.microsoft.icon')
+        except FileNotFoundError:
+            return '', 204
+        except (RuntimeError, OSError, ValueError) as exc:  # pylint: disable=broad-exception-caught
             logger.error("Erreur lors du service de la page d'accueil: %s", str(exc))
             return (
                 jsonify(
@@ -333,7 +398,7 @@ def register_main_routes(flask_app):
                 "status": "healthy",
                 "response_time_ms": round(db_response_time, 2),
             }
-        except Exception as exc:
+        except (RuntimeError, OSError, ValueError) as exc:
             logger.error("Base de données non disponible", error=str(exc))
             health_data["services"]["database"] = {
                 "status": "unhealthy",
@@ -349,7 +414,7 @@ def register_main_routes(flask_app):
                 "type": cache_stats["cache_type"],
                 "hit_rate": cache_stats.get("hit_rate", "N/A"),
             }
-        except Exception as exc:
+        except (RuntimeError, OSError, ValueError) as exc:
             health_data["services"]["cache"] = {
                 "status": "unhealthy",
                 "error": str(exc),
@@ -369,7 +434,7 @@ def register_main_routes(flask_app):
                 "average_query_time": round(query_stats["average_time"], 4),
                 "slow_queries_count": query_stats["slow_queries_count"],
             }
-        except Exception:
+        except (RuntimeError, OSError, ValueError):
             pass
 
         # Ressources système
@@ -381,7 +446,7 @@ def register_main_routes(flask_app):
                 ),
             }
             health_data["resources"]["cpu"] = {"usage_percent": psutil.cpu_percent()}
-        except Exception:
+        except (RuntimeError, OSError, ValueError):
             pass
 
         # Statut global
@@ -418,7 +483,7 @@ def register_main_routes(flask_app):
                 200,
             )
 
-        except Exception as exc:
+        except (RuntimeError, OSError, ValueError) as exc:
             logger.error("Readiness check failed", error=str(exc))
             return (
                 jsonify(
@@ -458,7 +523,7 @@ def register_main_routes(flask_app):
                 200,
             )
 
-        except Exception as exc:
+        except (RuntimeError, OSError, ValueError) as exc:
             logger.error("Liveness check failed", error=str(exc))
             return (
                 jsonify(
@@ -504,7 +569,7 @@ def register_main_routes(flask_app):
             )
             response.cache_control.max_age = cache_timeout
             return response
-        except Exception as exc:  # pylint: disable=broad-exception-caught
+        except (RuntimeError, OSError, ValueError) as exc:  # pylint: disable=broad-exception-caught
             logger.error("Erreur lors du service de l'asset %s: %s", filename, exc)
             return jsonify({"error": "Asset not found"}), 404
 
@@ -644,7 +709,7 @@ def register_cli_commands(flask_app):
                 conn.execute(text("SELECT 1")).fetchone()
             click.echo("  ✓ Base de données: CONNECTÉE")
             click.echo(f"  URI: {config.SQLALCHEMY_DATABASE_URI}")
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             click.echo(f"  ✗ Base de données: ÉCHEC ({str(e)})")
 
         # Vérification de Redis
@@ -656,7 +721,7 @@ def register_cli_commands(flask_app):
             click.echo("  ✓ Redis: CONNECTÉ")
             click.echo(f"  URL: {config.REDIS_URL}")
             click.echo(f"  Version: {info.get('redis_version', 'Unknown')}")
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             click.echo(f"  ✗ Redis: ÉCHEC ({str(e)})")
 
         # Vérification des configurations

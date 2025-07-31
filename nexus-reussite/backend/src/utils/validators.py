@@ -24,12 +24,12 @@ def validate_email(email: str) -> bool:
             return False
 
         # Utiliser email-validator pour une validation robuste
-        validated_email = _validate_email(email.strip())
+        _validate_email(email.strip())
         return True
 
     except EmailNotValidError:
         return False
-    except Exception:
+    except (RuntimeError, OSError, ValueError):
         return False
 
 
@@ -252,15 +252,15 @@ def validate_file_upload(file_data: Dict[str, Any]) -> Dict[str, Any]:
 
     # Vérifier l'extension
     allowed_extensions = {
-        "pdf",
+        "pd",
         "doc",
         "docx",
         "txt",
-        "rtf",
+        "rt",
         "jpg",
         "jpeg",
         "png",
-        "gif",
+        "gi",
         "webp",
         "mp4",
         "avi",
@@ -289,13 +289,13 @@ def validate_file_upload(file_data: Dict[str, Any]) -> Dict[str, Any]:
 
     # Vérifier le type MIME
     allowed_mime_types = {
-        "application/pdf",
+        "application/pd",
         "application/msword",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "text/plain",
         "image/jpeg",
         "image/png",
-        "image/gif",
+        "image/gi",
         "image/webp",
         "video/mp4",
         "video/quicktime",

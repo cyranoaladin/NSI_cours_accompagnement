@@ -7,12 +7,10 @@ import json
 import os
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional
 
 from ..models.content_system import (
     BrickType,
     ContentBrick,
-    DocumentRequest,
     LearningStep,
     Subject,
     TargetProfile,
@@ -36,7 +34,7 @@ class ContentBankService:
                     for brick_data in data.get("bricks", []):
                         brick = ContentBrick.from_dict(brick_data)
                         self.bricks[brick.id] = brick
-            except Exception as e:
+            except (RuntimeError, OSError, ValueError) as e:
                 print(f"Erreur lors du chargement des données: {e}")
                 self._initialize_sample_data()
         else:
@@ -51,7 +49,7 @@ class ContentBankService:
             }
             with open(self.data_file, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             print(f"Erreur lors de la sauvegarde: {e}")
 
     def _initialize_sample_data(self):

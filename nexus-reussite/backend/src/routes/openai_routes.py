@@ -1,13 +1,11 @@
 import asyncio
-import json
 import logging
 from datetime import datetime
-from typing import Any, Dict
 
-from flask import Blueprint, current_app, jsonify, request
+from flask import Blueprint, jsonify, request
 from flask_cors import cross_origin
 
-from ..services.openai_integration import (
+from services.openai_integration import (
     ConversationContext,
     StudentProfile,
     chat_with_aria,
@@ -44,7 +42,7 @@ def health_check():
 
         return jsonify(status), 200
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error(f"Erreur lors de la vérification de santé: {e}")
         return jsonify({"error": "Service unavailable"}), 503
 
@@ -97,7 +95,7 @@ def chat_endpoint():
         finally:
             loop.close()
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error(f"Erreur dans le chat endpoint: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
@@ -170,7 +168,7 @@ def advanced_chat_endpoint():
         finally:
             loop.close()
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error(f"Erreur dans l'advanced chat endpoint: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
@@ -218,7 +216,7 @@ def generate_document_endpoint():
         finally:
             loop.close()
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error(f"Erreur dans la génération de document: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
@@ -279,7 +277,7 @@ def generate_advanced_document_endpoint():
         finally:
             loop.close()
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error(f"Erreur dans la génération avancée de document: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
@@ -342,7 +340,7 @@ def generate_quiz_endpoint():
         finally:
             loop.close()
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error(f"Erreur dans la génération de quiz: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
@@ -409,7 +407,7 @@ def generate_advanced_quiz_endpoint():
         finally:
             loop.close()
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error(f"Erreur dans la génération avancée de quiz: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
@@ -460,7 +458,7 @@ def generate_image_endpoint():
         finally:
             loop.close()
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error(f"Erreur dans la génération d'image: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
@@ -525,7 +523,7 @@ def analyze_work_endpoint():
         finally:
             loop.close()
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error(f"Erreur dans l'analyse de travail: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
@@ -548,7 +546,7 @@ def usage_stats_endpoint():
             200,
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error(f"Erreur lors de la récupération des statistiques: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
@@ -612,7 +610,7 @@ def available_models_endpoint():
             200,
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error(f"Erreur lors de la récupération des modèles: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
@@ -657,7 +655,7 @@ def save_conversation_context():
             200,
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error(f"Erreur lors de la sauvegarde du contexte: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
@@ -690,7 +688,7 @@ def get_conversation_context(session_id):
 
         return jsonify({"success": True, "data": demo_context, "found": True}), 200
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error(f"Erreur lors de la récupération du contexte: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
@@ -740,7 +738,7 @@ def submit_feedback():
             200,
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error(f"Erreur lors de la soumission du feedback: {e}")
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 

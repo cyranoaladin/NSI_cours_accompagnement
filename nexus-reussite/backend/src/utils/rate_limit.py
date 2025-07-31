@@ -3,10 +3,8 @@ Utilitaires de limitation de taux pour Nexus Réussite
 """
 
 import logging
-import time
 from typing import Optional
 
-from flask import request
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
@@ -15,8 +13,6 @@ logger = logging.getLogger(__name__)
 
 class RateLimitExceeded(Exception):
     """Exception levée quand la limite de taux est dépassée."""
-
-    pass
 
 
 class RateLimiter:
@@ -129,27 +125,29 @@ def get_user_id():
         user_id = get_jwt_identity()
         if user_id:
             return f"user:{user_id}"
-    except Exception:
+    except (RuntimeError, OSError, ValueError):
         pass
 
     # Fallback sur l'adresse IP
     return get_remote_address()
 
 
-# Limiteur principal pour les routes d'authentification
+# Limiteur principal pour les routes d'authentification - plus permissif
 auth_rate_limit = Limiter(
-    key_func=get_remote_address, default_limits=["100 per day", "20 per hour"]
+    key_func=get_remote_address,
+    default_limits=["2000 per day", "200 per hour"]
 )
 
-# Limiteur pour les routes API générales
+# Limiteur pour les routes API générales - très permissif
 api_rate_limit = Limiter(
     key_func=get_user_id,
-    default_limits=["1000 per day", "100 per hour", "10 per minute"],
+    default_limits=["10000 per day", "1000 per hour", "100 per minute"]
 )
 
-# Limiteur strict pour les opérations sensibles
+# Limiteur strict pour les opérations sensibles seulement
 strict_rate_limit = Limiter(
-    key_func=get_user_id, default_limits=["50 per day", "10 per hour", "1 per minute"]
+    key_func=get_user_id,
+    default_limits=["200 per day", "50 per hour", "5 per minute"]
 )
 
 
@@ -171,7 +169,7 @@ def init_rate_limiting(app):
 
         logger.info("Rate limiting initialisé avec succès")
 
-    except Exception as e:
-        logger.error(f"Erreur lors de l'initialisation du rate limiting: {e}")
+    except (ValueError, TypeError, RuntimeError):
+        logger.error("Erreur lors de l'initialisation du rate limiting: {e}")
         # En cas d'erreur, utiliser la limitation en mémoire
         logger.warning("Utilisation de la limitation en mémoire")

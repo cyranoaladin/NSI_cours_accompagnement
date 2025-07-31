@@ -7,15 +7,12 @@ import base64
 import hashlib
 import hmac
 import json
+import os
 import time
-import uuid
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional
 from urllib.parse import urlencode
-
-import requests
 
 
 class ConferenceStatus(Enum):
@@ -91,7 +88,13 @@ class VideoConferenceService:
         """Génère un ID unique pour une salle"""
         timestamp = int(time.time())
         unique_string = f"{teacher_id}_{subject}_{timestamp}"
-        return hashlib.md5(unique_string.encode()).hexdigest()[:12]
+
+        # Ajout d'un salt optionnel pour renforcer la sécurité
+        salt = os.getenv("HASH_SALT", "")
+        if salt:
+            unique_string = salt + unique_string
+
+        return hashlib.sha256(unique_string.encode()).hexdigest()[:12]
 
     def generate_jwt_token(
         self,
@@ -112,7 +115,7 @@ class VideoConferenceService:
             "iss": self.app_id,
             "aud": "jitsi",
             "exp": now + 3600,  # Expire dans 1 heure
-            "nbf": now - 10,  # Valide depuis 10 secondes avant
+            "nb": now - 10,  # Valide depuis 10 secondes avant
             "sub": self.jitsi_domain,
             "room": room_name,
             "context": {

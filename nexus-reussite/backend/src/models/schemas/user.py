@@ -5,9 +5,8 @@ Schémas de validation pour les modèles utilisateur
 from marshmallow import Schema, ValidationError, fields, post_load, pre_load, validate
 from marshmallow_enum import EnumField
 
-from ..user import AcademicLevel, LearningStyle, UserRole, UserStatus
+from ..user import UserRole, UserStatus
 from .base import (
-    BaseSchema,
     TimestampSchema,
     validate_email,
     validate_json_dict,

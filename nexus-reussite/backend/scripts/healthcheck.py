@@ -4,7 +4,6 @@ Health check script for Nexus Réussite Backend Docker container
 """
 
 import os
-import sys
 from urllib.parse import urljoin
 
 import requests
@@ -37,7 +36,7 @@ def health_check():
     except requests.exceptions.RequestException as e:
         print(f"❌ Health check failed with error: {e}")
         return 1
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         print(f"❌ Unexpected error during health check: {e}")
         return 1
 

@@ -5,7 +5,6 @@ Gestion des migrations de base de données avec Alembic
 """
 
 import os
-import sys
 from pathlib import Path
 
 # Ajouter le répertoire du projet au Python path

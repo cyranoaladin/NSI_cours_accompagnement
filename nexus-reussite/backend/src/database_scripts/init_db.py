@@ -4,10 +4,6 @@ Script d'initialisation avec données de démonstration
 """
 
 import os
-import sys
-from datetime import datetime, timedelta
-
-from werkzeug.security import generate_password_hash
 
 # Ajouter le répertoire parent au path
 sys.path.append(
@@ -49,9 +45,12 @@ def create_demo_data():
     print("👥 Création des utilisateurs de démonstration...")
 
     # === ADMINISTRATEURS ===
+    admin_password = os.getenv(
+        "ADMIN_PASSWORD", "admin123"
+    )  # Use env var in production
     admin = User(
         email="admin@nexus-reussite.com",
-        password="admin123",
+        password=admin_password,
         first_name="Admin",
         last_name="Nexus",
         role=UserRole.ADMIN,
@@ -157,7 +156,7 @@ def create_demo_data():
         {
             "email": "youssef.trabelsi@email.com",
             "password": "demo123",
-            "first_name": "Youssef",
+            "first_name": "Yousse",
             "last_name": "Trabelsi",
             "academic_level": AcademicLevel.TERMINALE,
             "specialties": ["Mathématiques", "NSI"],

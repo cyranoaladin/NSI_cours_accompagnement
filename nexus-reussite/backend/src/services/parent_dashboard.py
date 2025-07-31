@@ -1,18 +1,14 @@
-import json
 from datetime import date, datetime, timedelta
 
 from src.models.formulas import (
     Enrollment,
-    Formula,
     Group,
     GroupSession,
     IndividualSession,
-    SessionAttendance,
     StudentObjective,
     Teacher,
-    WeeklyReport,
 )
-from src.models.student import Assessment, LearningSession, Student
+from src.models.student import Assessment, Student
 
 
 class ParentDashboardService:
@@ -73,7 +69,7 @@ class ParentDashboardService:
             }
 
             return overview
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             print(f"Erreur dans get_student_overview: {e}")
             return None
 
@@ -146,7 +142,7 @@ class ParentDashboardService:
                     }
 
             return next_session
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             print(f"Erreur dans get_next_session: {e}")
             return None
 
@@ -195,7 +191,7 @@ class ParentDashboardService:
                     )
 
             return stats
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             print(f"Erreur dans get_monthly_stats: {e}")
             return {
                 "sessions_this_month": 0,
@@ -233,7 +229,7 @@ class ParentDashboardService:
                     else 0
                 ),
             }
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             print(f"Erreur dans get_objectives_progress: {e}")
             return {
                 "total_objectives": 0,
@@ -253,7 +249,7 @@ class ParentDashboardService:
                     "confidence": 85,
                     "styles": [
                         {"style": "Visuel", "score": 85},
-                        {"style": "Auditif", "score": 60},
+                        {"style": "Auditi", "score": 60},
                         {"style": "Kinesthésique", "score": 45},
                         {"style": "Lecture/Écriture", "score": 75},
                     ],
@@ -280,7 +276,7 @@ class ParentDashboardService:
                 "styles": [{"style": k, "score": v} for k, v in styles.items()],
                 "recommendations": profile.get("recommendations", []),
             }
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             print(f"Erreur dans get_learning_style_analysis: {e}")
             return None
 
@@ -329,7 +325,7 @@ class ParentDashboardService:
                     subject_data["status"] = "À revoir"
 
             return list(subjects_progress.values())
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             print(f"Erreur dans get_subject_progress: {e}")
             return []
 
@@ -394,7 +390,7 @@ class ParentDashboardService:
             # Trier par timestamp et limiter
             notifications.sort(key=lambda x: x["timestamp"], reverse=True)
             return notifications[:limit]
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             print(f"Erreur dans get_recent_notifications: {e}")
             return []
 
@@ -469,7 +465,7 @@ class ParentDashboardService:
                 chart_data.append(data_point)
 
             return chart_data
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             print(f"Erreur dans get_progress_chart_data: {e}")
             # Données par défaut en cas d'erreur
             return [
@@ -538,6 +534,6 @@ class ParentDashboardService:
 
             confidence = sum(factors[key] * weights[key] for key in factors)
             return min(100, max(0, round(confidence)))
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             print(f"Erreur dans calculate_aria_confidence: {e}")
             return 94  # Valeur par défaut

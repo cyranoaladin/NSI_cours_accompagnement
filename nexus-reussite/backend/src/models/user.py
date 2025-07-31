@@ -4,12 +4,10 @@ Modèle utilisateur pour la plateforme NSI
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, Optional
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from ..database import db
-from .base import BaseModel, SoftDeleteMixin
+from database import db
 
 
 class UserRole(Enum):
@@ -149,7 +147,7 @@ class User(db.Model):
 
     @property
     def is_active(self):
-        """Vérifie si l'utilisateur est actif"""
+        """Vérifie si l'utilisateur est acti"""
         return self.status == UserStatus.ACTIVE
 
     def to_dict(self, include_sensitive=False):  # pylint: disable=unused-argument

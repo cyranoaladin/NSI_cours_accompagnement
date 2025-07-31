@@ -8,7 +8,7 @@ import logging
 import os
 import random
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Dict, List, Optional, Any
 
 # Configuration du logging
 logger = logging.getLogger(__name__)
@@ -164,7 +164,6 @@ class ARIAService:
                 logger.info("Service ARIA initialisé avec OpenAI API")
             else:
                 # Ne pas afficher d'avertissement en mode test
-                import os
 
                 if os.environ.get("FLASK_ENV") != "testing":
                     logger.warning("Clé OpenAI non configurée - Mode simulation activé")
@@ -172,7 +171,7 @@ class ARIAService:
         except ImportError:
             logger.error("Package openai non installé - Mode simulation activé")
             self.has_openai = False
-        except Exception as exc:  # pylint: disable=broad-exception-caught
+        except (RuntimeError, OSError, ValueError) as exc:  # pylint: disable=broad-exception-caught
             logger.error(
                 "Erreur initialisation OpenAI: %s - Mode simulation activé", exc
             )
@@ -261,7 +260,7 @@ class ARIAService:
                 },
             }
 
-        except Exception as exc:  # pylint: disable=broad-exception-caught
+        except (RuntimeError, OSError, ValueError) as exc:  # pylint: disable=broad-exception-caught
             logger.error("Erreur OpenAI API: %s", exc)
             return self._generate_fallback_response(message, student_profile, context)
 
@@ -304,7 +303,7 @@ class ARIAService:
             "spécialisé dans l'accompagnement des élèves du système français "
             f"en Tunisie.\n\nPROFIL DE L'ÉLÈVE:\n- Niveau: {grade_level}\n"
             f"- Style d'apprentissage: {learning_style}\n\n"
-            f"CARACTÉRISTIQUES DE TES RÉPONSES:\n- Adapte ton langage au "
+            "CARACTÉRISTIQUES DE TES RÉPONSES:\n- Adapte ton langage au "
             f"niveau {grade_level}\n- Utilise des approches {learning_style} "
             "dans tes explications\n- Sois encourageant et bienveillant\n"
             "- Propose des solutions concrètes et personnalisées\n- Reste "
@@ -364,7 +363,7 @@ class ARIAService:
         self, student_profile: Dict, subject: str, topic: str
     ) -> Dict[str, Any]:
         """Génère du contenu personnalisé pour un sujet donné"""
-        learning_style = student_profile.get("learning_style", "adaptatif")
+        learning_style = student_profile.get("learning_style", "adaptati")
         difficulty_level = student_profile.get("difficulty_level", "intermediate")
 
         if self.has_openai:
@@ -379,9 +378,9 @@ class ARIAService:
         """Génère du contenu avec OpenAI"""
         try:
             prompt = (
-                f"Génère du contenu éducatif personnalisé pour:\n"
+                "Génère du contenu éducatif personnalisé pour:\n"
                 f"- Sujet: {topic} en {subject}\n"
-                f"- Style d'apprentissage: "
+                "- Style d'apprentissage: "
                 f"{student_profile.get('learning_style')}\n"
                 f"- Niveau: {student_profile.get('grade_level', 'terminale')}\n\n"
                 "Inclus:\n1. Une explication adaptée (100 mots max)\n"
@@ -411,7 +410,7 @@ class ARIAService:
                 "personalized": True,
             }
 
-        except Exception as exc:  # pylint: disable=broad-exception-caught
+        except (RuntimeError, OSError, ValueError) as exc:  # pylint: disable=broad-exception-caught
             logger.error("Erreur génération contenu OpenAI: %s", exc)
             return self._generate_fallback_content(
                 student_profile.get("learning_style"),

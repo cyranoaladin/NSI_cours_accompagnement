@@ -1,9 +1,7 @@
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, Optional
 
-from ..database import db
-from .base import BaseModel, SoftDeleteMixin
+from database import db
 
 
 class FormulaType(Enum):

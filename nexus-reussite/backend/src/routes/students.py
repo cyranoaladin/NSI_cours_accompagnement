@@ -1,11 +1,11 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask import Blueprint, jsonify, request
 from flask_cors import cross_origin
 from sqlalchemy import or_
 
-from src.models.student import Assessment, LearningSession, Student, db
+from models.student import Assessment, LearningSession, Student, db
 
 students_bp = Blueprint("students", __name__)
 
@@ -74,7 +74,7 @@ def register_student():
             201,
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         db.session.rollback()
         return jsonify({"error": f"Erreur lors de l'inscription: {str(e)}"}), 500
 
@@ -92,8 +92,8 @@ def get_student(student_id):
 
         return jsonify({"success": True, "student": student.to_dict()})
 
-    except Exception as e:
-        return jsonify({"error": f"Erreur lors de la récupération: {str(e)}"}), 500
+    except (ValueError, JSONDecodeError) as e:
+        ify({"error": f"Erreur lors de la récupération: {str(e)}"}), 500
 
 
 @students_bp.route("/<int:student_id>", methods=["PUT"])
@@ -135,7 +135,7 @@ def update_student(student_id):
             }
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         db.session.rollback()
         return jsonify({"error": f"Erreur lors de la mise à jour: {str(e)}"}), 500
 
@@ -212,7 +212,7 @@ def list_students():
             }
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         return (
             jsonify({"error": f"Erreur lors de la récupération de la liste: {str(e)}"}),
             500,
@@ -286,7 +286,7 @@ def get_student_sessions(student_id):
             }
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         return (
             jsonify(
                 {"error": f"Erreur lors de la récupération des sessions: {str(e)}"}
@@ -364,7 +364,7 @@ def get_student_assessments(student_id):
             }
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         return (
             jsonify(
                 {"error": f"Erreur lors de la récupération des évaluations: {str(e)}"}
@@ -385,7 +385,6 @@ def get_student_dashboard(student_id):
             return jsonify({"error": "Étudiant non trouvé"}), 404
 
         # Sessions récentes (7 derniers jours)
-        from datetime import timedelta
 
         week_ago = datetime.utcnow() - timedelta(days=7)
 
@@ -484,7 +483,7 @@ def get_student_dashboard(student_id):
             }
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         return (
             jsonify(
                 {
@@ -581,7 +580,7 @@ def deactivate_student(student_id):
 
         return jsonify({"success": True, "message": "Étudiant désactivé avec succès"})
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         db.session.rollback()
         return jsonify({"error": f"Erreur lors de la désactivation: {str(e)}"}), 500
 
@@ -650,7 +649,7 @@ def get_global_statistics():
             }
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         return (
             jsonify(
                 {"error": f"Erreur lors de la récupération des statistiques: {str(e)}"}

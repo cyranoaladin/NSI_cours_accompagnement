@@ -3,10 +3,8 @@ Service de base de données documentaire pour ARIA
 Permet à l'IA d'accéder à une base de connaissances structurée
 """
 
-import json
 import sqlite3
-from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 
 
 class DocumentDatabase:
@@ -125,7 +123,7 @@ class DocumentDatabase:
                 "document_type": "methodologie",
                 "tags": "dissertation,methodologie,plan,argumentation",
                 "difficulty_level": 2,
-                "url": "/documents/francais/methodologie-dissertation.pdf",
+                "url": "/documents/francais/methodologie-dissertation.pd",
             },
         ]
 
@@ -287,7 +285,7 @@ class DocumentDatabase:
         subject = student_profile.get("current_subject", "mathematiques")
         grade_level = student_profile.get("grade_level", "terminale")
         difficulty = student_profile.get("difficulty_preference", 3)
-        learning_style = student_profile.get("learning_style", "visual")
+        student_profile.get("learning_style", "visual")
 
         recommendations = {"documents": [], "exercises": [], "links": []}
 

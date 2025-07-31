@@ -2,14 +2,12 @@
 Routes API pour la gestion des WebSockets et notifications
 """
 
-import json
-from datetime import datetime, timedelta
-from typing import Any, Dict, List
+from datetime import datetime
 
 from flask import Blueprint, current_app, jsonify, request
-from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
-from ..services.websocket_service import (
+from services.websocket_service import (
     Notification,
     NotificationType,
     UserRole,
@@ -48,7 +46,7 @@ def get_notifications():
             }
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         current_app.logger.error(
             f"Erreur lors de la récupération des notifications: {e}"
         )
@@ -80,7 +78,7 @@ def mark_notification_read(notification_id):
         else:
             return jsonify({"success": False, "error": "Notification non trouvée"}), 404
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         current_app.logger.error(f"Erreur lors du marquage de la notification: {e}")
         return (
             jsonify(
@@ -115,7 +113,7 @@ def mark_all_notifications_read():
             }
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         current_app.logger.error(f"Erreur lors du marquage des notifications: {e}")
         return (
             jsonify(
@@ -127,7 +125,7 @@ def mark_all_notifications_read():
 
 @websocket_bp.route("/send-notification", methods=["POST"])
 @jwt_required()
-def send_notification():
+async def send_notification():
     """Envoie une notification (pour les enseignants et admins)"""
     try:
         current_user = get_jwt_identity()
@@ -181,7 +179,7 @@ def send_notification():
                 500,
             )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         current_app.logger.error(f"Erreur lors de l'envoi de la notification: {e}")
         return (
             jsonify(
@@ -193,7 +191,7 @@ def send_notification():
 
 @websocket_bp.route("/broadcast", methods=["POST"])
 @jwt_required()
-def broadcast_notification():
+async def broadcast_notification():
     """Diffuse une notification à tous les utilisateurs d'un rôle (admin seulement)"""
     try:
         current_user = get_jwt_identity()
@@ -250,7 +248,7 @@ def broadcast_notification():
             }
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         current_app.logger.error(f"Erreur lors de la diffusion: {e}")
         return jsonify({"success": False, "error": "Erreur lors de la diffusion"}), 500
 
@@ -306,7 +304,7 @@ def get_active_connections():
 
         return jsonify({"success": True, "data": connections_stats})
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         current_app.logger.error(f"Erreur lors de la récupération des connexions: {e}")
         return (
             jsonify(
@@ -321,7 +319,7 @@ def get_active_connections():
 
 @websocket_bp.route("/test-notification", methods=["POST"])
 @jwt_required()
-def test_notification():
+async def test_notification():
     """Envoie une notification de test (développement seulement)"""
     try:
         current_user = get_jwt_identity()
@@ -352,7 +350,7 @@ def test_notification():
             }
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         current_app.logger.error(f"Erreur lors du test de notification: {e}")
         return (
             jsonify({"success": False, "error": "Erreur lors du test de notification"}),
@@ -365,7 +363,7 @@ def test_notification():
 
 @websocket_bp.route("/student-progress", methods=["POST"])
 @jwt_required()
-def notify_student_progress():
+async def notify_student_progress():
     """Notifie la progression d'un élève"""
     try:
         current_user = get_jwt_identity()
@@ -406,14 +404,14 @@ def notify_student_progress():
                     },
                 )
                 await websocket_service.send_notification(parent_notification)
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             current_app.logger.warning(f"Impossible de notifier le parent: {e}")
 
         return jsonify(
             {"success": success, "message": "Notification de progression envoyée"}
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         current_app.logger.error(f"Erreur lors de la notification de progression: {e}")
         return (
             jsonify({"success": False, "error": "Erreur lors de la notification"}),
@@ -423,7 +421,7 @@ def notify_student_progress():
 
 @websocket_bp.route("/achievement", methods=["POST"])
 @jwt_required()
-def notify_achievement():
+async def notify_achievement():
     """Notifie qu'un élève a débloqué une réussite"""
     try:
         data = request.get_json()
@@ -444,7 +442,7 @@ def notify_achievement():
             {"success": success, "message": "Notification de réussite envoyée"}
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         current_app.logger.error(f"Erreur lors de la notification de réussite: {e}")
         return (
             jsonify({"success": False, "error": "Erreur lors de la notification"}),
@@ -454,7 +452,7 @@ def notify_achievement():
 
 @websocket_bp.route("/teacher-message", methods=["POST"])
 @jwt_required()
-def send_teacher_message():
+async def send_teacher_message():
     """Envoie un message d'enseignant à un élève"""
     try:
         current_user = get_jwt_identity()
@@ -483,7 +481,7 @@ def send_teacher_message():
 
         return jsonify({"success": success, "message": "Message envoyé à l'élève"})
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         current_app.logger.error(f"Erreur lors de l'envoi du message: {e}")
         return (
             jsonify({"success": False, "error": "Erreur lors de l'envoi du message"}),
@@ -493,7 +491,7 @@ def send_teacher_message():
 
 @websocket_bp.route("/system-alert", methods=["POST"])
 @jwt_required()
-def send_system_alert():
+async def send_system_alert():
     """Envoie une alerte système (admin seulement)"""
     try:
         current_user = get_jwt_identity()
@@ -531,7 +529,7 @@ def send_system_alert():
             }
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         current_app.logger.error(f"Erreur lors de l'envoi de l'alerte: {e}")
         return (
             jsonify({"success": False, "error": "Erreur lors de l'envoi de l'alerte"}),
@@ -586,7 +584,7 @@ def get_notification_stats():
 
         return jsonify({"success": True, "stats": stats})
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         current_app.logger.error(
             f"Erreur lors de la récupération des statistiques: {e}"
         )

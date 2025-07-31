@@ -7,8 +7,8 @@ from datetime import datetime
 
 from flask import Blueprint, jsonify, request
 
-from ..services.aria_ai import ARIAService
-from ..services.document_database import DocumentDatabase
+from services.aria_ai import ARIAService
+from services.document_database import DocumentDatabase
 
 # Configuration du logging
 logger = logging.getLogger(__name__)
@@ -73,7 +73,7 @@ def chat_with_aria():
 
     except (ValueError, KeyError) as e:
         return jsonify({"error": f"Invalid request data: {str(e)}"}), 400
-    except Exception as e:  # pylint: disable=broad-exception-caught
+    except (RuntimeError, OSError, ValueError) as e:  # pylint: disable=broad-exception-caught
         logger.error("Error in chat_with_aria: %s", str(e))
         return jsonify({"error": "Internal server error"}), 500
 
@@ -100,7 +100,7 @@ def get_recommendations():
 
     except (ValueError, KeyError) as e:
         return jsonify({"error": f"Invalid request data: {str(e)}"}), 400
-    except Exception as e:  # pylint: disable=broad-exception-caught
+    except (RuntimeError, OSError, ValueError) as e:  # pylint: disable=broad-exception-caught
         logger.error("Error in get_recommendations: %s", str(e))
         return jsonify({"error": "Internal server error"}), 500
 
@@ -130,7 +130,7 @@ def search_documents():
 
     except (ValueError, KeyError) as e:
         return jsonify({"error": f"Invalid request data: {str(e)}"}), 400
-    except Exception as e:  # pylint: disable=broad-exception-caught
+    except (RuntimeError, OSError, ValueError) as e:  # pylint: disable=broad-exception-caught
         logger.error("Error in search_documents: %s", str(e))
         return jsonify({"error": "Internal server error"}), 500
 
@@ -173,7 +173,7 @@ def add_document():
 
     except (ValueError, KeyError) as e:
         return jsonify({"error": f"Invalid request data: {str(e)}"}), 400
-    except Exception as e:  # pylint: disable=broad-exception-caught
+    except (RuntimeError, OSError, ValueError) as e:  # pylint: disable=broad-exception-caught
         logger.error("Error in add_document: %s", str(e))
         return jsonify({"error": "Internal server error"}), 500
 
@@ -192,7 +192,7 @@ def analyze_learning_style():
 
     except (ValueError, KeyError) as e:
         return jsonify({"error": f"Invalid request data: {str(e)}"}), 400
-    except Exception as e:  # pylint: disable=broad-exception-caught
+    except (RuntimeError, OSError, ValueError) as e:  # pylint: disable=broad-exception-caught
         logger.error("Error in analyze_learning_style: %s", str(e))
         return jsonify({"error": "Internal server error"}), 500
 
@@ -248,7 +248,7 @@ def generate_study_plan():
 
     except (ValueError, KeyError) as e:
         return jsonify({"error": f"Invalid request data: {str(e)}"}), 400
-    except Exception as e:  # pylint: disable=broad-exception-caught
+    except (RuntimeError, OSError, ValueError) as e:  # pylint: disable=broad-exception-caught
         logger.error("Error in generate_study_plan: %s", str(e))
         return jsonify({"error": "Internal server error"}), 500
 
@@ -271,7 +271,7 @@ def evaluate_progress():
 
     except (ValueError, KeyError) as e:
         return jsonify({"error": f"Invalid request data: {str(e)}"}), 400
-    except Exception as e:  # pylint: disable=broad-exception-caught
+    except (RuntimeError, OSError, ValueError) as e:  # pylint: disable=broad-exception-caught
         logger.error("Error in evaluate_progress: %s", str(e))
         return jsonify({"error": "Internal server error"}), 500
 
@@ -290,6 +290,6 @@ def health_check():
             }
         )
 
-    except Exception as e:  # pylint: disable=broad-exception-caught
+    except (RuntimeError, OSError, ValueError) as e:  # pylint: disable=broad-exception-caught
         logger.error("Error in health_check: %s", str(e))
         return jsonify({"status": "error", "error": "Internal server error"}), 500

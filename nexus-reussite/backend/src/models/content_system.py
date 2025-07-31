@@ -3,12 +3,10 @@ Modèles pour le système de production de contenu personnalisé
 Nexus Réussite - Content Management System
 """
 
-import json
-from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
-from ..database import db
+from database import db
 from .base import BaseModel, SoftDeleteMixin
 
 

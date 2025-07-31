@@ -1,57 +1,55 @@
-import React, { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button.jsx'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
-import { Badge } from '@/components/ui/badge.jsx'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.jsx'
-import { 
-  BookOpen, 
-  Brain, 
-  Trophy, 
-  Star, 
-  Clock, 
-  Target, 
-  TrendingUp,
-  MessageCircle,
-  Calendar,
-  FileText,
-  Award,
-  Zap,
-  Users,
-  GraduationCap,
-  BarChart3,
-  CheckCircle,
-  ArrowRight,
-  Play,
-  MapPin,
-  Phone,
-  Mail,
-  Globe,
-  Facebook,
-  Instagram,
-  Youtube,
-  Linkedin,
-  Code2,
-  Presentation,
-  Calculator,
+import { Badge } from '@/components/ui/badge.jsx';
+import { Button } from '@/components/ui/button.jsx';
+import { Card } from '@/components/ui/card.jsx';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.jsx';
+import {
   Atom,
-  PenTool,
+  Award,
+  BookOpen,
+  Brain,
+  Calculator,
+  Calendar,
+  Car,
+  CheckCircle,
+  Clock,
+  Code2,
+  Coffee,
+  Eye,
+  Facebook,
+  Globe,
+  GraduationCap,
+  Instagram,
   Lightbulb,
+  Linkedin,
+  Mail,
+  MapPin,
+  Menu,
+  MessageCircle,
+  Monitor,
+  Navigation,
+  PenTool,
+  Phone,
+  Play,
+  Presentation,
+  Quote,
+  Rocket,
   Shield,
   Sparkles,
-  Rocket,
-  Heart,
-  ChevronRight,
-  Quote,
-  Eye,
-  Monitor,
-  Coffee,
-  Navigation,
-  Car
-} from 'lucide-react'
+  Star,
+  Target,
+  TrendingUp,
+  Trophy,
+  Users,
+  X,
+  Youtube
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import Logo from './Logo';
 
 const LandingPage = ({ onLogin }) => {
   const [activeTab, setActiveTab] = useState('individuel');
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const testimonials = [
     {
@@ -129,8 +127,87 @@ const LandingPage = ({ onLogin }) => {
 
   return (
     <div className="min-h-screen">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 header-blur border-b border-gray-200/50 shadow-sm">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <div className="flex items-center">
+              <Logo size="small" className="h-10" />
+            </div>
+
+            {/* Navigation */}
+            <nav className="hidden md:flex items-center space-x-8">
+              <a href="#formations" className="nav-link text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                Formations
+              </a>
+              <a href="#professeurs" className="nav-link text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                Professeurs
+              </a>
+              <a href="#temoignages" className="nav-link text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                Témoignages
+              </a>
+              <a href="#contact" className="nav-link text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                Contact
+              </a>
+            </nav>
+
+            {/* Actions Desktop */}
+            <div className="hidden md:flex items-center space-x-4">
+              <Button variant="outline" size="sm" onClick={() => window.location.href = '/auth'}>
+                Connexion
+              </Button>
+              <Button size="sm" onClick={() => window.location.href = '/auth'}>
+                S'inscrire
+              </Button>
+            </div>
+
+            {/* Menu Hamburger Mobile */}
+            <div className="md:hidden">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Menu Mobile */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-gray-200 bg-white mobile-menu-enter">
+            <div className="px-4 py-4 space-y-4">
+              <nav className="flex flex-col space-y-4">
+                <a href="#formations" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                  Formations
+                </a>
+                <a href="#professeurs" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                  Professeurs
+                </a>
+                <a href="#temoignages" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                  Témoignages
+                </a>
+                <a href="#contact" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                  Contact
+                </a>
+              </nav>
+              <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
+                <Button variant="outline" onClick={() => window.location.href = '/auth'}>
+                  Connexion
+                </Button>
+                <Button onClick={() => window.location.href = '/auth'}>
+                  S'inscrire
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </header>
+
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900 py-20 lg:py-32">
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900 pt-32 pb-20 lg:pt-40 lg:pb-32">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         <div className="container mx-auto px-4 relative">
           <div className="max-w-4xl mx-auto text-center">
@@ -167,17 +244,17 @@ const LandingPage = ({ onLogin }) => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="nexus-button-primary text-lg px-8 py-4"
                 onClick={() => scrollToSection('offres')}
               >
                 <CheckCircle className="w-5 h-5 mr-2" />
                 Bilan de Positionnement Gratuit
               </Button>
-              <Button 
-                variant="outline" 
-                size="lg" 
+              <Button
+                variant="outline"
+                size="lg"
                 className="text-lg px-8 py-4"
                 onClick={() => onLogin('student')}
               >
@@ -238,7 +315,7 @@ const LandingPage = ({ onLogin }) => {
               </div>
               <h3 className="text-xl font-bold mb-4">Accompagnement Présentiel</h3>
               <p className="text-muted-foreground mb-6">
-                Cours en face-à-face avec nos professeurs certifiés et agrégés. 
+                Cours en face-à-face avec nos professeurs certifiés et agrégés.
                 Interaction humaine, motivation et suivi personnalisé.
               </p>
             </Card>
@@ -249,7 +326,7 @@ const LandingPage = ({ onLogin }) => {
               </div>
               <h3 className="text-xl font-bold mb-4">Plateforme Intelligente 24/7</h3>
               <p className="text-muted-foreground mb-6">
-                IA ARIA disponible en permanence, ressources documentaires, 
+                IA ARIA disponible en permanence, ressources documentaires,
                 exercices adaptatifs et suivi de progression en temps réel.
               </p>
             </Card>
@@ -260,7 +337,7 @@ const LandingPage = ({ onLogin }) => {
               </div>
               <h3 className="text-xl font-bold mb-4">Personnalisation Maximale</h3>
               <p className="text-muted-foreground mb-6">
-                Diagnostic offert au départ, gamification, progression visible et 
+                Diagnostic offert au départ, gamification, progression visible et
                 bilans réguliers pour un accompagnement sur mesure.
               </p>
             </Card>
@@ -425,7 +502,7 @@ const LandingPage = ({ onLogin }) => {
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold mb-6">Nos Formules & Offres</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Des parcours adaptés à chaque profil : accompagnement individuel, mini-groupes, stages intensifs. 
+              Des parcours adaptés à chaque profil : accompagnement individuel, mini-groupes, stages intensifs.
               Choisissez la formule qui correspond à vos ambitions et votre rythme d'apprentissage.
             </p>
           </div>
@@ -856,19 +933,19 @@ const LandingPage = ({ onLogin }) => {
                   {testimonials[currentTestimonial].avatar}
                 </div>
               </div>
-              
+
               <div className="flex justify-center mb-4">
                 {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
                   <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                 ))}
               </div>
-              
+
               <blockquote className="text-lg text-muted-foreground mb-6 italic">
                 <Quote className="w-6 h-6 text-muted-foreground/50 inline mr-2" />
                 {testimonials[currentTestimonial].text}
                 <Quote className="w-6 h-6 text-muted-foreground/50 inline ml-2 rotate-180" />
               </blockquote>
-              
+
               <div>
                 <p className="font-semibold text-foreground">{testimonials[currentTestimonial].name}</p>
                 <p className="text-sm text-muted-foreground">
@@ -882,9 +959,8 @@ const LandingPage = ({ onLogin }) => {
                 <button
                   key={index}
                   onClick={() => setCurrentTestimonial(index)}
-                  className={`w-3 h-3 rounded-full transition-colors ${
-                    index === currentTestimonial ? 'bg-primary' : 'bg-muted-foreground/30'
-                  }`}
+                  className={`w-3 h-3 rounded-full transition-colors ${index === currentTestimonial ? 'bg-primary' : 'bg-muted-foreground/30'
+                    }`}
                 />
               ))}
             </div>
@@ -906,18 +982,16 @@ const LandingPage = ({ onLogin }) => {
             {teachers.map((teacher) => (
               <Card key={teacher.id} className="nexus-card p-6 text-center hover:shadow-lg transition-shadow">
                 <div className="relative mb-6">
-                  <div className={`w-20 h-20 nexus-avatar mx-auto text-xl ${
-                    teacher.id === 'dubois' ? 'bg-blue-500 text-white' :
-                    teacher.id === 'martin' ? 'bg-green-500 text-white' :
-                    'bg-red-500 text-white'
-                  }`}>
+                  <div className={`w-20 h-20 nexus-avatar mx-auto text-xl ${teacher.id === 'dubois' ? 'bg-blue-500 text-white' :
+                      teacher.id === 'martin' ? 'bg-green-500 text-white' :
+                        'bg-red-500 text-white'
+                    }`}>
                     {teacher.avatar}
                   </div>
-                  <Badge className={`absolute -top-2 -right-2 ${
-                    teacher.badge === 'Expert' ? 'nexus-badge-success' :
-                    teacher.badge === 'DIU NSI' ? 'nexus-badge-info' :
-                    'nexus-badge-warning'
-                  }`}>
+                  <Badge className={`absolute -top-2 -right-2 ${teacher.badge === 'Expert' ? 'nexus-badge-success' :
+                      teacher.badge === 'DIU NSI' ? 'nexus-badge-info' :
+                        'nexus-badge-warning'
+                    }`}>
                     <Award className="w-3 h-3 mr-1" />
                     {teacher.badge}
                   </Badge>
@@ -925,7 +999,7 @@ const LandingPage = ({ onLogin }) => {
 
                 <h3 className="text-xl font-bold mb-2">{teacher.name}</h3>
                 <p className="text-primary font-medium mb-2">{teacher.title}</p>
-                
+
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center justify-center space-x-2 text-sm text-muted-foreground">
                     <GraduationCap className="w-4 h-4" />
@@ -949,13 +1023,12 @@ const LandingPage = ({ onLogin }) => {
 
                 <div className="flex items-center justify-center space-x-1 mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star 
-                      key={i} 
-                      className={`w-4 h-4 ${
-                        i < Math.floor(teacher.rating) 
-                          ? 'text-yellow-400 fill-current' 
+                    <Star
+                      key={i}
+                      className={`w-4 h-4 ${i < Math.floor(teacher.rating)
+                          ? 'text-yellow-400 fill-current'
                           : 'text-gray-300'
-                      }`} 
+                        }`}
                     />
                   ))}
                   <span className="text-sm text-muted-foreground ml-2">({teacher.rating}/5)</span>
@@ -991,7 +1064,7 @@ const LandingPage = ({ onLogin }) => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <h3 className="text-2xl font-bold mb-8">Nos Espaces</h3>
-              
+
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -1082,10 +1155,10 @@ const LandingPage = ({ onLogin }) => {
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
             Rejoignez les centaines d'élèves qui ont choisi Nexus Réussite pour atteindre l'excellence.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="secondary"
               className="text-lg px-8 py-4"
               onClick={() => onLogin('student')}
@@ -1093,8 +1166,8 @@ const LandingPage = ({ onLogin }) => {
               <CheckCircle className="w-5 h-5 mr-2" />
               Demander un bilan gratuit
             </Button>
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="outline"
               className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-primary"
               onClick={() => onLogin('parent')}
@@ -1201,4 +1274,3 @@ const LandingPage = ({ onLogin }) => {
 };
 
 export default LandingPage;
-

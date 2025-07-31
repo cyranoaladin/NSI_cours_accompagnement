@@ -46,7 +46,7 @@ def integrate_api_docs(app: Flask) -> Api:
             
             return export_data, 200, {'Content-Type': 'application/json'}
             
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             return {"error": "Failed to export API documentation", "message": str(e)}, 500
     
     return api

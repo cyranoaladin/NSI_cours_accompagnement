@@ -7,13 +7,11 @@ from marshmallow_enum import EnumField
 
 from ..content_system import BrickType, LearningStep, Subject, TargetProfile
 from .base import (
-    BaseSchema,
     SoftDeleteSchema,
     TimestampSchema,
     validate_difficulty_level,
     validate_duration_minutes,
     validate_json_dict,
-    validate_json_list,
     validate_rating,
 )
 

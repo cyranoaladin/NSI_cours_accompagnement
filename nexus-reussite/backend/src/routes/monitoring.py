@@ -4,7 +4,7 @@ Fournit des endpoints pour surveiller les performances et diagnostiquer les prob
 """
 
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import structlog
 from flask import Blueprint, jsonify, request
@@ -12,14 +12,14 @@ from flask_jwt_extended import jwt_required
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-from ..config import get_config
-from ..database import (
+from config import get_config
+from database import (
     analyze_table_performance,
     create_database_indices,
     get_query_stats,
     reset_query_stats,
 )
-from ..services.cache_service import cache_service
+from services.cache_service import cache_service
 
 logger = structlog.get_logger()
 
@@ -87,7 +87,7 @@ def performance_overview():
             200,
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error("Erreur lors de la récupération des performances", error=str(e))
         return (
             jsonify(
@@ -122,7 +122,7 @@ def database_stats():
             200,
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error("Erreur lors de l'analyse de la base de données", error=str(e))
         return jsonify({"error": "Erreur d'analyse", "message": str(e)}), 500
 
@@ -148,7 +148,7 @@ def optimize_database():
             200,
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error(
             "Erreur lors de l'optimisation de la base de données", error=str(e)
         )
@@ -171,7 +171,7 @@ def cache_stats():
             200,
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error("Erreur lors de la récupération des stats cache", error=str(e))
         return jsonify({"error": "Erreur cache", "message": str(e)}), 500
 
@@ -196,7 +196,7 @@ def clear_cache():
             }
         ), (200 if result else 500)
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error("Erreur lors du vidage du cache", error=str(e))
         return jsonify({"error": "Erreur de vidage", "message": str(e)}), 500
 
@@ -236,7 +236,7 @@ def invalidate_cache_pattern():
             200,
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error(
             "Erreur lors de l'invalidation du cache", error=str(e), pattern=pattern
         )
@@ -264,7 +264,7 @@ def reset_sql_stats():
             200,
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error("Erreur lors de la réinitialisation des stats SQL", error=str(e))
         return jsonify({"error": "Erreur de réinitialisation", "message": str(e)}), 500
 
@@ -316,7 +316,7 @@ def get_slow_queries():
             200,
         )
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error("Erreur lors de la récupération des requêtes lentes", error=str(e))
         return jsonify({"error": "Erreur de récupération", "message": str(e)}), 500
 
@@ -332,7 +332,7 @@ def detailed_health():
 
         from sqlalchemy import text
 
-        from ..database import db
+        from database import db
 
         health_info = {
             "timestamp": datetime.utcnow().isoformat(),
@@ -352,7 +352,7 @@ def detailed_health():
                 "status": "healthy",
                 "response_time_ms": round(db_duration, 2),
             }
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             health_info["checks"]["database"] = {"status": "unhealthy", "error": str(e)}
             overall_healthy = False
 
@@ -365,7 +365,7 @@ def detailed_health():
             health_info["checks"]["cache"] = {
                 "status": "healthy" if test_value == "ok" else "degraded"
             }
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             health_info["checks"]["cache"] = {"status": "unhealthy", "error": str(e)}
 
         # Informations système légères
@@ -374,7 +374,7 @@ def detailed_health():
                 "thread_count": threading.active_count(),
                 "process_id": os.getpid(),
             }
-        except Exception:
+        except (RuntimeError, OSError, ValueError):
             pass
 
         health_info["status"] = "healthy" if overall_healthy else "unhealthy"
@@ -382,7 +382,7 @@ def detailed_health():
 
         return jsonify(health_info), status_code
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         logger.error("Erreur lors du health check détaillé", error=str(e))
         return (
             jsonify(

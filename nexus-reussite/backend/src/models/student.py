@@ -1,8 +1,7 @@
 import json
 from datetime import datetime
-from typing import Any, Dict, Optional
 
-from ..database import db
+from database import db
 from .base import BaseModel, SoftDeleteMixin
 
 
@@ -12,25 +11,23 @@ class Student(BaseModel, SoftDeleteMixin):
     __tablename__ = "students"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     full_name = db.Column(db.String(100), nullable=True)
     email = db.Column(db.String(120), unique=True, nullable=True)
     phone = db.Column(db.String(20), nullable=True)
-    level = db.Column(
-        db.String(20), nullable=True
-    )  # seconde, premiere, terminale
+    level = db.Column(db.String(20), nullable=True)  # seconde, premiere, terminale
     grade_level = db.Column(
         db.String(20), nullable=True
     )  # Alias for backward compatibility
     school = db.Column(db.String(100), nullable=True)
-    _specialties = db.Column('specialties', db.Text, nullable=True)  # JSON string
+    _specialties = db.Column("specialties", db.Text, nullable=True)  # JSON string
     preferred_subjects = db.Column(db.Text, nullable=True)  # JSON string
     current_year = db.Column(db.Integer, nullable=True)
-    
+
     # Progress tracking
     completed_exercises = db.Column(db.Integer, default=0)
     total_exercises = db.Column(db.Integer, default=0)
-    _recent_scores = db.Column('recent_scores', db.Text, nullable=True)  # JSON string
+    _recent_scores = db.Column("recent_scores", db.Text, nullable=True)  # JSON string
 
     # Profil d'apprentissage ARIA
     learning_style = db.Column(
@@ -58,7 +55,10 @@ class Student(BaseModel, SoftDeleteMixin):
         "Assessment", backref="student", lazy=True, cascade="all, delete-orphan"
     )
     _learning_sessions_rel = db.relationship(
-        "LearningSession", backref="student_sessions", lazy=True, overlaps="sessions,student"
+        "LearningSession",
+        backref="student_sessions",
+        lazy=True,
+        overlaps="sessions,student",
     )
 
     def __init__(
@@ -73,7 +73,7 @@ class Student(BaseModel, SoftDeleteMixin):
         phone=None,
         school=None,
         preferred_subjects=None,
-        **kwargs
+        **kwargs,
     ):
         self.user_id = user_id
         self.full_name = full_name
@@ -83,9 +83,9 @@ class Student(BaseModel, SoftDeleteMixin):
         self.grade_level = grade_level or level
         self.school = school
         self.current_year = current_year
-        self.completed_exercises = kwargs.get('completed_exercises', 0)
-        self.total_exercises = kwargs.get('total_exercises', 0)
-        
+        self.completed_exercises = kwargs.get("completed_exercises", 0)
+        self.total_exercises = kwargs.get("total_exercises", 0)
+
         # Handle specialties as list
         if isinstance(specialties, list):
             self.specialties = json.dumps(specialties)
@@ -93,7 +93,7 @@ class Student(BaseModel, SoftDeleteMixin):
             self.specialties = specialties
         else:
             self.specialties = None
-            
+
         # Handle preferred_subjects
         if isinstance(preferred_subjects, list):
             self.preferred_subjects = json.dumps(preferred_subjects)
@@ -101,51 +101,55 @@ class Student(BaseModel, SoftDeleteMixin):
             self.preferred_subjects = preferred_subjects
         else:
             self.preferred_subjects = None
-    
+
     def calculate_progress(self):
         """Calcule le pourcentage de progression de l'étudiant"""
         if self.total_exercises == 0:
             return 0.0
         return (self.completed_exercises / self.total_exercises) * 100.0
-    
+
     def add_learning_session(self, session_data):
         """Ajoute une session d'apprentissage à l'étudiant"""
         # For tests, store session data as dict in learning_sessions list
-        if not hasattr(self, '_learning_sessions_data'):
+        if not hasattr(self, "_learning_sessions_data"):
             self._learning_sessions_data = []
         self._learning_sessions_data.append(session_data)
-        
+
         # Try to create database record if possible
         if self.id is not None:
             try:
                 session = LearningSession(
                     student_id=self.id,
-                    subject=session_data.get('subject', ''),
-                    topic=session_data.get('topic', session_data.get('subject', '')),
-                    session_type=session_data.get('session_type', 'practice'),
-                    duration_minutes=session_data.get('duration', 0),
-                    completion_rate=session_data.get('completion_rate', 1.0),
-                    accuracy_rate=session_data.get('score', 0) / 100.0 if session_data.get('score') else None
+                    subject=session_data.get("subject", ""),
+                    topic=session_data.get("topic", session_data.get("subject", "")),
+                    session_type=session_data.get("session_type", "practice"),
+                    duration_minutes=session_data.get("duration", 0),
+                    completion_rate=session_data.get("completion_rate", 1.0),
+                    accuracy_rate=(
+                        session_data.get("score", 0) / 100.0
+                        if session_data.get("score")
+                        else None
+                    ),
                 )
                 db.session.add(session)
                 db.session.commit()
-            except Exception:
+            except (RuntimeError, OSError, ValueError):
                 # If database operation fails, we still have the data stored above
                 pass
-    
+
     def get_next_level(self):
         """Retourne le niveau suivant pour l'étudiant"""
         level_progression = {
             "Seconde": "Première",
-            "Première": "Terminale", 
-            "Terminale": "Post-Bac"
+            "Première": "Terminale",
+            "Terminale": "Post-Bac",
         }
         return level_progression.get(self.level, "Post-Bac")
-    
+
     @property
     def specialties(self):
         """Retourne les spécialités sous forme de liste mutable"""
-        if not hasattr(self, '_specialties_list'):
+        if not hasattr(self, "_specialties_list"):
             if self._specialties:
                 try:
                     self._specialties_list = json.loads(self._specialties)
@@ -154,7 +158,7 @@ class Student(BaseModel, SoftDeleteMixin):
             else:
                 self._specialties_list = []
         return self._specialties_list
-    
+
     @specialties.setter
     def specialties(self, value):
         """Définit les spécialités (accepte liste ou string JSON)"""
@@ -164,7 +168,7 @@ class Student(BaseModel, SoftDeleteMixin):
             self._specialties = value
         else:
             self._specialties = None
-    
+
     @property
     def recent_scores(self):
         """Retourne les scores récents sous forme de liste"""
@@ -174,7 +178,7 @@ class Student(BaseModel, SoftDeleteMixin):
             except (json.JSONDecodeError, TypeError):
                 return []
         return []
-    
+
     @recent_scores.setter
     def recent_scores(self, value):
         """Définit les scores récents (accepte liste ou string JSON)"""
@@ -184,16 +188,16 @@ class Student(BaseModel, SoftDeleteMixin):
             self._recent_scores = value
         else:
             self._recent_scores = None
-    
-    @property 
+
+    @property
     def learning_sessions(self):
         """Retourne les sessions d'apprentissage (pour compatibilité tests)"""
         # Check if we have temporary session data (used in tests)
-        if hasattr(self, '_learning_sessions_data'):
+        if hasattr(self, "_learning_sessions_data"):
             return self._learning_sessions_data
-        # Otherwise return empty list for tests  
+        # Otherwise return empty list for tests
         return []
-    
+
     @learning_sessions.setter
     def learning_sessions(self, value):
         """Définit les sessions d'apprentissage (pour compatibilité tests)"""

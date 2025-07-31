@@ -9,8 +9,6 @@ import logging
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from enum import Enum
-from functools import wraps
-from typing import Any, Dict, List, Optional, Set
 
 import jwt
 import websockets
@@ -168,7 +166,7 @@ class WebSocketService:
         except websockets.exceptions.ConnectionClosed:
             await self.unregister_connection(connection_id)
             return False
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             logger.error(f"Erreur lors de l'envoi du message: {e}")
             return False
 
@@ -197,7 +195,7 @@ class WebSocketService:
                     sent_count += 1
                 except websockets.exceptions.ConnectionClosed:
                     await self.unregister_connection(self.get_connection_id(connection))
-                except Exception as e:
+                except (RuntimeError, OSError, ValueError) as e:
                     logger.error(f"Erreur lors de la diffusion: {e}")
 
         return sent_count
@@ -281,7 +279,7 @@ class WebSocketService:
                 connection.last_ping = current_time
             except websockets.exceptions.ConnectionClosed:
                 dead_connections.append(connection_id)
-            except Exception as e:
+            except (RuntimeError, OSError, ValueError) as e:
                 logger.error(f"Erreur lors du ping: {e}")
                 dead_connections.append(connection_id)
 
@@ -353,12 +351,12 @@ class WebSocketService:
                     await websocket.send(
                         json.dumps({"type": "error", "message": "Format JSON invalide"})
                     )
-                except Exception as e:
+                except (RuntimeError, OSError, ValueError) as e:
                     logger.error(f"Erreur lors du traitement du message: {e}")
 
         except websockets.exceptions.ConnectionClosed:
             logger.info("Connexion WebSocket fermée")
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             logger.error(f"Erreur dans handle_websocket: {e}")
         finally:
             if connection_id:

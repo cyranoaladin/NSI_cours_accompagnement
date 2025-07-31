@@ -3,11 +3,9 @@ Moteur d'assemblage intelligent pour la génération de contenu personnalisé
 Nexus Réussite - Content Assembly Engine
 """
 
-import json
-import random
+import re
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
 
 from ..models.content_system import (
     BrickType,
@@ -251,7 +249,7 @@ class ContentAssemblyEngine:
         content_sections = []
 
         # En-tête du document
-        header = f"""# {self._generate_title(request, template)}
+        header = """# {self._generate_title(request, template)}
 
 **Matière :** {request.subject.value.title()}
 **Chapitre :** {request.chapter}
@@ -292,7 +290,7 @@ class ContentAssemblyEngine:
                     content_sections.append("\n")
 
         # Pied de page
-        footer = f"""
+        footer = """
 ---
 
 **Document généré automatiquement par Nexus Réussite**
@@ -323,7 +321,6 @@ Pour toute question, contactez votre coach Nexus Réussite.
         html = html.replace("### ", "<h3>").replace("\n", "</h3>\n")
 
         # Conversion du gras
-        import re
 
         html = re.sub(r"\*\*(.*?)\*\*", r"<strong>\1</strong>", html)
         html = re.sub(r"\*(.*?)\*", r"<em>\1</em>", html)

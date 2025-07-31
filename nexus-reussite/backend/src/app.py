@@ -4,7 +4,6 @@ Production-ready entrypoint with factory pattern
 """
 
 import logging
-import os
 from typing import Optional
 
 from .main_production import create_app as _create_app
@@ -27,13 +26,13 @@ def create_app(config_name: Optional[str] = None):
         app = _create_app(config_name)
 
         logger.info("✅ Nexus Réussite Backend initialized successfully")
-        logger.info(f"Environment: {os.environ.get('FLASK_ENV', 'unknown')}")
-        logger.info(f"Debug mode: {app.debug}")
+        logger.info("Environment: {os.environ.get('FLASK_ENV', 'unknown')}")
+        logger.info("Debug mode: {app.debug}")
 
         return app
 
-    except Exception as e:
-        logger.error(f"❌ Failed to initialize application: {str(e)}")
+    except (ValueError, TypeError, RuntimeError):
+        logger.error("❌ Failed to initialize application: {str(e)}")
         raise
 
 
