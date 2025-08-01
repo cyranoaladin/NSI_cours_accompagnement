@@ -9,6 +9,7 @@ import { validateEmail } from '@/lib/utils';
 import useAppStore from '@/stores/appStore';
 import useAuthStore from '@/stores/authStore';
 import { ArrowLeft, Eye, EyeOff, Loader2, Lock, LogIn, Mail } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -118,10 +119,14 @@ export default function LoginPage() {
 
           <div className="flex items-center justify-center space-x-2 mb-6">
             <div className="w-auto" style={{ height: '40px' }}>
-              <img
-                src="/logo_nexus-reussite.png"
+              <Image
+                src="/logo_nexus-reussite.webp"
                 alt="Nexus Réussite"
+                width={500}
+                height={165}
                 className="w-auto object-contain"
+                priority
+                quality={100}
                 style={{ height: '40px' }}
               />
             </div>

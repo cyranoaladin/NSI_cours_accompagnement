@@ -43,7 +43,7 @@ export const metadata: Metadata = {
   icons: {
     icon: '/favicon.ico',
     shortcut: '/nexus-favicon.svg',
-    apple: '/logo_nexus-reussite.png',
+    apple: '/logo_nexus-reussite.webp',
   },
   manifest: '/manifest.json',
   verification: {

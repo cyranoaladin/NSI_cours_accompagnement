@@ -1,6 +1,7 @@
 'use client';
 
 import { Award, BookOpen, Clock, MessageCircle, Target, TrendingUp } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import useAuthStore from '../stores/authStore';
@@ -58,10 +59,13 @@ const StudentDashboard = () => {
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center">
               <div className="w-auto mr-4" style={{ height: '40px' }}>
-                <img
-                  src="/logo_nexus-reussite.png"
+                <Image
+                  src="/logo_nexus-reussite.webp"
                   alt="Nexus Réussite"
+                  width={500}
+                  height={165}
                   className="w-auto object-contain"
+                  quality={100}
                   style={{ height: '40px' }}
                 />
               </div>

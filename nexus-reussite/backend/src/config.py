@@ -3,6 +3,7 @@
 import os
 
 class Config:
+    """Configuration de base"""
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-key'
     DATABASE_URL = os.environ.get('DATABASE_URL') or 'sqlite:///nexus.db'
     SQLALCHEMY_DATABASE_URI = DATABASE_URL  # Flask-SQLAlchemy requiert cette variable
@@ -26,16 +27,52 @@ class Config:
     # Sentry Configuration
     SENTRY_DSN = os.environ.get('SENTRY_DSN')
 
+    # Performance et debug
+    DEBUG = False
+    TESTING = False
+
     def init_app(self, app):
         """Initialise la configuration avec l'app Flask"""
         app.config.from_object(self)
         return app
 
-config = {'default': Config}
+
+class DevelopmentConfig(Config):
+    """Configuration pour le développement"""
+    DEBUG = True
+    DATABASE_URL = os.environ.get('DATABASE_URL') or 'sqlite:///nexus_dev.db'
+    SQLALCHEMY_DATABASE_URI = DATABASE_URL
+    SQLALCHEMY_ECHO = True  # Log des requêtes SQL
+
+
+class TestingConfig(Config):
+    """Configuration pour les tests"""
+    TESTING = True
+    DATABASE_URL = 'sqlite:///:memory:'
+    SQLALCHEMY_DATABASE_URI = DATABASE_URL
+    WTF_CSRF_ENABLED = False
+
+
+class ProductionConfig(Config):
+    """Configuration pour la production"""
+    DEBUG = False
+    TESTING = False
+    # Utilise les variables d'environnement sans fallback dangereux
+
+config = {
+    'default': DevelopmentConfig,
+    'development': DevelopmentConfig,
+    'testing': TestingConfig,
+    'production': ProductionConfig
+}
 
 def get_config(config_name=None):
     """Get configuration instance"""
-    return Config()
+    if config_name is None:
+        config_name = os.environ.get('FLASK_ENV', 'development')
+
+    config_class = config.get(config_name, DevelopmentConfig)
+    return config_class()
 
 def validate_config(config_obj=None):
     """Validate configuration"""

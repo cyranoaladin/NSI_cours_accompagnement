@@ -1,0 +1,36 @@
+{
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.*"
+  ],
+  "ignore": [],
+  "defineConstant": {},
+  "stubPath": "typings",
+  "venv": "venv",
+  "venvPath": ".",
+  "pythonPath": "./venv/bin/python",
+  "executionEnvironments": [
+    {
+      "root": "src",
+      "pythonVersion": "3.12",
+      "pythonPlatform": "Linux",
+      "extraPaths": [
+        "./venv/lib/python3.12/site-packages",
+        "./src"
+      ]
+    }
+  ],
+  "typeCheckingMode": "basic",
+  "useLibraryCodeForTypes": true,
+  "autoImportCompletions": true,
+  "indexing": true,
+  "logLevel": "information",
+  "reportMissingImports": "warning",
+  "reportMissingTypeStubs": false,
+  "reportImportCycles": false,
+  "reportUnknownVariableType": false
+}

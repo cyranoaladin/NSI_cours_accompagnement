@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Backend",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/nexus-reussite/backend/src/main_production.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/nexus-reussite/backend",
+      "python": "${workspaceFolder}/nexus-reussite/backend/venv/bin/python",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/nexus-reussite/backend/src:${workspaceFolder}/nexus-reussite/backend/venv/lib/python3.12/site-packages"
+      }
+    }
+  ]
+}

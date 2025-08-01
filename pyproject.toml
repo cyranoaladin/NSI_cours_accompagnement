@@ -1,0 +1,249 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nexus-reussite"
+version = "1.0.0"
+description = "Plateforme éducative révolutionnaire pour l'enseignement de la NSI"
+authors = [
+    {name = "Nexus Réussite Team", email = "dev@nexusreussite.academy"}
+]
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+keywords = ["education", "nsi", "ai", "learning", "flask", "react"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Education",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Framework :: Flask",
+]
+
+# Configuration Black
+[tool.black]
+line-length = 88
+target-version = ['py311', 'py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+    # Directories
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | migrations
+  | __pycache__
+)/
+'''
+
+# Configuration isort
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+src_paths = ["backend/src"]
+skip_glob = ["*/migrations/*", "*/__pycache__/*", "*/venv/*", "*/.venv/*"]
+
+# Configuration Flake8
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503", "E501", "F401"]
+exclude = [
+    ".git",
+    "__pycache__",
+    "venv",
+    ".venv",
+    "migrations",
+    "build",
+    "dist",
+    ".eggs",
+    "*.egg-info"
+]
+per-file-ignores = [
+    "__init__.py:F401",
+    "*/migrations/*:E501,F401",
+    "*/tests/*:F401,F811"
+]
+
+# Configuration MyPy
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+disallow_untyped_decorators = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+ignore_missing_imports = true
+show_error_codes = true
+show_column_numbers = true
+show_error_context = true
+pretty = true
+
+[[tool.mypy.overrides]]
+module = [
+    "flask.*",
+    "werkzeug.*",
+    "sqlalchemy.*",
+    "alembic.*",
+    "redis.*",
+    "celery.*",
+    "sentry_sdk.*",
+    "prometheus_client.*",
+    "structlog.*",
+    "psutil.*",
+    "click.*",
+    "jwt.*",
+    "bcrypt.*",
+    "marshmallow.*"
+]
+ignore_missing_imports = true
+
+# Configuration Pylint
+[tool.pylint.main]
+source-roots = ["backend/src"]
+ignore-paths = [
+    "^backend/migrations/.*$",
+    "^backend/venv/.*$",
+    "^backend/.venv/.*$",
+    "^backend/__pycache__/.*$"
+]
+
+[tool.pylint.messages_control]
+disable = [
+    "C0111",  # missing-docstring
+    "C0103",  # invalid-name
+    "R0903",  # too-few-public-methods
+    "R0913",  # too-many-arguments
+    "W0613",  # unused-argument
+    "C0301",  # line-too-long (handled by black)
+    "R0801",  # duplicate-code
+    "W0511",  # fixme
+    "C0114",  # missing-module-docstring
+    "C0115",  # missing-class-docstring
+    "C0116",  # missing-function-docstring
+    "R0902",  # too-many-instance-attributes
+    "R0912",  # too-many-branches
+    "R0915",  # too-many-statements
+    "W0703",  # broad-except
+    "W1203",  # logging-fstring-interpolation
+]
+
+[tool.pylint.format]
+max-line-length = 88
+
+[tool.pylint.design]
+max-args = 10
+max-locals = 20
+max-returns = 8
+max-branches = 15
+max-statements = 60
+max-parents = 10
+max-attributes = 12
+min-public-methods = 1
+max-public-methods = 25
+max-bool-expr = 8
+
+# Configuration Bandit
+[tool.bandit]
+exclude_dirs = [
+    "tests",
+    "migrations",
+    "venv",
+    ".venv",
+    "__pycache__"
+]
+skips = [
+    "B101",  # assert_used
+    "B601",  # paramiko_calls
+    "B602",  # subprocess_popen_with_shell_equals_true
+    "B603",  # subprocess_without_shell_equals_true
+    "B404",  # import_subprocess
+    "B608",  # hardcoded_sql_expressions
+]
+
+# Configuration Coverage
+[tool.coverage.run]
+source = ["backend/src"]
+omit = [
+    "*/migrations/*",
+    "*/venv/*",
+    "*/.venv/*",
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/node_modules/*"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod"
+]
+show_missing = true
+precision = 2
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+# Configuration Pytest
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=backend/src",
+    "--cov-report=term-missing:skip-covered",
+    "--cov-report=html",
+    "--cov-report=xml",
+    "--cov-fail-under=80"
+]
+testpaths = ["backend/tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "api: marks tests as API tests",
+    "auth: marks tests as authentication tests",
+    "database: marks tests as database tests"
+]
+filterwarnings = [
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning"
+]

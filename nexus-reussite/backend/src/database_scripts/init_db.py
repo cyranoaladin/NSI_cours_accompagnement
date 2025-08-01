@@ -4,6 +4,7 @@ Script d'initialisation avec données de démonstration
 """
 
 import os
+import sys
 
 # Ajouter le répertoire parent au path
 sys.path.append(
@@ -40,9 +41,18 @@ def init_database():
 
 
 def create_demo_data():
-    """Crée les données de démonstration"""
+    """
+    ⚠️  ATTENTION: DONNÉES DE DÉMONSTRATION - NE PAS UTILISER EN PRODUCTION
+    Ce script est réservé au développement et aux tests uniquement
+    """
 
-    print("👥 Création des utilisateurs de démonstration...")
+    # Vérification de sécurité
+    if os.environ.get('FLASK_ENV') == 'production':
+        print("❌ ERREUR CRITIQUE: Tentative de création de données de démo en production!")
+        print("   Utilisez init_production.py pour la production")
+        return False
+
+    print("⚠️  Création des utilisateurs de DÉMONSTRATION (DEV SEULEMENT)...")
 
     # === ADMINISTRATEURS ===
     admin_password = os.getenv(

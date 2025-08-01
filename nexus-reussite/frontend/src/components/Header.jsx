@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import useAuthStore from '../stores/authStore';
 import { Button } from './ui/button';
@@ -14,10 +15,14 @@ const Header = ({ onGetStarted }) => {
         {/* Logo Section */}
         <div className="flex items-center space-x-2 h-full">
           <div className="w-auto" style={{ height: '60px' }}>
-            <img
-              src="/logo_nexus-reussite.png"
+            <Image
+              src="/logo_nexus-reussite.webp"
               alt="Nexus Réussite"
+              width={500}
+              height={165}
               className="w-auto object-contain transition-all duration-200 hover:scale-105"
+              priority
+              quality={100}
               style={{ height: '60px' }}
             />
           </div>

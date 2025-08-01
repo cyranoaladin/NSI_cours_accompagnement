@@ -1,6 +1,7 @@
 'use client';
 
 import { Award, BookOpen, ChevronRight, Users, Zap } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import useAuthStore from '../stores/authStore';
@@ -178,10 +179,14 @@ const LandingPage = () => {
             <div className="md:col-span-2">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="h-12 sm:h-16 w-auto">
-                  <img
-                    src="/logo_nexus-reussite.png"
+                  <Image
+                    src="/logo_nexus-reussite.webp"
                     alt="Nexus Réussite"
+                    width={500}
+                    height={165}
                     className="h-full w-auto object-contain"
+                    priority
+                    quality={100}
                   />
                 </div>
                 <div>

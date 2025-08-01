@@ -26,3 +26,13 @@ vendor/
 # Other
 .cache/
 key.pem
+# Ajout des exclusions pour éviter de commiter le venv à l'avenir
+
+# Environnements virtuels Python
+backend/venv/
+backend/.venv/
+**/venv/
+**/.venv/
+
+# Cache pre-commit
+.pre-commit-cache/
