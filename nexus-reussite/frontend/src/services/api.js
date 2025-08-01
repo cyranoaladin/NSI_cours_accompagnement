@@ -1,503 +1,232 @@
-/**
- * Service API principal pour Nexus Réussite
- */
+import axios from 'axios';
 
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-production-domain.com/api'
-  : 'http://localhost:5000/api';
+// Configuration de base pour l'API
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
-class ApiService {
-  constructor() {
-    this.baseURL = API_BASE_URL;
-    this.token = this.getSecureToken();
-  }
-  
-  // Chiffrement simple pour les tokens (Base64 + rotation)
-  encryptToken(token) {
-    try {
-      const encoded = btoa(token);
-      // Simple rotation cipher pour obscurcir
-      return encoded.split('').map(char => 
-        String.fromCharCode(char.charCodeAt(0) + 1)
-      ).join('');
-    } catch (error) {
-      console.error('Erreur de chiffrement:', error);
-      return token;
-    }
-  }
-  
-  // Déchiffrement des tokens
-  decryptToken(encryptedToken) {
-    try {
-      if (!encryptedToken) return null;
-      // Inverse rotation cipher
-      const decoded = encryptedToken.split('').map(char => 
-        String.fromCharCode(char.charCodeAt(0) - 1)
-      ).join('');
-      return atob(decoded);
-    } catch (error) {
-      console.error('Erreur de déchiffrement:', error);
-      return null;
-    }
-  }
-  
-  // Récupération sécurisée du token
-  getSecureToken() {
-    const encrypted = localStorage.getItem('auth_token_enc');
-    return this.decryptToken(encrypted);
-  }
+// Instance axios avec configuration par défaut
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
-  // Configuration des headers
-  getHeaders(includeAuth = true) {
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-
-    if (includeAuth && this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
-    }
-
-    return headers;
-  }
-
-  // Méthode générique pour les requêtes
-  async request(endpoint, options = {}) {
-    const url = `${this.baseURL}${endpoint}`;
-    const config = {
-      headers: this.getHeaders(options.auth !== false),
-      ...options,
-    };
-
-    try {
-      const response = await fetch(url, config);
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-      }
-
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        return await response.json();
-      }
-      
-      return await response.text();
-    } catch (error) {
-      console.error('API Request failed:', error);
-      throw error;
-    }
-  }
-
-  // Méthodes HTTP
-  async get(endpoint, params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    const url = queryString ? `${endpoint}?${queryString}` : endpoint;
-    return this.request(url, { method: 'GET' });
-  }
-
-  async post(endpoint, data = {}) {
-    return this.request(endpoint, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
-  }
-
-  async put(endpoint, data = {}) {
-    return this.request(endpoint, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
-  }
-
-  async delete(endpoint) {
-    return this.request(endpoint, { method: 'DELETE' });
-  }
-
-  // Gestion de l'authentification
-  setToken(token) {
-    this.token = token;
+// Intercepteur pour ajouter le token JWT automatiquement
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('access_token');
     if (token) {
-      const encrypted = this.encryptToken(token);
-      localStorage.setItem('auth_token_enc', encrypted);
-      // Supprimer l'ancien token non chiffré
-      localStorage.removeItem('auth_token');
-    } else {
-      localStorage.removeItem('auth_token_enc');
-      localStorage.removeItem('auth_token');
+      config.headers.Authorization = `Bearer ${token}`;
     }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
+);
 
-  getToken() {
-    return this.token;
-  }
-
-  clearToken() {
-    this.token = null;
-    localStorage.removeItem('auth_token_enc');
-    localStorage.removeItem('auth_token');
-  }
-
-  // === AUTHENTIFICATION ===
-  
-  async login(email, password) {
-    const response = await this.post('/auth/login', { email, password });
-    if (response.success && response.token) {
-      this.setToken(response.token);
+// Intercepteur pour gérer les erreurs de réponse
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token expiré, rediriger vers la page de connexion
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      window.location.href = '/auth/login';
     }
-    return response;
+    return Promise.reject(error);
   }
+);
 
-  async register(userData) {
-    return this.post('/auth/register', userData);
-  }
+// === SERVICES D'AUTHENTIFICATION ===
+export const authService = {
+  login: async (email, password) => {
+    const response = await apiClient.post('/auth/login', { email, password });
+    const { access_token, refresh_token, user } = response.data;
 
-  async logout() {
+    // Stocker les tokens
+    localStorage.setItem('access_token', access_token);
+    localStorage.setItem('refresh_token', refresh_token);
+    localStorage.setItem('user', JSON.stringify(user));
+
+    return response.data;
+  },
+
+  register: async (userData) => {
+    const response = await apiClient.post('/auth/register', userData);
+    return response.data;
+  },
+
+  logout: async () => {
     try {
-      await this.post('/auth/logout');
+      await apiClient.post('/auth/logout');
     } finally {
-      this.clearToken();
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user');
     }
-  }
+  },
 
-  async refreshToken() {
-    const response = await this.post('/auth/refresh');
-    if (response.success && response.token) {
-      this.setToken(response.token);
-    }
-    return response;
-  }
-
-  async getCurrentUser() {
-    return this.get('/auth/me');
-  }
-
-  // === PROFILS UTILISATEURS ===
-
-  async getProfile() {
-    return this.get('/profile');
-  }
-
-  async updateProfile(profileData) {
-    return this.put('/profile', profileData);
-  }
-
-  async uploadAvatar(file) {
-    const formData = new FormData();
-    formData.append('avatar', file);
-    
-    return this.request('/profile/avatar', {
-      method: 'POST',
-      body: formData,
-      headers: { 'Authorization': `Bearer ${this.token}` }
+  refreshToken: async () => {
+    const refreshToken = localStorage.getItem('refresh_token');
+    const response = await apiClient.post('/auth/refresh', {
+      refresh_token: refreshToken,
     });
-  }
+    const { access_token } = response.data;
+    localStorage.setItem('access_token', access_token);
+    return access_token;
+  },
 
-  // === ÉTUDIANTS ===
+  getCurrentUser: () => {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  },
+};
 
-  async getStudents(params = {}) {
-    return this.get('/students', params);
-  }
+// === SERVICES UTILISATEUR ===
+export const userService = {
+  getProfile: async () => {
+    const response = await apiClient.get('/users/profile');
+    return response.data;
+  },
 
-  async getStudent(studentId) {
-    return this.get(`/students/${studentId}`);
-  }
+  updateProfile: async (profileData) => {
+    const response = await apiClient.put('/users/profile', profileData);
+    return response.data;
+  },
 
-  async createStudent(studentData) {
-    return this.post('/students', studentData);
-  }
-
-  async updateStudent(studentId, studentData) {
-    return this.put(`/students/${studentId}`, studentData);
-  }
-
-  async deleteStudent(studentId) {
-    return this.delete(`/students/${studentId}`);
-  }
-
-  async getStudentProgress(studentId) {
-    return this.get(`/students/${studentId}/progress`);
-  }
-
-  async updateStudentProgress(studentId, progressData) {
-    return this.put(`/students/${studentId}/progress`, progressData);
-  }
-
-  // === IA ARIA ===
-
-  async chatWithAria(message, context = {}) {
-    return this.post('/aria/chat', { message, context });
-  }
-
-  async getAriaRecommendations(studentId) {
-    return this.get(`/aria/recommendations/${studentId}`);
-  }
-
-  async generatePersonalizedContent(studentId, subject, contentType) {
-    return this.post('/aria/generate-content', {
-      student_id: studentId,
-      subject,
-      content_type: contentType
+  changePassword: async (currentPassword, newPassword) => {
+    const response = await apiClient.put('/users/change-password', {
+      current_password: currentPassword,
+      new_password: newPassword,
     });
-  }
+    return response.data;
+  },
+};
 
-  async getAriaAnalysis(studentId) {
-    return this.get(`/aria/analysis/${studentId}`);
-  }
+// === SERVICES COURS ET CONTENU ===
+export const contentService = {
+  getCourses: async (params = {}) => {
+    const response = await apiClient.get('/courses', { params });
+    return response.data;
+  },
 
-  // === GÉNÉRATION DE DOCUMENTS ===
+  getCourse: async (courseId) => {
+    const response = await apiClient.get(`/courses/${courseId}`);
+    return response.data;
+  },
 
-  async generateDocument(documentData) {
-    return this.post('/documents/generate', documentData);
-  }
+  getLessons: async (courseId) => {
+    const response = await apiClient.get(`/courses/${courseId}/lessons`);
+    return response.data;
+  },
 
-  async getDocumentTemplates() {
-    return this.get('/documents/templates');
-  }
+  getLesson: async (lessonId) => {
+    const response = await apiClient.get(`/lessons/${lessonId}`);
+    return response.data;
+  },
 
-  async getGeneratedDocuments(params = {}) {
-    return this.get('/documents', params);
-  }
+  createCourse: async (courseData) => {
+    const response = await apiClient.post('/courses', courseData);
+    return response.data;
+  },
 
-  async downloadDocument(documentId) {
-    const response = await fetch(`${this.baseURL}/documents/${documentId}/download`, {
-      headers: this.getHeaders()
+  updateCourse: async (courseId, courseData) => {
+    const response = await apiClient.put(`/courses/${courseId}`, courseData);
+    return response.data;
+  },
+
+  deleteCourse: async (courseId) => {
+    const response = await apiClient.delete(`/courses/${courseId}`);
+    return response.data;
+  },
+};
+
+// === SERVICES PROGRESSION ===
+export const progressService = {
+  getStudentProgress: async (studentId) => {
+    const response = await apiClient.get(`/progress/student/${studentId}`);
+    return response.data;
+  },
+
+  markLessonComplete: async (lessonId) => {
+    const response = await apiClient.post(`/progress/lesson/${lessonId}/complete`);
+    return response.data;
+  },
+
+  getProgressStats: async () => {
+    const response = await apiClient.get('/progress/stats');
+    return response.data;
+  },
+};
+
+// === SERVICES ARIA (IA) ===
+export const ariaService = {
+  sendMessage: async (message, context = {}) => {
+    const response = await apiClient.post('/aria/chat', {
+      message,
+      context,
     });
-    
-    if (!response.ok) {
-      throw new Error('Erreur lors du téléchargement');
-    }
-    
-    return response.blob();
-  }
+    return response.data;
+  },
 
-  // === BIBLIOTHÈQUE DE CONTENU ===
-
-  async getContentLibrary(params = {}) {
-    return this.get('/content', params);
-  }
-
-  async getContentItem(contentId) {
-    return this.get(`/content/${contentId}`);
-  }
-
-  async searchContent(query, filters = {}) {
-    return this.get('/content/search', { query, ...filters });
-  }
-
-  async uploadContent(file, metadata) {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('metadata', JSON.stringify(metadata));
-    
-    return this.request('/content/upload', {
-      method: 'POST',
-      body: formData,
-      headers: { 'Authorization': `Bearer ${this.token}` }
+  getConversationHistory: async (limit = 50) => {
+    const response = await apiClient.get('/aria/history', {
+      params: { limit },
     });
-  }
+    return response.data;
+  },
 
-  // === VISIOCONFÉRENCE ===
+  clearConversation: async () => {
+    const response = await apiClient.delete('/aria/history');
+    return response.data;
+  },
+};
 
-  async createConference(conferenceData) {
-    return this.post('/video-conference/create', conferenceData);
-  }
+// === SERVICES QUIZ ET ÉVALUATIONS ===
+export const quizService = {
+  getQuizzes: async (courseId) => {
+    const response = await apiClient.get(`/courses/${courseId}/quizzes`);
+    return response.data;
+  },
 
-  async createInstantConference(subject) {
-    return this.post('/video-conference/instant', { subject });
-  }
+  getQuiz: async (quizId) => {
+    const response = await apiClient.get(`/quizzes/${quizId}`);
+    return response.data;
+  },
 
-  async joinConference(roomId) {
-    return this.post(`/video-conference/join/${roomId}`);
-  }
-
-  async leaveConference(roomId) {
-    return this.post(`/video-conference/leave/${roomId}`);
-  }
-
-  async endConference(roomId) {
-    return this.post(`/video-conference/end/${roomId}`);
-  }
-
-  async getUserRooms(includeHistory = false) {
-    return this.get('/video-conference/rooms', { include_history: includeHistory });
-  }
-
-  async getRoomInfo(roomId) {
-    return this.get(`/video-conference/room/${roomId}`);
-  }
-
-  async getActiveConferences() {
-    return this.get('/video-conference/active');
-  }
-
-  async getConferenceStatistics() {
-    return this.get('/video-conference/statistics');
-  }
-
-  // === NOTIFICATIONS ===
-
-  async getNotifications(params = {}) {
-    return this.get('/websocket/notifications', params);
-  }
-
-  async markNotificationRead(notificationId) {
-    return this.post(`/websocket/notifications/${notificationId}/read`);
-  }
-
-  async markAllNotificationsRead() {
-    return this.post('/websocket/notifications/mark-all-read');
-  }
-
-  async sendNotification(notificationData) {
-    return this.post('/websocket/send-notification', notificationData);
-  }
-
-  // === GAMIFICATION ===
-
-  async getAchievements(studentId) {
-    return this.get(`/gamification/achievements/${studentId}`);
-  }
-
-  async unlockAchievement(studentId, achievementId) {
-    return this.post(`/gamification/unlock/${studentId}/${achievementId}`);
-  }
-
-  async getLeaderboard(params = {}) {
-    return this.get('/gamification/leaderboard', params);
-  }
-
-  async getStudentStats(studentId) {
-    return this.get(`/gamification/stats/${studentId}`);
-  }
-
-  // === FORMULES ET TARIFS ===
-
-  async getFormulas() {
-    return this.get('/formulas');
-  }
-
-  async subscribeToFormula(formulaId, studentId) {
-    return this.post('/formulas/subscribe', {
-      formula_id: formulaId,
-      student_id: studentId
+  submitQuizAnswers: async (quizId, answers) => {
+    const response = await apiClient.post(`/quizzes/${quizId}/submit`, {
+      answers,
     });
-  }
+    return response.data;
+  },
 
-  async getSubscriptions(studentId) {
-    return this.get(`/formulas/subscriptions/${studentId}`);
-  }
+  getQuizResults: async (quizId) => {
+    const response = await apiClient.get(`/quizzes/${quizId}/results`);
+    return response.data;
+  },
+};
 
-  // === ENSEIGNANTS ===
+// === SERVICES NOTIFICATIONS ===
+export const notificationService = {
+  getNotifications: async () => {
+    const response = await apiClient.get('/notifications');
+    return response.data;
+  },
 
-  async getTeachers() {
-    return this.get('/teachers');
-  }
+  markAsRead: async (notificationId) => {
+    const response = await apiClient.put(`/notifications/${notificationId}/read`);
+    return response.data;
+  },
 
-  async getTeacher(teacherId) {
-    return this.get(`/teachers/${teacherId}`);
-  }
+  markAllAsRead: async () => {
+    const response = await apiClient.put('/notifications/read-all');
+    return response.data;
+  },
+};
 
-  async getTeacherAvailability(teacherId) {
-    return this.get(`/teachers/${teacherId}/availability`);
-  }
-
-  async bookSession(teacherId, sessionData) {
-    return this.post(`/teachers/${teacherId}/book`, sessionData);
-  }
-
-  // === RAPPORTS ===
-
-  async getStudentReport(studentId, period = 'week') {
-    return this.get(`/reports/student/${studentId}`, { period });
-  }
-
-  async getParentReport(parentId, period = 'week') {
-    return this.get(`/reports/parent/${parentId}`, { period });
-  }
-
-  async getTeacherReport(teacherId, period = 'week') {
-    return this.get(`/reports/teacher/${teacherId}`, { period });
-  }
-
-  async generateCustomReport(reportConfig) {
-    return this.post('/reports/custom', reportConfig);
-  }
-
-  // === PAIEMENTS ===
-
-  async getPaymentMethods() {
-    return this.get('/payments/methods');
-  }
-
-  async processPayment(paymentData) {
-    return this.post('/payments/process', paymentData);
-  }
-
-  async getPaymentHistory(params = {}) {
-    return this.get('/payments/history', params);
-  }
-
-  async getInvoices(params = {}) {
-    return this.get('/payments/invoices', params);
-  }
-
-  // === SUPPORT ===
-
-  async createSupportTicket(ticketData) {
-    return this.post('/support/tickets', ticketData);
-  }
-
-  async getSupportTickets() {
-    return this.get('/support/tickets');
-  }
-
-  async updateSupportTicket(ticketId, updateData) {
-    return this.put(`/support/tickets/${ticketId}`, updateData);
-  }
-
-  async getFAQ() {
-    return this.get('/support/faq');
-  }
-
-  // === STATISTIQUES ===
-
-  async getDashboardStats(userType, userId) {
-    return this.get(`/stats/dashboard/${userType}/${userId}`);
-  }
-
-  async getUsageStats(params = {}) {
-    return this.get('/stats/usage', params);
-  }
-
-  async getPerformanceStats(studentId, subject = null) {
-    return this.get(`/stats/performance/${studentId}`, { subject });
-  }
-
-  // === UTILITAIRES ===
-
-  async uploadFile(file, category = 'general') {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('category', category);
-    
-    return this.request('/upload', {
-      method: 'POST',
-      body: formData,
-      headers: { 'Authorization': `Bearer ${this.token}` }
-    });
-  }
-
-  async healthCheck() {
-    return this.get('/health', {}, { auth: false });
-  }
-
-  async getSystemInfo() {
-    return this.get('/info', {}, { auth: false });
-  }
-}
-
-// Instance singleton
-const apiService = new ApiService();
-
-export default apiService;
-
+// Export de l'instance axios pour des cas d'usage spécifiques
+export default apiClient;

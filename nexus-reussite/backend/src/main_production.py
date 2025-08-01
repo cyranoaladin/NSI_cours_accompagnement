@@ -1,7 +1,5 @@
-"""
-Point d'entrée principal de Nexus Réussite Backend
-Version production-ready avec architecture modulaire
-"""
+"""Point d'entrée principal de Nexus Réussite Backend Version production-ready avec
+architecture modulaire."""
 
 import os
 from datetime import datetime
@@ -11,21 +9,21 @@ import sentry_sdk
 
 # Configuration du logging structuré
 import structlog
+
+# Configuration et initialisation
+from config import get_config, validate_config
+from database import init_app as init_database
 from flask import Flask, jsonify, request, send_from_directory
 from flask_compress import Compress
 from flask_jwt_extended import JWTManager
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_talisman import Talisman
+from middleware.cors_enhanced import enhanced_cors
+from middleware.security import security_middleware
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from werkzeug.exceptions import RequestEntityTooLarge
-
-# Configuration et initialisation
-from config import get_config, validate_config
-from database import init_app as init_database
-from middleware.cors_enhanced import enhanced_cors
-from middleware.security import security_middleware
 
 structlog.configure(
     processors=[
@@ -79,8 +77,7 @@ talisman = Talisman()
 
 
 def create_app(config_name=None):  # pylint: disable=unused-argument
-    """Factory pour créer l'application Flask"""
-
+    """Factory pour créer l'application Flask."""
     # Récupération de la configuration
     config_obj = get_config(config_name)
 
@@ -191,7 +188,7 @@ def create_app(config_name=None):  # pylint: disable=unused-argument
 
 
 def register_error_handlers(flask_app):
-    """Enregistre les gestionnaires d'erreurs globaux"""
+    """Enregistre les gestionnaires d'erreurs globaux."""
 
     @flask_app.errorhandler(400)
     def bad_request(error):  # pylint: disable=unused-argument
@@ -252,8 +249,7 @@ def register_error_handlers(flask_app):
 
 
 def register_blueprints(flask_app):
-    """Enregistre tous les blueprints de l'application"""
-
+    """Enregistre tous les blueprints de l'application."""
     # Import centralisé depuis routes.__init__
     # pylint: disable=import-outside-toplevel
     from routes import BLUEPRINTS
@@ -266,92 +262,49 @@ def register_blueprints(flask_app):
 
 
 def register_main_routes(flask_app):
-    """Enregistre les routes principales de l'application"""
+    """Enregistre les routes principales de l'application."""
 
     @flask_app.route("/")
     def index():
-        """Page d'accueil - sert le frontend React"""
-        try:
-            return send_from_directory("static", "index.html")
-        except FileNotFoundError:
-            logger.error("Frontend index.html not found")
-            return (
-                jsonify(
-                    {
-                        "error": "Page not found",
-                        "message": "Frontend not built or not found",
-                        "suggestion": "Run 'npm run build' in frontend directory",
-                    }
-                ),
-                404,
-            )
+        """API root - redirection vers la documentation"""
+        return jsonify(
+            {
+                "message": "Nexus Réussite Backend API",
+                "version": "1.0.0",
+                "frontend": "http://localhost:3000",
+                "api_docs": "/api/docs",
+                "health": "/health",
+            }
+        )
 
     @flask_app.route("/parent")
     def parent_dashboard():
-        """Page tableau de bord parents"""
-        try:
-            return send_from_directory("static/parent", "index.html")
-        except FileNotFoundError:
-            logger.warning("Page parent non trouvée, redirection vers accueil")
-            return send_from_directory("static", "index.html")
-
-    # Routes pour fichiers statiques avec MIME types corrects et sans rate limiting
-    @flask_app.route("/css/<path:filename>")
-    def serve_css(filename):
-        """Serve CSS files with correct MIME type"""
-        try:
-            return send_from_directory(
-                os.path.join(flask_app.root_path, "static", "css"),
-                filename,
-                mimetype='text/css'
-            )
-        except FileNotFoundError:
-            return jsonify({"error": "CSS file not found"}), 404
-
-    @flask_app.route("/components/<path:filename>")
-    def serve_js_components(filename):
-        """Serve JavaScript components with correct MIME type"""
-        try:
-            return send_from_directory(
-                os.path.join(flask_app.root_path, "static", "components"),
-                filename,
-                mimetype='application/javascript'
-            )
-        except FileNotFoundError:
-            return jsonify({"error": "JS component not found"}), 404
-
-    @flask_app.route("/images/<path:filename>")
-    def serve_images(filename):
-        """Serve images with correct MIME type"""
-        try:
-            # Déterminer le MIME type selon l'extension
-            ext = filename.lower().split('.')[-1]
-            mime_types = {
-                'png': 'image/png',
-                'jpg': 'image/jpeg',
-                'jpeg': 'image/jpeg',
-                'gif': 'image/gif',
-                'svg': 'image/svg+xml',
-                'webp': 'image/webp'
+        """Redirection vers le frontend Next.js."""
+        return jsonify(
+            {
+                "message": "Parent dashboard available on frontend",
+                "redirect": "http://localhost:3000/parent",
             }
-            mimetype = mime_types.get(ext, 'application/octet-stream')
+        )
 
-            return send_from_directory(
-                os.path.join(flask_app.root_path, "static", "images"),
-                filename,
-                mimetype=mimetype
-            )
-        except FileNotFoundError:
-            return jsonify({"error": "Image not found"}), 404
+    # ✅ CONTENU STATIQUE GÉRÉ PAR NEXT.JS FRONTEND
+    # Les routes CSS, JS, images sont maintenant servies par le frontend Next.js sur port 3000
+    # Cette architecture sépare clairement API (Flask) et UI (Next.js)
 
     @flask_app.route("/favicon.ico")
     def favicon():
-        """Favicon du site"""
+        """Favicon du site."""
         try:
-            return send_from_directory("static", "favicon.ico", mimetype='image/vnd.microsoft.icon')
+            return send_from_directory(
+                "static", "favicon.ico", mimetype="image/vnd.microsoft.icon"
+            )
         except FileNotFoundError:
-            return '', 204
-        except (RuntimeError, OSError, ValueError) as exc:  # pylint: disable=broad-exception-caught
+            return "", 204
+        except (
+            RuntimeError,
+            OSError,
+            ValueError,
+        ) as exc:  # pylint: disable=broad-exception-caught
             logger.error("Erreur lors du service de la page d'accueil: %s", str(exc))
             return (
                 jsonify(
@@ -367,9 +320,8 @@ def register_main_routes(flask_app):
     @flask_app.route("/api/health")
     @limiter.exempt
     def health_check():
-        """Point de contrôle de santé complet pour le monitoring"""
+        """Point de contrôle de santé complet pour le monitoring."""
         import psutil
-
         from database import get_query_stats
         from services.cache_service import cache_service
 
@@ -387,9 +339,8 @@ def register_main_routes(flask_app):
 
         # Vérification de la base de données
         try:
-            from sqlalchemy import text
-
             from database import db
+            from sqlalchemy import text
 
             start_time = datetime.utcnow()
             db.session.execute(text("SELECT 1"))
@@ -462,9 +413,8 @@ def register_main_routes(flask_app):
         """Probe de prêt pour Kubernetes - vérifie si l'app peut recevoir du trafic"""
         try:
             # Vérifications critiques pour le readiness
-            from sqlalchemy import text
-
             from database import db
+            from sqlalchemy import text
 
             # Test de base de données
             db.session.execute(text("SELECT 1"))
@@ -557,63 +507,25 @@ def register_main_routes(flask_app):
             }
         )
 
-    # Route pour servir les assets statiques
-    @flask_app.route("/assets/<path:filename>")
-    def serve_assets(filename):
-        """Sert les assets statiques avec cache"""
-        try:
-            response = send_from_directory("static/assets", filename)
-            # Cache pour 1 heure en développement, 1 jour en production
-            cache_timeout = (
-                86400 if flask_app.config.get("ENV") == "production" else 3600
-            )
-            response.cache_control.max_age = cache_timeout
-            return response
-        except (RuntimeError, OSError, ValueError) as exc:  # pylint: disable=broad-exception-caught
-            logger.error("Erreur lors du service de l'asset %s: %s", filename, exc)
-            return jsonify({"error": "Asset not found"}), 404
-
-    # Route catch-all pour le frontend React (SPA)
-    @flask_app.route("/<path:path>")
-    def react_app(path):
-        """Route catch-all pour servir l'application React"""
-        # Ne pas intercepter les routes API
-        if path.startswith("api/"):
-            return jsonify({"error": "API endpoint not found"}), 404
-
-        try:
-            # Essayer de servir le fichier statique
-            return send_from_directory("static", path)
-        except FileNotFoundError:
-            # Si le fichier n'existe pas, servir index.html (SPA)
-            try:
-                return send_from_directory("static", "index.html")
-            except FileNotFoundError:
-                return (
-                    jsonify(
-                        {
-                            "error": "Frontend not available",
-                            "message": "Please build the frontend first",
-                        }
-                    ),
-                    404,
-                )
+    # ✅ ROUTES STATIQUES SUPPRIMÉES - MAINTENANT GÉRées PAR NEXT.JS
+    # Le backend Flask se concentre uniquement sur l'API
+    # Tout le contenu statique et routage frontend est géré par Next.js sur port 3000
 
 
 def setup_jwt_callbacks(flask_app):
-    """Configure les callbacks JWT avec blacklist"""
+    """Configure les callbacks JWT avec blacklist."""
     from services.jwt_blacklist import get_jwt_blacklist_service
 
     @jwt.token_in_blocklist_loader
     def check_if_token_revoked(jwt_header, jwt_payload):
-        """Vérifie si un token est révoqué"""
+        """Vérifie si un token est révoqué."""
         jti = jwt_payload["jti"]
         blacklist_service = get_jwt_blacklist_service()
         return blacklist_service.is_token_blacklisted(jti)
 
     @jwt.revoked_token_loader
     def revoked_token_callback(jwt_header, jwt_payload):
-        """Callback pour token révoqué"""
+        """Callback pour token révoqué."""
         return (
             jsonify(
                 {"success": False, "error": "Token révoqué", "code": "TOKEN_REVOKED"}
@@ -623,7 +535,7 @@ def setup_jwt_callbacks(flask_app):
 
     @jwt.expired_token_loader
     def expired_token_callback(jwt_header, jwt_payload):
-        """Callback pour token expiré"""
+        """Callback pour token expiré."""
         return (
             jsonify(
                 {"success": False, "error": "Token expiré", "code": "TOKEN_EXPIRED"}
@@ -633,7 +545,7 @@ def setup_jwt_callbacks(flask_app):
 
     @jwt.invalid_token_loader
     def invalid_token_callback(error):
-        """Callback pour token invalide"""
+        """Callback pour token invalide."""
         return (
             jsonify(
                 {"success": False, "error": "Token invalide", "code": "TOKEN_INVALID"}
@@ -643,7 +555,7 @@ def setup_jwt_callbacks(flask_app):
 
     @jwt.unauthorized_loader
     def missing_token_callback(error):
-        """Callback pour token manquant"""
+        """Callback pour token manquant."""
         return (
             jsonify(
                 {
@@ -657,11 +569,11 @@ def setup_jwt_callbacks(flask_app):
 
 
 def setup_logging_middleware(flask_app):
-    """Configure le middleware de logging pour les requêtes"""
+    """Configure le middleware de logging pour les requêtes."""
 
     @flask_app.before_request
     def log_request_info():
-        """Log des informations de requête"""
+        """Log des informations de requête."""
         if not request.path.startswith("/health"):  # Éviter le spam des health checks
             logger.info(
                 "Request: %s %s from %s",
@@ -672,7 +584,7 @@ def setup_logging_middleware(flask_app):
 
     @flask_app.after_request
     def log_response_info(response):
-        """Log des informations de réponse"""
+        """Log des informations de réponse."""
         if not request.path.startswith("/health"):
             logger.info(
                 "Response: %s for %s %s",
@@ -684,12 +596,11 @@ def setup_logging_middleware(flask_app):
 
 
 def register_cli_commands(flask_app):
-    """Enregistre les commandes CLI personnalisées"""
+    """Enregistre les commandes CLI personnalisées."""
     import click
+    from config import get_config
     from redis import Redis
     from sqlalchemy import create_engine, text
-
-    from config import get_config
 
     @flask_app.cli.command("diagnose")
     def diagnose():
@@ -755,7 +666,7 @@ def register_cli_commands(flask_app):
 
 # Factory pour créer l'app avec configuration par défaut
 def create_default_app():
-    """Crée l'application avec la configuration par défaut"""
+    """Crée l'application avec la configuration par défaut."""
     return create_app()
 
 

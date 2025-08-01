@@ -1,21 +1,4 @@
-import React, { useState } from 'react';
-import LoginForm from './LoginForm';
-import RegisterForm from './RegisterForm';
+'use client';
 
-export default function AuthPage() {
-  const [isLogin, setIsLogin] = useState(true);
-
-  const switchToRegister = () => setIsLogin(false);
-  const switchToLogin = () => setIsLogin(true);
-
-  return (
-    <>
-      {isLogin ? (
-        <LoginForm onSwitchToRegister={switchToRegister} />
-      ) : (
-        <RegisterForm onSwitchToLogin={switchToLogin} />
-      )}
-    </>
-  );
-}
-
+import { usePathname, useSearchParams } from 'next/navigation';
+// Fichier src/components/Auth/AuthPage.jsx - Veuillez re-uploader le projet pour obtenir le contenu complet

@@ -1,394 +1,191 @@
-/**
- * Service WebSocket pour les notifications en temps réel
- */
+import { io } from 'socket.io-client';
 
 class WebSocketService {
   constructor() {
-    this.ws = null;
+    this.socket = null;
+    this.isConnected = false;
     this.reconnectAttempts = 0;
     this.maxReconnectAttempts = 5;
-    this.reconnectInterval = 1000;
-    this.listeners = new Map();
-    this.isConnected = false;
-    this.userId = null;
-    this.userRole = null;
-    this.heartbeatInterval = null;
+    this.reconnectDelay = 1000;
   }
 
-  // Connexion WebSocket
-  connect(userId, userRole, token) {
-    this.userId = userId;
-    this.userRole = userRole;
-    
-    const wsUrl = process.env.NODE_ENV === 'production'
-      ? `wss://your-production-domain.com/ws`
-      : `ws://localhost:5000/ws`;
-    
-    try {
-      this.ws = new WebSocket(`${wsUrl}?token=${token}&user_id=${userId}&role=${userRole}`);
-      
-      this.ws.onopen = this.onOpen.bind(this);
-      this.ws.onmessage = this.onMessage.bind(this);
-      this.ws.onclose = this.onClose.bind(this);
-      this.ws.onerror = this.onError.bind(this);
-      
-    } catch (error) {
-      console.error('Erreur lors de la connexion WebSocket:', error);
-      this.scheduleReconnect();
+  // Connexion au serveur WebSocket
+  connect() {
+    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:5000';
+    const token = localStorage.getItem('access_token');
+
+    if (!token) {
+      console.warn('No auth token found, cannot connect to WebSocket');
+      return;
     }
-  }
 
-  // Événements WebSocket
-  onOpen(event) {
-    console.log('WebSocket connecté');
-    this.isConnected = true;
-    this.reconnectAttempts = 0;
-    
-    // Démarrer le heartbeat
-    this.startHeartbeat();
-    
-    // Notifier les listeners
-    this.emit('connected', { userId: this.userId, userRole: this.userRole });
-  }
+    this.socket = io(wsUrl, {
+      auth: {
+        token: token,
+      },
+      transports: ['websocket'],
+      upgrade: false,
+    });
 
-  onMessage(event) {
-    try {
-      const data = JSON.parse(event.data);
-      
-      // Gérer les différents types de messages
-      switch (data.type) {
-        case 'notification':
-          this.handleNotification(data.data);
-          break;
-        case 'progress_update':
-          this.handleProgressUpdate(data.data);
-          break;
-        case 'achievement_unlocked':
-          this.handleAchievementUnlocked(data.data);
-          break;
-        case 'teacher_message':
-          this.handleTeacherMessage(data.data);
-          break;
-        case 'conference_invitation':
-          this.handleConferenceInvitation(data.data);
-          break;
-        case 'system_alert':
-          this.handleSystemAlert(data.data);
-          break;
-        case 'heartbeat':
-          this.handleHeartbeat(data.data);
-          break;
-        case 'broadcast_notification':
-          this.handleBroadcastNotification(data.data);
-          break;
-        default:
-          console.log('Message WebSocket non géré:', data);
+    // Événements de connexion
+    this.socket.on('connect', () => {
+      console.log('✅ Connected to WebSocket server');
+      this.isConnected = true;
+      this.reconnectAttempts = 0;
+    });
+
+    this.socket.on('disconnect', (reason) => {
+      console.log('❌ Disconnected from WebSocket server:', reason);
+      this.isConnected = false;
+
+      if (reason === 'io server disconnect') {
+        // Le serveur a fermé la connexion, tentative de reconnexion
+        this.handleReconnection();
       }
-      
-      // Émettre l'événement générique
-      this.emit('message', data);
-      
-    } catch (error) {
-      console.error('Erreur lors du parsing du message WebSocket:', error);
-    }
+    });
+
+    this.socket.on('connect_error', (error) => {
+      console.error('WebSocket connection error:', error);
+      this.handleReconnection();
+    });
+
+    // Événements métier
+    this.setupBusinessEvents();
+
+    return this.socket;
   }
 
-  onClose(event) {
-    console.log('WebSocket fermé:', event.code, event.reason);
-    this.isConnected = false;
-    this.stopHeartbeat();
-    
-    // Notifier les listeners
-    this.emit('disconnected', { code: event.code, reason: event.reason });
-    
-    // Tentative de reconnexion si ce n'est pas une fermeture volontaire
-    if (event.code !== 1000) {
-      this.scheduleReconnect();
-    }
-  }
+  // Configuration des événements métier
+  setupBusinessEvents() {
+    if (!this.socket) return;
 
-  onError(error) {
-    console.error('Erreur WebSocket:', error);
-    this.emit('error', error);
-  }
+    // Notifications en temps réel
+    this.socket.on('notification', (data) => {
+      console.log('📢 New notification:', data);
+      // Dispatch custom event pour les composants React
+      window.dispatchEvent(new CustomEvent('newNotification', { detail: data }));
+    });
 
-  // Gestion des différents types de messages
-  handleNotification(notification) {
-    console.log('Nouvelle notification:', notification);
-    
-    // Afficher une notification native si possible
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification(notification.title, {
-        body: notification.message,
-        icon: '/favicon.ico',
-        tag: notification.id
-      });
-    }
-    
-    // Émettre l'événement pour les composants
-    this.emit('notification', notification);
-  }
+    // Mise à jour de progression
+    this.socket.on('progress_update', (data) => {
+      console.log('📈 Progress update:', data);
+      window.dispatchEvent(new CustomEvent('progressUpdate', { detail: data }));
+    });
 
-  handleProgressUpdate(progressData) {
-    console.log('Mise à jour de progression:', progressData);
-    this.emit('progress_update', progressData);
-  }
+    // Messages ARIA
+    this.socket.on('aria_response', (data) => {
+      console.log('🤖 ARIA response:', data);
+      window.dispatchEvent(new CustomEvent('ariaResponse', { detail: data }));
+    });
 
-  handleAchievementUnlocked(achievement) {
-    console.log('Nouveau succès débloqué:', achievement);
-    
-    // Notification spéciale pour les succès
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('🏆 Nouveau succès débloqué !', {
-        body: achievement.name,
-        icon: '/favicon.ico',
-        tag: `achievement_${achievement.id}`
-      });
-    }
-    
-    this.emit('achievement_unlocked', achievement);
-  }
+    // Mise à jour de statut en ligne
+    this.socket.on('user_status', (data) => {
+      console.log('👤 User status update:', data);
+      window.dispatchEvent(new CustomEvent('userStatusUpdate', { detail: data }));
+    });
 
-  handleTeacherMessage(message) {
-    console.log('Message d\'enseignant:', message);
-    this.emit('teacher_message', message);
-  }
-
-  handleConferenceInvitation(invitation) {
-    console.log('Invitation à une conférence:', invitation);
-    this.emit('conference_invitation', invitation);
-  }
-
-  handleSystemAlert(alert) {
-    console.log('Alerte système:', alert);
-    this.emit('system_alert', alert);
-  }
-
-  handleHeartbeat(data) {
-    // Répondre au heartbeat
-    this.send({
-      type: 'heartbeat_response',
-      timestamp: Date.now()
+    // Sessions de classe/conférence
+    this.socket.on('class_session_update', (data) => {
+      console.log('🎓 Class session update:', data);
+      window.dispatchEvent(new CustomEvent('classSessionUpdate', { detail: data }));
     });
   }
 
-  handleBroadcastNotification(notification) {
-    console.log('Notification diffusée:', notification);
-    this.emit('broadcast_notification', notification);
-  }
-
-  // Gestion du heartbeat
-  startHeartbeat() {
-    this.heartbeatInterval = setInterval(() => {
-      if (this.isConnected) {
-        this.send({
-          type: 'heartbeat',
-          timestamp: Date.now()
-        });
-      }
-    }, 30000); // Toutes les 30 secondes
-  }
-
-  stopHeartbeat() {
-    if (this.heartbeatInterval) {
-      clearInterval(this.heartbeatInterval);
-      this.heartbeatInterval = null;
+  // Gestion de la reconnexion
+  handleReconnection() {
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      console.error('Max reconnection attempts reached');
+      return;
     }
-  }
 
-  // Reconnexion automatique
-  scheduleReconnect() {
-    if (this.reconnectAttempts < this.maxReconnectAttempts) {
-      this.reconnectAttempts++;
-      const delay = this.reconnectInterval * Math.pow(2, this.reconnectAttempts - 1);
-      
-      console.log(`Tentative de reconnexion ${this.reconnectAttempts}/${this.maxReconnectAttempts} dans ${delay}ms`);
-      
-      setTimeout(() => {
-        if (this.userId && this.userRole) {
-          const token = localStorage.getItem('auth_token');
-          if (token) {
-            this.connect(this.userId, this.userRole, token);
-          }
-        }
-      }, delay);
-    } else {
-      console.error('Nombre maximum de tentatives de reconnexion atteint');
-      this.emit('max_reconnect_attempts_reached');
-    }
-  }
+    this.reconnectAttempts++;
+    const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
 
-  // Envoi de messages
-  send(data) {
-    if (this.isConnected && this.ws) {
-      try {
-        this.ws.send(JSON.stringify(data));
-        return true;
-      } catch (error) {
-        console.error('Erreur lors de l\'envoi du message:', error);
-        return false;
+    console.log(`🔄 Attempting to reconnect in ${delay}ms (attempt ${this.reconnectAttempts})`);
+
+    setTimeout(() => {
+      if (!this.isConnected) {
+        this.connect();
       }
-    } else {
-      console.warn('WebSocket non connecté, impossible d\'envoyer le message');
-      return false;
-    }
+    }, delay);
   }
 
-  // Envoi de notifications
-  sendNotification(recipientId, title, message, type = 'info', data = {}) {
-    return this.send({
-      type: 'send_notification',
-      data: {
-        recipient_id: recipientId,
-        title,
-        message,
-        notification_type: type,
-        data
-      }
-    });
-  }
-
-  // Marquer une notification comme lue
-  markNotificationRead(notificationId) {
-    return this.send({
-      type: 'mark_notification_read',
-      data: {
-        notification_id: notificationId
-      }
-    });
-  }
-
-  // Rejoindre une salle (pour les notifications de groupe)
-  joinRoom(roomId) {
-    return this.send({
-      type: 'join_room',
-      data: {
-        room_id: roomId
-      }
-    });
-  }
-
-  // Quitter une salle
-  leaveRoom(roomId) {
-    return this.send({
-      type: 'leave_room',
-      data: {
-        room_id: roomId
-      }
-    });
-  }
-
-  // Gestion des événements
-  on(event, callback) {
-    if (!this.listeners.has(event)) {
-      this.listeners.set(event, []);
-    }
-    this.listeners.get(event).push(callback);
-  }
-
-  off(event, callback) {
-    if (this.listeners.has(event)) {
-      const callbacks = this.listeners.get(event);
-      const index = callbacks.indexOf(callback);
-      if (index > -1) {
-        callbacks.splice(index, 1);
-      }
-    }
-  }
-
+  // Émission d'événements
   emit(event, data) {
-    if (this.listeners.has(event)) {
-      this.listeners.get(event).forEach(callback => {
-        try {
-          callback(data);
-        } catch (error) {
-          console.error(`Erreur dans le callback de l'événement ${event}:`, error);
-        }
-      });
+    if (this.socket && this.isConnected) {
+      this.socket.emit(event, data);
+    } else {
+      console.warn(`Cannot emit ${event}: WebSocket not connected`);
     }
   }
 
-  // Déconnexion
+  // Rejoindre une room (pour les sessions de classe)
+  joinRoom(roomId) {
+    this.emit('join_room', { room_id: roomId });
+  }
+
+  // Quitter une room
+  leaveRoom(roomId) {
+    this.emit('leave_room', { room_id: roomId });
+  }
+
+  // Envoyer un message dans une room
+  sendToRoom(roomId, message) {
+    this.emit('room_message', {
+      room_id: roomId,
+      message: message,
+    });
+  }
+
+  // Mise à jour du statut utilisateur
+  updateUserStatus(status) {
+    this.emit('update_status', { status });
+  }
+
+  // Envoyer un message à ARIA
+  sendAriaMessage(message, context = {}) {
+    this.emit('aria_message', {
+      message,
+      context,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  // Déconnexion propre
   disconnect() {
-    this.stopHeartbeat();
-    
-    if (this.ws) {
-      this.ws.close(1000, 'Déconnexion volontaire');
-      this.ws = null;
+    if (this.socket) {
+      this.socket.disconnect();
+      this.socket = null;
+      this.isConnected = false;
+      this.reconnectAttempts = 0;
     }
-    
-    this.isConnected = false;
-    this.userId = null;
-    this.userRole = null;
-    this.reconnectAttempts = 0;
   }
 
-  // Statut de connexion
+  // Vérifier l'état de connexion
   getConnectionStatus() {
     return {
       isConnected: this.isConnected,
-      userId: this.userId,
-      userRole: this.userRole,
-      reconnectAttempts: this.reconnectAttempts
+      socket: this.socket,
+      reconnectAttempts: this.reconnectAttempts,
     };
   }
 
-  // Demander la permission pour les notifications natives
-  async requestNotificationPermission() {
-    if ('Notification' in window) {
-      const permission = await Notification.requestPermission();
-      return permission === 'granted';
+  // Écouter un événement spécifique
+  on(event, callback) {
+    if (this.socket) {
+      this.socket.on(event, callback);
     }
-    return false;
   }
 
-  // Vérifier si les notifications sont supportées
-  isNotificationSupported() {
-    return 'Notification' in window;
-  }
-
-  // Vérifier si les notifications sont autorisées
-  isNotificationPermissionGranted() {
-    return 'Notification' in window && Notification.permission === 'granted';
+  // Arrêter d'écouter un événement
+  off(event, callback) {
+    if (this.socket) {
+      this.socket.off(event, callback);
+    }
   }
 }
 
 // Instance singleton
-const webSocketService = new WebSocketService();
+const wsService = new WebSocketService();
 
-export default webSocketService;
-
-// Hook React pour utiliser le WebSocket
-export function useWebSocket() {
-  const [isConnected, setIsConnected] = React.useState(webSocketService.isConnected);
-  const [notifications, setNotifications] = React.useState([]);
-
-  React.useEffect(() => {
-    const handleConnected = () => setIsConnected(true);
-    const handleDisconnected = () => setIsConnected(false);
-    const handleNotification = (notification) => {
-      setNotifications(prev => [notification, ...prev].slice(0, 50)); // Garder les 50 dernières
-    };
-
-    webSocketService.on('connected', handleConnected);
-    webSocketService.on('disconnected', handleDisconnected);
-    webSocketService.on('notification', handleNotification);
-
-    return () => {
-      webSocketService.off('connected', handleConnected);
-      webSocketService.off('disconnected', handleDisconnected);
-      webSocketService.off('notification', handleNotification);
-    };
-  }, []);
-
-  return {
-    isConnected,
-    notifications,
-    send: webSocketService.send.bind(webSocketService),
-    sendNotification: webSocketService.sendNotification.bind(webSocketService),
-    markNotificationRead: webSocketService.markNotificationRead.bind(webSocketService),
-    on: webSocketService.on.bind(webSocketService),
-    off: webSocketService.off.bind(webSocketService)
-  };
-}
-
+export default wsService;

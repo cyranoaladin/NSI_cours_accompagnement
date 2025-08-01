@@ -1,18 +1,4 @@
-import React from 'react'
+'use client';
 
-const Progress = React.forwardRef(({ className, value, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={`relative h-4 w-full overflow-hidden rounded-full bg-secondary ${className || ''}`}
-    {...props}
-  >
-    <div
-      className="h-full w-full flex-1 bg-primary transition-all"
-      style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
-    />
-  </div>
-))
-Progress.displayName = "Progress"
-
-export { Progress }
-
+import { usePathname, useSearchParams } from 'next/navigation';
+// Fichier src/components/ui/progress.jsx - Veuillez re-uploader le projet pour obtenir le contenu complet

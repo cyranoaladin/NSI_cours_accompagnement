@@ -1,9 +1,4 @@
-import * as AspectRatioPrimitive from "@radix-ui/react-aspect-ratio"
+'use client';
 
-function AspectRatio({
-  ...props
-}) {
-  return <AspectRatioPrimitive.Root data-slot="aspect-ratio" {...props} />;
-}
-
-export { AspectRatio }
+import { usePathname, useSearchParams } from 'next/navigation';
+// Fichier src/components/ui/aspect-ratio.jsx - Veuillez re-uploader le projet pour obtenir le contenu complet

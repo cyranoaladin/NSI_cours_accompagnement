@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <!-- Fond -->
+  <rect width="800" height="400" fill="#f8fafc"/>
+
+  <!-- Étoile bleue -->
+  <g transform="translate(100,120)">
+    <path d="M80 20 L95 60 L140 60 L105 85 L120 125 L80 100 L40 125 L55 85 L20 60 L65 60 Z"
+          fill="#1e40af" stroke="none"/>
+  </g>
+
+  <!-- Flèche rouge -->
+  <g transform="translate(120,140)">
+    <path d="M0 40 L60 0 L45 15 L85 15 L85 25 L45 25 L60 40 Z"
+          fill="#dc2626" stroke="none"/>
+  </g>
+
+  <!-- Texte NEXUS -->
+  <text x="280" y="180" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#1e40af">
+    NEXUS
+  </text>
+
+  <!-- Texte RÉUSSITE -->
+  <text x="280" y="250" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#dc2626">
+    RÉUSSITE
+  </text>
+
+  <!-- Slogan -->
+  <rect x="280" y="270" width="480" height="60" fill="#1e40af"/>
+  <text x="290" y="295" font-family="Arial, sans-serif" font-size="20" font-weight="normal" fill="white">
+    Viser.
+  </text>
+  <text x="350" y="295" font-family="Arial, sans-serif" font-size="20" font-weight="normal" fill="white">
+    Atteindre.
+  </text>
+  <text x="460" y="295" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white">
+    Dépasser.
+  </text>
+
+  <text x="290" y="320" font-family="Arial, sans-serif" font-size="16" font-style="italic" fill="white">
+    Excellence • Innovation • Réussite
+  </text>
+</svg>

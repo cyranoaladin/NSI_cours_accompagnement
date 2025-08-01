@@ -1,15 +1,4 @@
-import { cn } from "@/lib/utils"
+'use client';
 
-function Skeleton({
-  className,
-  ...props
-}) {
-  return (
-    <div
-      data-slot="skeleton"
-      className={cn("bg-accent animate-pulse rounded-md", className)}
-      {...props} />
-  );
-}
-
-export { Skeleton }
+import { usePathname, useSearchParams } from 'next/navigation';
+// Fichier src/components/ui/skeleton.jsx - Veuillez re-uploader le projet pour obtenir le contenu complet

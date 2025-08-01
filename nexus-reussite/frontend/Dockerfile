@@ -1,42 +1,48 @@
-# Dockerfile pour Nexus Réussite Frontend
-FROM node:18-alpine as build
+# Dockerfile pour le frontend Next.js
+FROM node:18-alpine AS base
 
-# Définir le répertoire de travail
+# Installer les dépendances seulement quand nécessaire
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Copier les fichiers de package
-COPY package*.json ./
-
-# Installer les dépendances
+# Installer les dépendances basées sur le gestionnaire de paquets préféré
+COPY package.json package-lock.json* ./
 RUN npm ci --only=production
 
-# Copier le code source
+# Rebuild du code source seulement quand nécessaire
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Construire l'application
+# Variables d'environnement pour le build
+ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV production
+
 RUN npm run build
 
-# Stage de production avec Nginx
-FROM nginx:alpine
+# Image de production, copier tous les fichiers et lancer Next.js
+FROM base AS runner
+WORKDIR /app
 
-# Copier la configuration Nginx personnalisée
-COPY nginx.conf /etc/nginx/nginx.conf
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
 
-# Copier les fichiers construits
-COPY --from=build /app/dist /usr/share/nginx/html
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-# Copier le script d'entrée
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
+COPY --from=builder /app/public ./public
 
-# Exposer le port
-EXPOSE 80
+# Définir automatiquement les permissions de sortie et définir l'utilisateur approprié
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Commande de santé
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost/ || exit 1
+USER nextjs
 
-# Point d'entrée
-ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 3000
 
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
+CMD ["node", "server.js"]

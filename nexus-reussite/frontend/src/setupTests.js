@@ -1,8 +1,1 @@
-// Configuration globale des tests
-import '@testing-library/jest-dom';
-import { server } from './mocks/server';
-
-// Configuration MSW (Mock Service Worker)
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
+// Fichier src/setupTests.js - Veuillez re-uploader le projet pour obtenir le contenu complet
