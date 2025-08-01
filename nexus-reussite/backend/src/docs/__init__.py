@@ -19,10 +19,10 @@ API_DESCRIPTION = """
 🎓 **Nexus Réussite Backend API Documentation**
 
 ## Overview
-Nexus Réussite is an intelligent educational platform leveraging adaptive AI technology. 
+Nexus Réussite is an intelligent educational platform leveraging adaptive AI technology.
 This API provides comprehensive services for:
 - Student management and authentication
-- AI-powered tutoring and content generation  
+- AI-powered tutoring and content generation
 - Document generation (revision sheets, exercises, reports)
 - Video conferencing and real-time collaboration
 - Formula and concept management

@@ -32,7 +32,7 @@ def setup_logging(level: str = "INFO") -> logging.Logger:
 # Structlog fallback
 try:
     import structlog
-    
+
     def configure_structlog():
         """Configure structlog if available"""
         structlog.configure(
@@ -53,7 +53,7 @@ try:
             cache_logger_on_first_use=True,
         )
         return structlog.get_logger()
-        
+
 except ImportError:
     def configure_structlog():
         """Fallback when structlog not available"""

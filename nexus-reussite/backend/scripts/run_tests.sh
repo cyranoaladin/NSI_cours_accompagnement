@@ -68,13 +68,13 @@ fi
 # Step 4: Run Mutation Testing (if unit tests passed)
 if [ "$UNIT_TESTS_PASSED" = true ]; then
     print_status "Running mutation testing..."
-    
+
     # Check if mutmut is installed
     if ! command -v mutmut &> /dev/null; then
         print_warning "mutmut not found, installing..."
         pip install mutmut
     fi
-    
+
     # Run mutation testing
     if mutmut run --paths-to-mutate src/services/,src/models/,src/utils/ --runner "python -m pytest tests/unit/ -x --tb=no -q" --timeout 120; then
         mutmut html-report
@@ -104,7 +104,7 @@ if ! curl -f http://localhost:5000/health > /dev/null 2>&1; then
     python src/main_production.py &
     APP_PID=$!
     sleep 5
-    
+
     # Wait for server to be ready
     for i in {1..30}; do
         if curl -f http://localhost:5000/health > /dev/null 2>&1; then
@@ -140,17 +140,17 @@ print_status "Running security tests..."
 # Check if OWASP ZAP is available
 if command -v zap-cli &> /dev/null || [ -f "/usr/share/zaproxy/zap.sh" ]; then
     print_status "Starting OWASP ZAP daemon..."
-    
+
     # Start ZAP in daemon mode
     if command -v zap-cli &> /dev/null; then
         zap-cli start --start-options '-daemon -config api.disablekey=true -port 8080' &
     else
         /usr/share/zaproxy/zap.sh -daemon -config api.disablekey=true -port 8080 &
     fi
-    
+
     ZAP_PID=$!
     sleep 10  # Give ZAP time to start
-    
+
     # Run security tests
     if pytest tests/security/ -v --tb=short; then
         print_success "Security tests completed successfully"
@@ -159,7 +159,7 @@ if command -v zap-cli &> /dev/null || [ -f "/usr/share/zaproxy/zap.sh" ]; then
         print_error "Security tests failed"
         SECURITY_TESTS_PASSED=false
     fi
-    
+
     # Stop ZAP
     kill $ZAP_PID 2>/dev/null || true
 else

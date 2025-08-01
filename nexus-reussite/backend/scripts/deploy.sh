@@ -38,25 +38,25 @@ log_error() {
 # Check prerequisites
 check_prerequisites() {
     log_info "Checking prerequisites..."
-    
+
     # Check if kubectl is installed and configured
     if ! command -v kubectl &> /dev/null; then
         log_error "kubectl is not installed"
         exit 1
     fi
-    
+
     # Check if helm is installed
     if ! command -v helm &> /dev/null; then
         log_error "helm is not installed"
         exit 1
     fi
-    
+
     # Check if we can connect to cluster
     if ! kubectl cluster-info &> /dev/null; then
         log_error "Cannot connect to Kubernetes cluster"
         exit 1
     fi
-    
+
     log_success "Prerequisites check passed"
 }
 
@@ -70,14 +70,14 @@ create_namespace() {
 # Deploy secrets
 deploy_secrets() {
     log_info "Deploying secrets..."
-    
+
     # Check if secrets file exists
     if [[ ! -f "secrets/${VALUES_FILE}" ]]; then
         log_warning "Secrets file not found at secrets/${VALUES_FILE}"
         log_warning "Make sure to create secrets manually before deployment"
         return
     fi
-    
+
     # Apply secrets
     kubectl apply -f secrets/ -n ${NAMESPACE}
     log_success "Secrets deployed"
@@ -86,10 +86,10 @@ deploy_secrets() {
 # Deploy application using Helm
 deploy_application() {
     log_info "Deploying application..."
-    
+
     # Update Helm dependencies
     helm dependency update ${CHART_PATH}
-    
+
     # Deploy or upgrade
     if helm list -n ${NAMESPACE} | grep -q ${RELEASE_NAME}; then
         log_info "Upgrading existing release..."
@@ -108,23 +108,23 @@ deploy_application() {
             --wait \
             --atomic
     fi
-    
+
     log_success "Application deployed successfully"
 }
 
 # Health check
 health_check() {
     log_info "Performing health check..."
-    
+
     # Wait for deployment to be ready
     kubectl wait --for=condition=available \
         deployment/${RELEASE_NAME}-nexus-reussite-backend \
         -n ${NAMESPACE} \
         --timeout=300s
-    
+
     # Check if pods are running
     RUNNING_PODS=$(kubectl get pods -n ${NAMESPACE} -l app.kubernetes.io/name=nexus-reussite-backend --field-selector=status.phase=Running --no-headers | wc -l)
-    
+
     if [[ ${RUNNING_PODS} -gt 0 ]]; then
         log_success "Health check passed - ${RUNNING_PODS} pods running"
     else
@@ -142,14 +142,14 @@ display_info() {
     echo "Chart: ${CHART_PATH}"
     echo "Values: ${VALUES_FILE}"
     echo ""
-    
+
     log_info "Pod Status:"
     kubectl get pods -n ${NAMESPACE} -l app.kubernetes.io/name=nexus-reussite-backend
-    
+
     echo ""
     log_info "Service Status:"
     kubectl get svc -n ${NAMESPACE} -l app.kubernetes.io/name=nexus-reussite-backend
-    
+
     echo ""
     log_info "Ingress Status:"
     kubectl get ingress -n ${NAMESPACE}
@@ -166,7 +166,7 @@ rollback() {
 main() {
     log_info "Starting Nexus Réussite Backend Deployment"
     log_info "==========================================="
-    
+
     case ${1:-deploy} in
         "deploy")
             check_prerequisites
@@ -199,7 +199,7 @@ main() {
             exit 1
             ;;
     esac
-    
+
     log_success "Deployment script completed successfully"
 }
 

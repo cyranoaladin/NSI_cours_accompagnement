@@ -3,20 +3,20 @@
 # Analytics Service
 class AnalyticsService:
     """Service for analytics and metrics"""
-    
+
     def __init__(self):
         self.metrics = {}
-    
+
     def track_event(self, event_name: str, properties: dict = None):
         """Track an analytics event"""
         if properties is None:
             properties = {}
-        
+
         # Store locally for now
         if event_name not in self.metrics:
             self.metrics[event_name] = []
         self.metrics[event_name].append(properties)
-    
+
     def get_metrics(self):
         """Get all collected metrics"""
         return self.metrics
@@ -24,10 +24,10 @@ class AnalyticsService:
 # Notification Service
 class NotificationService:
     """Service for sending notifications"""
-    
+
     def __init__(self):
         self.notifications = []
-    
+
     def send_notification(self, user_id: str, message: str, type: str = "info"):
         """Send a notification to a user"""
         notification = {
@@ -38,7 +38,7 @@ class NotificationService:
         }
         self.notifications.append(notification)
         return notification
-    
+
     def _get_timestamp(self):
         """Get current timestamp"""
         from datetime import datetime
@@ -47,10 +47,10 @@ class NotificationService:
 # User Service
 class UserService:
     """Service for user management"""
-    
+
     def __init__(self):
         self.users = {}
-    
+
     def create_user(self, email: str, password: str):
         """Create a new user"""
         user_id = f"user_{len(self.users) + 1}"
@@ -62,11 +62,11 @@ class UserService:
         }
         self.users[user_id] = user
         return user
-    
+
     def get_user(self, user_id: str):
         """Get user by ID"""
         return self.users.get(user_id)
-    
+
     def _get_timestamp(self):
         """Get current timestamp"""
         from datetime import datetime
@@ -75,14 +75,14 @@ class UserService:
 # Cache Service
 class CacheService:
     """Service for caching data"""
-    
+
     def __init__(self):
         self.cache = {}
-    
+
     def get(self, key: str):
         """Get value from cache"""
         return self.cache.get(key)
-    
+
     def set(self, key: str, value, ttl: int = 300):
         """Set value in cache with TTL"""
         import time
@@ -90,12 +90,12 @@ class CacheService:
             "value": value,
             "expires_at": time.time() + ttl
         }
-    
+
     def delete(self, key: str):
         """Delete key from cache"""
         if key in self.cache:
             del self.cache[key]
-    
+
     def clear_expired(self):
         """Clear expired cache entries"""
         import time

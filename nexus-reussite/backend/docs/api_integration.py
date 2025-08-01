@@ -14,20 +14,20 @@ from flask_restx import Api, Resource, fields, Namespace
 def integrate_api_docs(app: Flask) -> Api:
     """
     Integrate comprehensive API documentation with the Flask application
-    
+
     Args:
         app: Flask application instance
-        
+
     Returns:
         Api: Configured Flask-RestX API instance with full documentation
     """
-    
+
     # Import the documentation module
     from ..src.docs import init_api_docs
-    
+
     # Initialize API documentation
     api = init_api_docs(app)
-    
+
     # Add documentation route
     @app.route('/api/docs/export')
     def export_api_docs():
@@ -35,7 +35,7 @@ def integrate_api_docs(app: Flask) -> Api:
         try:
             # Get the OpenAPI specification
             spec = api.__schema__
-            
+
             # Add metadata
             export_data = {
                 "export_timestamp": datetime.utcnow().isoformat(),
@@ -43,46 +43,46 @@ def integrate_api_docs(app: Flask) -> Api:
                 "export_format": "openapi-3.0.0",
                 "specification": spec
             }
-            
+
             return export_data, 200, {'Content-Type': 'application/json'}
-            
+
         except (RuntimeError, OSError, ValueError) as e:
             return {"error": "Failed to export API documentation", "message": str(e)}, 500
-    
+
     return api
 
 
 def generate_static_docs(app: Flask, output_dir: str = "docs/api"):
     """
     Generate static API documentation files
-    
+
     Args:
         app: Flask application instance
         output_dir: Directory to save generated documentation
     """
-    
+
     # Ensure output directory exists
     os.makedirs(output_dir, exist_ok=True)
-    
+
     # Generate OpenAPI specification
     with app.app_context():
         from ..src.docs import init_api_docs
         api = init_api_docs(app)
-        
+
         # Export OpenAPI spec
         spec = api.__schema__
-        
+
         # Save as JSON
         spec_file = os.path.join(output_dir, "openapi.json")
         with open(spec_file, 'w', encoding='utf-8') as f:
             json.dump(spec, f, indent=2, ensure_ascii=False)
-        
+
         # Generate HTML documentation
         html_content = generate_html_docs(spec)
         html_file = os.path.join(output_dir, "index.html")
         with open(html_file, 'w', encoding='utf-8') as f:
             f.write(html_content)
-        
+
         print(f"✅ API documentation generated in {output_dir}/")
         print(f"   - OpenAPI spec: {spec_file}")
         print(f"   - HTML docs: {html_file}")
@@ -91,14 +91,14 @@ def generate_static_docs(app: Flask, output_dir: str = "docs/api"):
 def generate_html_docs(spec: Dict[str, Any]) -> str:
     """
     Generate HTML documentation from OpenAPI specification
-    
+
     Args:
         spec: OpenAPI specification dictionary
-        
+
     Returns:
         str: HTML content for documentation
     """
-    
+
     html_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -130,9 +130,9 @@ def generate_html_docs(spec: Dict[str, Any]) -> str:
         <h1>🎓 Nexus Réussite Backend API</h1>
         <p>Intelligent Educational Platform API Documentation</p>
     </div>
-    
+
     <div id="swagger-ui"></div>
-    
+
     <script src="https://unpkg.com/swagger-ui-dist@3.52.5/swagger-ui-bundle.js"></script>
     <script src="https://unpkg.com/swagger-ui-dist@3.52.5/swagger-ui-standalone-preset.js"></script>
     <script>
@@ -165,7 +165,7 @@ def generate_html_docs(spec: Dict[str, Any]) -> str:
                     return request;
                 }
             });
-            
+
             // Add custom functionality for JWT token management
             const tokenInput = document.createElement('div');
             tokenInput.innerHTML = `
@@ -177,7 +177,7 @@ def generate_html_docs(spec: Dict[str, Any]) -> str:
                 </div>
             `;
             document.body.appendChild(tokenInput);
-            
+
             window.setToken = function() {
                 const token = document.getElementById('jwt-token').value;
                 if (token) {
@@ -185,13 +185,13 @@ def generate_html_docs(spec: Dict[str, Any]) -> str:
                     alert('JWT token set successfully!');
                 }
             };
-            
+
             window.clearToken = function() {
                 localStorage.removeItem('jwt_token');
                 document.getElementById('jwt-token').value = '';
                 alert('JWT token cleared!');
             };
-            
+
             // Load existing token
             const existingToken = localStorage.getItem('jwt_token');
             if (existingToken) {
@@ -202,13 +202,13 @@ def generate_html_docs(spec: Dict[str, Any]) -> str:
 </body>
 </html>
     """
-    
+
     return html_template
 
 
 if __name__ == "__main__":
     # Generate static documentation
     from ..src.main_production import create_app
-    
+
     app = create_app()
     generate_static_docs(app)

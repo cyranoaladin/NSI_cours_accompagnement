@@ -313,21 +313,21 @@ def analyze_table_performance() -> Dict[str, Any]:
             # Requête pour obtenir des statistiques sur les tables (PostgreSQL)
             if "postgresql" in str(db.engine.url):
                 stats_query = """
-                SELECT 
+                SELECT
                     schemaname,
                     tablename,
                     attname,
                     n_distinct,
                     correlation
-                FROM pg_stats 
+                FROM pg_stats
                 WHERE schemaname = 'public'
                 ORDER BY tablename, attname;
                 """
             else:
                 # Pour SQLite, requête simplifiée
                 stats_query = """
-                SELECT name as tablename, sql 
-                FROM sqlite_master 
+                SELECT name as tablename, sql
+                FROM sqlite_master
                 WHERE type='table' AND name NOT LIKE 'sqlite_%';
                 """
 
